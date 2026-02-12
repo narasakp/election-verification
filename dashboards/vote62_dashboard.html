@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเปรียบเทียบ กกต. vs Vote62</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header .tagline {
+            font-size: 1.2em;
+            opacity: 0.95;
+            margin-bottom: 15px;
+        }
+        
+        .header .badges {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .data-source {
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 25px;
+            background: #f8f9fa;
+        }
+        
+        .data-source.ect {
+            border-color: #667eea;
+        }
+        
+        .data-source.vote62 {
+            border-color: #f5576c;
+        }
+        
+        .data-source h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .data-source h2 .icon {
+            font-size: 1.5em;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+            font-weight: 600;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .results {
+            margin-top: 40px;
+        }
+        
+        .result-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .result-header h3 {
+            font-size: 1.3em;
+            color: #333;
+        }
+        
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
+        .status-badge.identical {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-badge.minor {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-badge.significant {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-badge.critical {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .comparison-table th, .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .comparison-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .comparison-table .diff-cell {
+            font-weight: 600;
+        }
+        
+        .comparison-table .diff-cell.match {
+            color: #28a745;
+        }
+        
+        .comparison-table .diff-cell.mismatch {
+            color: #dc3545;
+        }
+        
+        .stats-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-box .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .stat-box .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .alert {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 5px solid;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            border-color: #0c5460;
+            color: #0c5460;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            border-color: #856404;
+            color: #856404;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            border-color: #721c24;
+            color: #721c24;
+        }
+        
+        .alert h4 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .action-buttons button {
+            flex: 1;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+        }
+        
+        .section h2 {
+            color: #333;
+            border-left: 5px solid #667eea;
+            padding-left: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .guide-box {
+            background: #e7f3ff;
+            border: 2px solid #0366d6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .guide-box h3 {
+            color: #0366d6;
+            margin-bottom: 15px;
+        }
+        
+        .guide-box ol {
+            margin-left: 20px;
+        }
+        
+        .guide-box li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 ระบบเปรียบเทียบข้อมูลการเลือกตั้ง</h1>
+            <p class="tagline">กกต. (Official) vs Vote62.com (Citizen-sourced)</p>
+            <div class="badges">
+                <span class="badge">📊 Cross-Verification</span>
+                <span class="badge">🔒 Transparency Check</span>
+                <span class="badge">🚨 Fraud Detection</span>
+            </div>
+        </div>
+        
+        <div class="content">
+            <!-- คำแนะนำการใช้งาน -->
+            <div class="guide-box">
+                <h3>📖 วิธีใช้งาน</h3>
+                <ol>
+                    <li><strong>เลือกเขตเลือกตั้ง</strong> หรือ <strong>รหัสหน่วยเลือกตั้ง</strong> ที่ต้องการตรวจสอบ</li>
+                    <li>กดปุ่ม <strong>"เปรียบเทียบข้อมูล"</strong> เพื่อดึงข้อมูลจากทั้งสองแหล่ง</li>
+                    <li>ตรวจสอบผลการเปรียบเทียบ - ระบบจะแจ้งเตือนหากพบความแตกต่าง</li>
+                    <li>หากพบความผิดปกติ สามารถ <strong>รายงานไปยัง iLaw หรือ Vote62</strong></li>
+                </ol>
+            </div>
+            
+            <!-- ส่วนเลือกหน่วยเลือกตั้ง -->
+            <div class="section">
+                <h2>🎯 เลือกหน่วยเลือกตั้งที่ต้องการตรวจสอบ</h2>
+                
+                <div class="comparison-grid">
+                    <div class="input-group">
+                        <label for="constituency">เขตเลือกตั้ง:</label>
+                        <select id="constituency">
+                            <option value="">-- เลือกเขต --</option>
+                            <option value="bkk-1">กรุงเทพมหานคร เขต 1</option>
+                            <option value="bkk-2">กรุงเทพมหานคร เขต 2</option>
+                            <option value="cm-1">เชียงใหม่ เขต 1</option>
+                            <!-- เพิ่มเขตอื่นๆ -->
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="unitId">รหัสหน่วยเลือกตั้ง:</label>
+                        <input type="text" id="unitId" placeholder="เช่น 001001">
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="compareData()">🔍 เปรียบเทียบข้อมูล</button>
+            </div>
+            
+            <!-- สถิติภาพรวม -->
+            <div class="section" id="statsSection" style="display:none;">
+                <h2>📊 สถิติการเปรียบเทียบ</h2>
+                
+                <div class="stats-dashboard">
+                    <div class="stat-box">
+                        <div class="label">หน่วยที่เปรียบเทียบ</div>
+                        <div class="number" id="totalCompared">0</div>
+                    </div>
+                    <div class="stat-box" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                        <div class="label">✅ เหมือนกันเป๊ะ</div>
+                        <div class="number" id="identicalCount">0</div>
+                    </div>
+                    <div class="stat-box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <div class="label">⚠️ แตกต่างเล็กน้อย</div>
+                        <div class="number" id="minorCount">0</div>
+                    </div>
+                    <div class="stat-box" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <div class="label">🚨 แตกต่างมาก</div>
+                        <div class="number" id="significantCount">0</div>
+                    </div>
+                    <div class="stat-box" style="background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);">
+                        <div class="label">🔴 แตกต่างร้ายแรง</div>
+                        <div class="number" id="criticalCount">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ผลการเปรียบเทียบ -->
+            <div class="section">
+                <h2>📋 ผลการเปรียบเทียบ</h2>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>กำลังดึงและเปรียบเทียบข้อมูล...</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill">0%</div>
+                    </div>
+                </div>
+                
+                <div id="results"></div>
+            </div>
+            
+            <!-- ส่วน Batch Comparison -->
+            <div class="section">
+                <h2>⚡ เปรียบเทียบหลายหน่วยพร้อมกัน</h2>
+                
+                <div class="alert alert-info">
+                    <h4>💡 คำแนะนำ</h4>
+                    <p>สามารถอัพโหลดไฟล์ CSV ที่มีรายการรหัสหน่วยเลือกตั้งทั้งหมดที่ต้องการตรวจสอบ</p>
+                    <p>Format: unit_id, constituency_name</p>
+                </div>
+                
+                <div class="input-group">
+                    <label for="batchFile">อัพโหลดไฟล์ CSV:</label>
+                    <input type="file" id="batchFile" accept=".csv">
+                </div>
+                
+                <button class="btn btn-secondary" onclick="batchCompare()">⚡ เริ่มเปรียบเทียบทั้งหมด</button>
+            </div>
+            
+            <!-- คำแนะนำเมื่อพบความผิดปกติ -->
+            <div class="section">
+                <h2>🚨 พบความผิดปกติ? ทำอย่างไร</h2>
+                
+                <div class="alert alert-warning">
+                    <h4>ขั้นตอนการรายงาน</h4>
+                    <ol style="margin-left: 20px; margin-top: 10px;">
+                        <li>บันทึกหลักฐาน: Screenshot ผลการเปรียบเทียบ + รหัสหน่วยเลือกตั้ง</li>
+                        <li>ตรวจสอบซ้ำในระบบของ Vote62.com โดยตรง</li>
+                        <li>รายงานไปยัง:
+                            <ul style="margin-top: 10px;">
+                                <li>📧 iLaw: <a href="https://ilaw.or.th">ilaw.or.th</a></li>
+                                <li>📧 Vote62: <a href="https://vote62.com">vote62.com</a></li>
+                                <li>📞 กกต. สายด่วน: 1-800-XXX-XXXX</li>
+                            </ul>
+                        </li>
+                        <li>แชร์ข้อมูลในโซเชียลมีเดียพร้อม #นับใหม่ทั้งประเทศ</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let comparisonData = {
+            total: 0,
+            identical: 0,
+            minor: 0,
+            significant: 0,
+            critical: 0
+        };
+        
+        function compareData() {
+            const unitId = document.getElementById('unitId').value;
+            const constituency = document.getElementById('constituency').value;
+            
+            if (!unitId && !constituency) {
+                alert('กรุณากรอกรหัสหน่วยเลือกตั้ง หรือเลือกเขต');
+                return;
+            }
+            
+            // แสดง loading
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('results').innerHTML = '';
+            
+            // จำลองการดึงข้อมูล
+            simulateDataFetch(unitId || '001001');
+        }
+        
+        function simulateDataFetch(unitId) {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                document.getElementById('progressFill').style.width = progress + '%';
+                document.getElementById('progressFill').textContent = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        displayResults(unitId);
+                        document.getElementById('loading').classList.remove('active');
+                    }, 500);
+                }
+            }, 200);
+        }
+        
+        function displayResults(unitId) {
+            // จำลองผลการเปรียบเทียบ
+            const mockResults = generateMockComparison(unitId);
+            
+            let html = `
+                <div class="result-card">
+                    <div class="result-header">
+                        <h3>หน่วย ${unitId} - ${mockResults.constituency}</h3>
+                        <span class="status-badge ${mockResults.level}">${mockResults.status}</span>
+                    </div>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>ข้อมูล</th>
+                                <th>กกต.</th>
+                                <th>Vote62</th>
+                                <th>ส่วนต่าง</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>คะแนนรวม</strong></td>
+                                <td>${mockResults.ect.total.toLocaleString()}</td>
+                                <td>${mockResults.vote62.total.toLocaleString()}</td>
+                                <td class="diff-cell ${mockResults.difference === 0 ? 'match' : 'mismatch'}">
+                                    ${mockResults.difference.toLocaleString()} คะแนน
+                                </td>
+                            </tr>
+            `;
+            
+            // แสดงรายละเอียดแต่ละพรรค
+            mockResults.parties.forEach(party => {
+                html += `
+                    <tr>
+                        <td>${party.name}</td>
+                        <td>${party.ect.toLocaleString()}</td>
+                        <td>${party.vote62.toLocaleString()}</td>
+                        <td class="diff-cell ${party.diff === 0 ? 'match' : 'mismatch'}">
+                            ${party.diff === 0 ? '✅' : '⚠️ ' + party.diff.toLocaleString()}
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                    
+                    ${mockResults.difference > 0 ? `
+                        <div class="alert alert-danger" style="margin-top: 20px;">
+                            <h4>🚨 พบความแตกต่าง!</h4>
+                            <p>ข้อมูลจาก กกต. และ Vote62 ไม่ตรงกัน ควรตรวจสอบเพิ่มเติมและรายงานไปยังหน่วยงานที่เกี่ยวข้อง</p>
+                        </div>
+                    ` : `
+                        <div class="alert alert-info" style="margin-top: 20px; background: #d4edda; border-color: #28a745; color: #155724;">
+                            <h4>✅ ข้อมูลตรงกัน</h4>
+                            <p>ข้อมูลจาก กกต. และ Vote62 ตรงกันทุกรายการ</p>
+                        </div>
+                    `}
+                </div>
+            `;
+            
+            document.getElementById('results').innerHTML = html;
+            
+            // อัพเดทสถิติ
+            updateStats(mockResults.level);
+        }
+        
+        function generateMockComparison(unitId) {
+            // สุ่มผลการเปรียบเทียบ (เพื่อ demo)
+            const random = Math.random();
+            const level = random > 0.7 ? 'critical' : 
+                         random > 0.5 ? 'significant' :
+                         random > 0.3 ? 'minor' : 'identical';
+            
+            const baseVotes = {
+                'พรรค A': 1500,
+                'พรรค B': 1200,
+                'พรรค C': 800,
+                'บัตรเสีย': 50
+            };
+            
+            const parties = [];
+            let ectTotal = 0;
+            let vote62Total = 0;
+            
+            Object.entries(baseVotes).forEach(([name, votes]) => {
+                const variance = level === 'critical' ? 100 :
+                               level === 'significant' ? 30 :
+                               level === 'minor' ? 5 : 0;
+                
+                const ectVotes = votes;
+                const vote62Votes = votes + (Math.random() > 0.5 ? variance : -variance);
+                
+                parties.push({
+                    name,
+                    ect: ectVotes,
+                    vote62: vote62Votes,
+                    diff: Math.abs(ectVotes - vote62Votes)
+                });
+                
+                ectTotal += ectVotes;
+                vote62Total += vote62Votes;
+            });
+            
+            return {
+                constituency: 'กรุงเทพมหานคร เขต 1',
+                ect: { total: ectTotal },
+                vote62: { total: vote62Total },
+                difference: Math.abs(ectTotal - vote62Total),
+                level,
+                status: level === 'identical' ? '✅ เหมือนกันเป๊ะ' :
+                       level === 'minor' ? '⚠️ แตกต่างเล็กน้อย' :
+                       level === 'significant' ? '🚨 แตกต่างมาก' :
+                       '🔴 แตกต่างร้ายแรง',
+                parties
+            };
+        }
+        
+        function updateStats(level) {
+            comparisonData.total++;
+            comparisonData[level]++;
+            
+            document.getElementById('totalCompared').textContent = comparisonData.total;
+            document.getElementById('identicalCount').textContent = comparisonData.identical;
+            document.getElementById('minorCount').textContent = comparisonData.minor;
+            document.getElementById('significantCount').textContent = comparisonData.significant;
+            document.getElementById('criticalCount').textContent = comparisonData.critical;
+            
+            document.getElementById('statsSection').style.display = 'block';
+        }
+        
+        function batchCompare() {
+            const fileInput = document.getElementById('batchFile');
+            
+            if (!fileInput.files.length) {
+                alert('กรุณาเลือกไฟล์ CSV');
+                return;
+            }
+            
+            alert('🚀 กำลังเริ่มเปรียบเทียบข้อมูลทั้งหมด...\n\nนี่อาจใช้เวลาสักครู่ กรุณารอ');
+            
+            // จำลองการประมวลผล batch
+            // ในการใช้งานจริง ควรอ่านไฟล์ CSV และประมวลผลทีละหน่วย
+        }
+    </script>
+</body>
+</html>

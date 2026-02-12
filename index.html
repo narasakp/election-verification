@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบตรวจสอบการเลือกตั้ง - Election Verification Dashboard</title>
+    
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- Leaflet for maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- D3.js for advanced visualizations -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --danger: #f5576c;
+            --warning: #ffc107;
+            --success: #28a745;
+            --info: #17a2b8;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: var(--primary);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .stat-card .icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+        
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-card.identical .number { color: var(--success); }
+        .stat-card.minor .number { color: var(--warning); }
+        .stat-card.significant .number { color: #ff6b6b; }
+        .stat-card.critical .number { color: var(--danger); }
+        
+        .viz-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .viz-section h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-left: 5px solid var(--primary);
+            padding-left: 15px;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 20px;
+        }
+        
+        .map-container {
+            height: 500px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        select, input {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .alert {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            border-color: var(--info);
+            color: #0c5460;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            border-color: var(--warning);
+            color: #856404;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            border-color: var(--danger);
+            color: #721c24;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .badge-critical { background: var(--danger); color: white; }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            margin-top: 50px;
+        }
+        
+        .footer a {
+            color: white;
+            text-decoration: underline;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🔍 ระบบตรวจสอบการเลือกตั้ง 2026</h1>
+            <p>Election Verification Dashboard - เปรียบเทียบข้อมูล กกต. vs Vote62.com</p>
+        </div>
+        
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card identical">
+                <div class="icon">✅</div>
+                <div class="number" id="stat-identical">0</div>
+                <div class="label">เหมือนกันเป๊ะ</div>
+            </div>
+            <div class="stat-card minor">
+                <div class="icon">⚠️</div>
+                <div class="number" id="stat-minor">0</div>
+                <div class="label">แตกต่างเล็กน้อย</div>
+            </div>
+            <div class="stat-card significant">
+                <div class="icon">🚨</div>
+                <div class="number" id="stat-significant">0</div>
+                <div class="label">แตกต่างมาก</div>
+            </div>
+            <div class="stat-card critical">
+                <div class="icon">🔴</div>
+                <div class="number" id="stat-critical">0</div>
+                <div class="label">แตกต่างร้ายแรง</div>
+            </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="viz-section">
+            <h2>🎛️ ตัวเลือกการแสดงผล</h2>
+            <div class="controls">
+                <select id="provinceSelect">
+                    <option value="all">ทุกจังหวัด</option>
+                    <option value="bangkok">กรุงเทพมหานคร</option>
+                    <option value="chiangmai">เชียงใหม่</option>
+                    <option value="phuket">ภูเก็ต</option>
+                </select>
+                
+                <select id="chartType">
+                    <option value="overview">ภาพรวม</option>
+                    <option value="comparison">เปรียบเทียบรายพรรค</option>
+                    <option value="timeline">Timeline</option>
+                    <option value="heatmap">Heatmap</option>
+                </select>
+                
+                <button class="btn btn-primary" onclick="loadData()">🔄 โหลดข้อมูล</button>
+                <button class="btn btn-primary" onclick="exportData()">📥 Export CSV</button>
+            </div>
+            
+            <div class="alert alert-info">
+                <strong>ℹ️ คำแนะนำ:</strong> ข้อมูลจะถูกโหลดจากไฟล์ JSON ที่วางไว้ใน GitHub Pages 
+                (สามารถอัพเดทข้อมูลด้วยการ push ไฟล์ใหม่)
+            </div>
+        </div>
+        
+        <!-- Chart: Overview -->
+        <div class="viz-section">
+            <h2>📊 ภาพรวมการเปรียบเทียบ</h2>
+            <div class="chart-container">
+                <canvas id="overviewChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Chart: Party Comparison -->
+        <div class="viz-section">
+            <h2>🏛️ เปรียบเทียบคะแนนรายพรรค</h2>
+            <div class="chart-container">
+                <canvas id="partyChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Chart: Discrepancy Distribution -->
+        <div class="viz-section">
+            <h2>📈 การกระจายของความแตกต่าง</h2>
+            <div class="chart-container">
+                <canvas id="distributionChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Map -->
+        <div class="viz-section">
+            <h2>🗺️ แผนที่หน่วยที่มีความผิดปกติ</h2>
+            <div class="map-container" id="map"></div>
+        </div>
+        
+        <!-- Detailed Results Table -->
+        <div class="viz-section">
+            <h2>📋 รายละเอียดการเปรียบเทียบ</h2>
+            <div class="table-responsive">
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>รหัสหน่วย</th>
+                            <th>เขต</th>
+                            <th>กกต.</th>
+                            <th>Vote62</th>
+                            <th>ส่วนต่าง</th>
+                            <th>สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Data will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Critical Units Alert -->
+        <div id="criticalAlert" style="display:none;">
+            <div class="viz-section">
+                <div class="alert alert-danger">
+                    <h3 style="margin-bottom: 15px;">🚨 พบหน่วยที่มีความผิดปกติร้ายแรง!</h3>
+                    <div id="criticalList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>พัฒนาโดย Election Verification System Team</p>
+        <p>#นับใหม่ทั้งประเทศ #ระบอบหน้าด้าน</p>
+        <p>ข้อมูลจาก: <a href="https://www.ect.go.th">กกต.</a> และ <a href="https://vote62.com">Vote62.com</a></p>
+    </div>
+
+    <script>
+        // Global variables
+        let map;
+        let charts = {};
+        let data = null;
+        
+        // Sample data structure (will be loaded from JSON file)
+        const sampleData = {
+            metadata: {
+                last_update: "2026-02-12T15:30:00",
+                total_units: 31200,
+                compared_units: 5000
+            },
+            statistics: {
+                identical: 4200,
+                minor: 500,
+                significant: 250,
+                critical: 50
+            },
+            units: [
+                {
+                    unit_id: "001001",
+                    constituency: "กรุงเทพมหานคร เขต 1",
+                    province: "bangkok",
+                    ect_total: 3550,
+                    vote62_total: 3550,
+                    difference: 0,
+                    level: "identical",
+                    lat: 13.7563,
+                    lng: 100.5018,
+                    parties: [
+                        { name: "พรรค A", ect: 1500, vote62: 1500 },
+                        { name: "พรรค B", ect: 1200, vote62: 1200 },
+                        { name: "พรรค C", ect: 800, vote62: 800 }
+                    ]
+                },
+                {
+                    unit_id: "001002",
+                    constituency: "กรุงเทพมหานคร เขต 1",
+                    province: "bangkok",
+                    ect_total: 3680,
+                    vote62_total: 3550,
+                    difference: 130,
+                    level: "critical",
+                    lat: 13.7600,
+                    lng: 100.5100,
+                    parties: [
+                        { name: "พรรค A", ect: 1630, vote62: 1500 },
+                        { name: "พรรค B", ect: 1200, vote62: 1200 },
+                        { name: "พรรค C", ect: 850, vote62: 850 }
+                    ]
+                }
+                // More units...
+            ]
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initMap();
+            loadData();
+        });
+        
+        // Load data (from JSON file or sample data)
+        function loadData() {
+            // In production, load from: fetch('data/election_data.json')
+            // For now, use sample data
+            data = sampleData;
+            updateUI();
+        }
+        
+        // Update all UI components
+        function updateUI() {
+            if (!data) return;
+            
+            updateStats();
+            updateCharts();
+            updateMap();
+            updateTable();
+            checkCriticalUnits();
+        }
+        
+        // Update statistics cards
+        function updateStats() {
+            document.getElementById('stat-identical').textContent = 
+                data.statistics.identical.toLocaleString();
+            document.getElementById('stat-minor').textContent = 
+                data.statistics.minor.toLocaleString();
+            document.getElementById('stat-significant').textContent = 
+                data.statistics.significant.toLocaleString();
+            document.getElementById('stat-critical').textContent = 
+                data.statistics.critical.toLocaleString();
+        }
+        
+        // Update charts
+        function updateCharts() {
+            createOverviewChart();
+            createPartyChart();
+            createDistributionChart();
+        }
+        
+        // Overview Chart
+        function createOverviewChart() {
+            const ctx = document.getElementById('overviewChart').getContext('2d');
+            
+            if (charts.overview) {
+                charts.overview.destroy();
+            }
+            
+            charts.overview = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['✅ เหมือนกันเป๊ะ', '⚠️ แตกต่างเล็กน้อย', 
+                             '🚨 แตกต่างมาก', '🔴 แตกต่างร้ายแรง'],
+                    datasets: [{
+                        data: [
+                            data.statistics.identical,
+                            data.statistics.minor,
+                            data.statistics.significant,
+                            data.statistics.critical
+                        ],
+                        backgroundColor: [
+                            '#28a745',
+                            '#ffc107',
+                            '#ff6b6b',
+                            '#f5576c'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'สัดส่วนผลการเปรียบเทียบ'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Party Comparison Chart
+        function createPartyChart() {
+            const ctx = document.getElementById('partyChart').getContext('2d');
+            
+            if (charts.party) {
+                charts.party.destroy();
+            }
+            
+            // Aggregate party data
+            const partyData = {};
+            data.units.forEach(unit => {
+                unit.parties.forEach(party => {
+                    if (!partyData[party.name]) {
+                        partyData[party.name] = { ect: 0, vote62: 0 };
+                    }
+                    partyData[party.name].ect += party.ect;
+                    partyData[party.name].vote62 += party.vote62;
+                });
+            });
+            
+            const labels = Object.keys(partyData);
+            const ectData = labels.map(name => partyData[name].ect);
+            const vote62Data = labels.map(name => partyData[name].vote62);
+            
+            charts.party = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'กกต.',
+                            data: ectData,
+                            backgroundColor: '#667eea'
+                        },
+                        {
+                            label: 'Vote62',
+                            data: vote62Data,
+                            backgroundColor: '#f5576c'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'เปรียบเทียบคะแนนรวมรายพรรค'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Distribution Chart
+        function createDistributionChart() {
+            const ctx = document.getElementById('distributionChart').getContext('2d');
+            
+            if (charts.distribution) {
+                charts.distribution.destroy();
+            }
+            
+            // Create histogram of differences
+            const differences = data.units.map(u => u.difference);
+            const bins = [0, 10, 50, 100, 200, 500, Infinity];
+            const counts = new Array(bins.length - 1).fill(0);
+            
+            differences.forEach(diff => {
+                for (let i = 0; i < bins.length - 1; i++) {
+                    if (diff >= bins[i] && diff < bins[i + 1]) {
+                        counts[i]++;
+                        break;
+                    }
+                }
+            });
+            
+            charts.distribution = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['0-10', '10-50', '50-100', '100-200', '200-500', '500+'],
+                    datasets: [{
+                        label: 'จำนวนหน่วย',
+                        data: counts,
+                        backgroundColor: '#667eea'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'การกระจายของความแตกต่าง (คะแนน)'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'จำนวนหน่วยเลือกตั้ง'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'ช่วงความแตกต่าง (คะแนน)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Initialize map
+        function initMap() {
+            map = L.map('map').setView([13.7563, 100.5018], 6);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+        }
+        
+        // Update map with markers
+        function updateMap() {
+            // Clear existing markers
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+            
+            // Add markers for each unit
+            data.units.forEach(unit => {
+                if (unit.lat && unit.lng) {
+                    const color = unit.level === 'critical' ? 'red' :
+                                 unit.level === 'significant' ? 'orange' :
+                                 unit.level === 'minor' ? 'yellow' : 'green';
+                    
+                    const marker = L.circleMarker([unit.lat, unit.lng], {
+                        radius: 8,
+                        fillColor: color,
+                        color: '#fff',
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 0.8
+                    }).addTo(map);
+                    
+                    marker.bindPopup(`
+                        <strong>หน่วย ${unit.unit_id}</strong><br>
+                        ${unit.constituency}<br>
+                        <hr>
+                        กกต.: ${unit.ect_total.toLocaleString()}<br>
+                        Vote62: ${unit.vote62_total.toLocaleString()}<br>
+                        ส่วนต่าง: ${unit.difference.toLocaleString()}<br>
+                        <strong style="color: ${color}">${getLevelText(unit.level)}</strong>
+                    `);
+                }
+            });
+        }
+        
+        // Update table
+        function updateTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            data.units.forEach(unit => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${unit.unit_id}</td>
+                    <td>${unit.constituency}</td>
+                    <td>${unit.ect_total.toLocaleString()}</td>
+                    <td>${unit.vote62_total.toLocaleString()}</td>
+                    <td>${unit.difference.toLocaleString()}</td>
+                    <td><span class="badge badge-${unit.level}">${getLevelText(unit.level)}</span></td>
+                `;
+            });
+        }
+        
+        // Check for critical units
+        function checkCriticalUnits() {
+            const critical = data.units.filter(u => u.level === 'critical');
+            
+            if (critical.length > 0) {
+                document.getElementById('criticalAlert').style.display = 'block';
+                const list = document.getElementById('criticalList');
+                list.innerHTML = '<ul>' + critical.map(u => 
+                    `<li><strong>หน่วย ${u.unit_id}</strong> (${u.constituency}): 
+                     ต่าง ${u.difference.toLocaleString()} คะแนน</li>`
+                ).join('') + '</ul>';
+            }
+        }
+        
+        // Helper function
+        function getLevelText(level) {
+            const map = {
+                'identical': '✅ เหมือนกันเป๊ะ',
+                'minor': '⚠️ แตกต่างเล็กน้อย',
+                'significant': '🚨 แตกต่างมาก',
+                'critical': '🔴 แตกต่างร้ายแรง'
+            };
+            return map[level] || level;
+        }
+        
+        // Export data
+        function exportData() {
+            if (!data) return;
+            
+            // Convert to CSV
+            const headers = ['รหัสหน่วย', 'เขต', 'กกต.', 'Vote62', 'ส่วนต่าง', 'สถานะ'];
+            const rows = data.units.map(u => [
+                u.unit_id,
+                u.constituency,
+                u.ect_total,
+                u.vote62_total,
+                u.difference,
+                getLevelText(u.level)
+            ]);
+            
+            let csv = headers.join(',') + '\n';
+            rows.forEach(row => {
+                csv += row.join(',') + '\n';
+            });
+            
+            // Download
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'election_verification_' + new Date().toISOString().split('T')[0] + '.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

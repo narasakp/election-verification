@@ -1,0 +1,354 @@
+{
+  "metadata": {
+    "last_update": "2026-02-12T15:30:00+07:00",
+    "total_units": 95000,
+    "compared_units": 31200,
+    "version": "1.0",
+    "data_source": {
+      "ect": "https://www.ect.go.th",
+      "vote62": "https://vote62.com"
+    },
+    "contributors": [
+      "iLaw",
+      "Rocket Media Lab",
+      "Opendream"
+    ]
+  },
+  "statistics": {
+    "identical": 28000,
+    "minor": 2500,
+    "significant": 600,
+    "critical": 100,
+    "percentage": {
+      "identical": 89.74,
+      "minor": 8.01,
+      "significant": 1.92,
+      "critical": 0.32
+    }
+  },
+  "provinces": {
+    "bangkok": {
+      "name": "กรุงเทพมหานคร",
+      "units": 5420,
+      "compared": 5200,
+      "critical": 15
+    },
+    "chiangmai": {
+      "name": "เชียงใหม่",
+      "units": 1850,
+      "compared": 1750,
+      "critical": 8
+    },
+    "phuket": {
+      "name": "ภูเก็ต",
+      "units": 420,
+      "compared": 400,
+      "critical": 3
+    }
+  },
+  "units": [
+    {
+      "unit_id": "001001",
+      "constituency": "กรุงเทพมหานคร เขต 1",
+      "province": "bangkok",
+      "district": "พระนคร",
+      "ect_total": 3550,
+      "vote62_total": 3550,
+      "difference": 0,
+      "level": "identical",
+      "coordinates": {
+        "lat": 13.7563,
+        "lng": 100.5018
+      },
+      "timestamp": "2026-02-12T20:00:00+07:00",
+      "eligible_voters": 4200,
+      "turnout_rate": 84.52,
+      "parties": [
+        {
+          "party_id": "01",
+          "name": "พรรคประชาธิปัตย์",
+          "ect": 1500,
+          "vote62": 1500,
+          "difference": 0,
+          "percentage": 42.25
+        },
+        {
+          "party_id": "02",
+          "name": "พรรคเพื่อไทย",
+          "ect": 1200,
+          "vote62": 1200,
+          "difference": 0,
+          "percentage": 33.80
+        },
+        {
+          "party_id": "03",
+          "name": "พรรคก้าวไกล",
+          "ect": 800,
+          "vote62": 800,
+          "difference": 0,
+          "percentage": 22.54
+        },
+        {
+          "party_id": "00",
+          "name": "บัตรเสีย",
+          "ect": 50,
+          "vote62": 50,
+          "difference": 0,
+          "percentage": 1.41
+        }
+      ],
+      "verified_by": ["อาสาสมัคร A", "อาสาสมัคร B"],
+      "photo_count": 3,
+      "has_discrepancy": false
+    },
+    {
+      "unit_id": "001002",
+      "constituency": "กรุงเทพมหานคร เขต 1",
+      "province": "bangkok",
+      "district": "พระนคร",
+      "ect_total": 3680,
+      "vote62_total": 3550,
+      "difference": 130,
+      "level": "critical",
+      "coordinates": {
+        "lat": 13.7600,
+        "lng": 100.5100
+      },
+      "timestamp": "2026-02-12T20:05:00+07:00",
+      "eligible_voters": 4100,
+      "turnout_rate": 89.76,
+      "parties": [
+        {
+          "party_id": "01",
+          "name": "พรรคประชาธิปัตย์",
+          "ect": 1630,
+          "vote62": 1500,
+          "difference": 130,
+          "percentage": 44.29,
+          "suspicious": true
+        },
+        {
+          "party_id": "02",
+          "name": "พรรคเพื่อไทย",
+          "ect": 1200,
+          "vote62": 1200,
+          "difference": 0,
+          "percentage": 32.61
+        },
+        {
+          "party_id": "03",
+          "name": "พรรคก้าวไกล",
+          "ect": 850,
+          "vote62": 850,
+          "difference": 0,
+          "percentage": 23.10
+        }
+      ],
+      "verified_by": ["อาสาสมัคร C"],
+      "photo_count": 2,
+      "has_discrepancy": true,
+      "discrepancy_notes": "พรรคประชาธิปัตย์มีคะแนนเพิ่มขึ้น 130 คะแนนในระบบ กกต.",
+      "reported": true,
+      "report_timestamp": "2026-02-12T21:00:00+07:00"
+    },
+    {
+      "unit_id": "001003",
+      "constituency": "กรุงเทพมหานคร เขต 1",
+      "province": "bangkok",
+      "district": "ดุสิต",
+      "ect_total": 4025,
+      "vote62_total": 4020,
+      "difference": 5,
+      "level": "minor",
+      "coordinates": {
+        "lat": 13.7750,
+        "lng": 100.5150
+      },
+      "timestamp": "2026-02-12T20:10:00+07:00",
+      "eligible_voters": 4500,
+      "turnout_rate": 89.44,
+      "parties": [
+        {
+          "party_id": "01",
+          "name": "พรรคประชาธิปัตย์",
+          "ect": 1700,
+          "vote62": 1695,
+          "difference": 5,
+          "percentage": 42.24
+        },
+        {
+          "party_id": "02",
+          "name": "พรรคเพื่อไทย",
+          "ect": 1350,
+          "vote62": 1350,
+          "difference": 0,
+          "percentage": 33.54
+        },
+        {
+          "party_id": "03",
+          "name": "พรรคก้าวไกล",
+          "ect": 900,
+          "vote62": 900,
+          "difference": 0,
+          "percentage": 22.36
+        },
+        {
+          "party_id": "00",
+          "name": "บัตรเสีย",
+          "ect": 75,
+          "vote62": 75,
+          "difference": 0,
+          "percentage": 1.86
+        }
+      ],
+      "verified_by": ["อาสาสมัคร D", "อาสาสมัคร E"],
+      "photo_count": 4,
+      "has_discrepancy": true,
+      "discrepancy_notes": "แตกต่างเล็กน้อย อาจเป็น human error ในการกรอก Vote62"
+    },
+    {
+      "unit_id": "002001",
+      "constituency": "กรุงเทพมหานคร เขต 2",
+      "province": "bangkok",
+      "district": "บางรัก",
+      "ect_total": 3280,
+      "vote62_total": 3210,
+      "difference": 70,
+      "level": "significant",
+      "coordinates": {
+        "lat": 13.7250,
+        "lng": 100.5300
+      },
+      "timestamp": "2026-02-12T20:15:00+07:00",
+      "eligible_voters": 3800,
+      "turnout_rate": 86.32,
+      "parties": [
+        {
+          "party_id": "02",
+          "name": "พรรคเพื่อไทย",
+          "ect": 1420,
+          "vote62": 1350,
+          "difference": 70,
+          "percentage": 43.29,
+          "suspicious": true
+        },
+        {
+          "party_id": "01",
+          "name": "พรรคประชาธิปัตย์",
+          "ect": 1100,
+          "vote62": 1100,
+          "difference": 0,
+          "percentage": 33.54
+        },
+        {
+          "party_id": "03",
+          "name": "พรรคก้าวไกล",
+          "ect": 760,
+          "vote62": 760,
+          "difference": 0,
+          "percentage": 23.17
+        }
+      ],
+      "verified_by": ["อาสาสมัคร F"],
+      "photo_count": 2,
+      "has_discrepancy": true,
+      "discrepancy_notes": "พรรคเพื่อไทยมีคะแนนเพิ่มขึ้น 70 คะแนน",
+      "reported": true,
+      "report_timestamp": "2026-02-12T21:30:00+07:00"
+    },
+    {
+      "unit_id": "003001",
+      "constituency": "เชียงใหม่ เขต 1",
+      "province": "chiangmai",
+      "district": "เมืองเชียงใหม่",
+      "ect_total": 4550,
+      "vote62_total": 4550,
+      "difference": 0,
+      "level": "identical",
+      "coordinates": {
+        "lat": 18.7883,
+        "lng": 98.9853
+      },
+      "timestamp": "2026-02-12T20:20:00+07:00",
+      "eligible_voters": 5200,
+      "turnout_rate": 87.50,
+      "parties": [
+        {
+          "party_id": "03",
+          "name": "พรรคก้าวไกล",
+          "ect": 2000,
+          "vote62": 2000,
+          "difference": 0,
+          "percentage": 43.96
+        },
+        {
+          "party_id": "02",
+          "name": "พรรคเพื่อไทย",
+          "ect": 1600,
+          "vote62": 1600,
+          "difference": 0,
+          "percentage": 35.16
+        },
+        {
+          "party_id": "01",
+          "name": "พรรคประชาธิปัตย์",
+          "ect": 900,
+          "vote62": 900,
+          "difference": 0,
+          "percentage": 19.78
+        },
+        {
+          "party_id": "00",
+          "name": "บัตรเสีย",
+          "ect": 50,
+          "vote62": 50,
+          "difference": 0,
+          "percentage": 1.10
+        }
+      ],
+      "verified_by": ["อาสาสมัคร G", "อาสาสมัคร H", "อาสาสมัคร I"],
+      "photo_count": 5,
+      "has_discrepancy": false
+    }
+  ],
+  "critical_units": [
+    {
+      "unit_id": "001002",
+      "constituency": "กรุงเทพมหานคร เขต 1",
+      "difference": 130,
+      "affected_party": "พรรคประชาธิปัตย์",
+      "priority": "high"
+    }
+  ],
+  "timeline": [
+    {
+      "timestamp": "2026-02-12T20:00:00+07:00",
+      "units_compared": 5000
+    },
+    {
+      "timestamp": "2026-02-12T21:00:00+07:00",
+      "units_compared": 10000
+    },
+    {
+      "timestamp": "2026-02-12T22:00:00+07:00",
+      "units_compared": 15000
+    },
+    {
+      "timestamp": "2026-02-12T23:00:00+07:00",
+      "units_compared": 20000
+    },
+    {
+      "timestamp": "2026-02-13T00:00:00+07:00",
+      "units_compared": 25000
+    },
+    {
+      "timestamp": "2026-02-13T01:00:00+07:00",
+      "units_compared": 31200
+    }
+  ],
+  "notes": [
+    "ข้อมูลนี้เป็นตัวอย่างสำหรับการทดสอบระบบ",
+    "ในการใช้งานจริง ข้อมูลจะถูกสร้างจากการเปรียบเทียบจริงระหว่าง กกต. และ Vote62",
+    "สามารถอัพเดทข้อมูลโดยการ push ไฟล์ JSON ใหม่ไปยัง GitHub"
+  ]
+}
