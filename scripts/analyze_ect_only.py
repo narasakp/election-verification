@@ -16,6 +16,8 @@ import os
 STATS_URL = "https://stats-ectreport69.ect.go.th/data/records/stats_cons.json"
 PROVINCE_URL = "https://static-ectreport69.ect.go.th/data/data/refs/info_province.json"
 PARTY_URL = "https://static-ectreport69.ect.go.th/data/data/refs/info_party_overview.json"
+CONSTITUENCY_URL = "https://static-ectreport69.ect.go.th/data/data/refs/info_constituency.json"
+CANDIDATE_URL = "https://static-ectreport69.ect.go.th/data/data/refs/info_mp_candidate.json"
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(SCRIPT_DIR, '..', 'data')
@@ -48,6 +50,33 @@ def build_party_map(party_data):
     return m
 
 
+def build_constituency_map(cons_data):
+    """สร้าง dict cons_id -> {total_vote_stations, registered_vote, zone}"""
+    m = {}
+    items = cons_data if isinstance(cons_data, list) else cons_data.get("constituency", cons_data.get("constituencies", []))
+    for c in items:
+        m[c["cons_id"]] = {
+            "total_vote_stations": c.get("total_vote_stations", 0),
+            "registered_vote": c.get("registered_vote", 0),
+            "zone": c.get("zone", []),
+        }
+    return m
+
+
+def build_candidate_map(cand_data):
+    """สร้าง dict mp_app_id -> {name, party_id, number, image_url}"""
+    m = {}
+    items = cand_data if isinstance(cand_data, list) else []
+    for c in items:
+        m[c["mp_app_id"]] = {
+            "name": c.get("mp_app_name", ""),
+            "party_id": c.get("mp_app_party_id", 0),
+            "number": c.get("mp_app_no", 0),
+            "image_url": c.get("image_url", ""),
+        }
+    return m
+
+
 def build_province_map(province_data):
     """สร้าง dict prov_id -> province name (Thai)"""
     m = {}
@@ -58,7 +87,7 @@ def build_province_map(province_data):
     return m
 
 
-def create_dashboard_data(stats, province_map, party_map):
+def create_dashboard_data(stats, province_map, party_map, cons_map, candidate_map):
     """สร้างข้อมูล Dashboard จาก stats_cons.json"""
 
     last_update = stats.get("last_update", datetime.now().isoformat())
@@ -109,18 +138,40 @@ def create_dashboard_data(stats, province_map, party_map):
             total_constituencies += 1
             prov_unit_count += 1
 
+            # Constituency static info (total stations, registered, zone)
+            cinfo = cons_map.get(cons_id, {})
+            total_stations = cinfo.get("total_vote_stations", 0)
+            registered_vote = cinfo.get("registered_vote", 0)
+            zone = cinfo.get("zone", [])
+
             # Candidate results (sorted by rank)
             candidates = cons.get("candidates", [])
             candidates_sorted = sorted(candidates, key=lambda x: x.get("mp_app_rank", 999))
 
+            candidates_list = []
             parties_list = []
             for cand in candidates_sorted:
                 pid = cand["party_id"]
                 pinfo = party_map.get(pid, {"name": f"party_{pid}", "color": "#999"})
+                cand_id = cand.get("mp_app_id", "")
+                cand_info = candidate_map.get(cand_id, {})
+                cand_entry = {
+                    "candidate_id": cand_id,
+                    "name": cand_info.get("name", ""),
+                    "number": cand_info.get("number", 0),
+                    "party": pinfo["name"],
+                    "party_color": pinfo["color"],
+                    "ect_votes": cand.get("mp_app_vote", 0),
+                    "vote62_votes": 0,
+                    "percent": cand.get("mp_app_vote_percent", 0),
+                    "rank": cand.get("mp_app_rank", 0),
+                }
+                candidates_list.append(cand_entry)
                 parties_list.append({
                     "name": pinfo["name"],
                     "color": pinfo["color"],
-                    "candidate_id": cand.get("mp_app_id", ""),
+                    "candidate_id": cand_id,
+                    "candidate_name": cand_info.get("name", ""),
                     "ect": cand.get("mp_app_vote", 0),
                     "vote62": 0,
                     "percent": cand.get("mp_app_vote_percent", 0),
@@ -134,6 +185,7 @@ def create_dashboard_data(stats, province_map, party_map):
                 "constituency": f"{prov_name} เขต {cons_id.split('_')[1]}",
                 "province": prov_name,
                 "prov_id": prov_id,
+                "zone": zone,
                 "ect_total": ect_total,
                 "vote62_total": 0,
                 "difference": 0,
@@ -143,6 +195,8 @@ def create_dashboard_data(stats, province_map, party_map):
                 "valid_votes": ect_total,
                 "invalid_votes": cons.get("invalid_votes", 0),
                 "blank_votes": cons.get("blank_votes", 0),
+                "registered_vote": registered_vote,
+                "total_stations": total_stations,
                 "counted_stations": cons.get("counted_vote_stations", 0),
                 "percent_count": cons.get("percent_count", 0),
                 "pause_report": cons.get("pause_report", False),
@@ -151,6 +205,7 @@ def create_dashboard_data(stats, province_map, party_map):
                 "winner_color": parties_list[0]["color"] if parties_list else "#999",
                 "has_discrepancy": False,
                 "note": "รอข้อมูล Vote62",
+                "candidates": candidates_list,
                 "parties": parties_list,
             }
             all_units.append(unit_data)
@@ -264,6 +319,8 @@ def main():
     stats = fetch_json(STATS_URL, "ผลคะแนน (stats_cons)")
     provinces = fetch_json(PROVINCE_URL, "ข้อมูลจังหวัด")
     parties = fetch_json(PARTY_URL, "ข้อมูลพรรค")
+    constituencies = fetch_json(CONSTITUENCY_URL, "ข้อมูลเขตเลือกตั้ง")
+    candidates = fetch_json(CANDIDATE_URL, "ข้อมูลผู้สมัคร")
 
     if not stats or not provinces or not parties:
         print("\n❌ ไม่สามารถดึงข้อมูลได้ครบ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต")
@@ -273,12 +330,16 @@ def main():
     print("\n[2/4] สร้าง lookup maps...")
     province_map = build_province_map(provinces)
     party_map = build_party_map(parties)
+    cons_map = build_constituency_map(constituencies) if constituencies else {}
+    candidate_map = build_candidate_map(candidates) if candidates else {}
     print(f"  จังหวัด: {len(province_map)} รายการ")
     print(f"  พรรค: {len(party_map)} รายการ")
+    print(f"  เขต: {len(cons_map)} รายการ")
+    print(f"  ผู้สมัคร: {len(candidate_map)} รายการ")
 
     # 3. สร้าง dashboard data
     print("\n[3/4] สร้างข้อมูล Dashboard...")
-    dashboard_data = create_dashboard_data(stats, province_map, party_map)
+    dashboard_data = create_dashboard_data(stats, province_map, party_map, cons_map, candidate_map)
 
     total_units = dashboard_data["metadata"]["total_units"]
     total_provs = len(dashboard_data["provinces"])

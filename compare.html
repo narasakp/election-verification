@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เปรียบเทียบ กกต. vs Vote62 - Election Verification</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #667eea; --secondary: #764ba2; --danger: #f5576c;
+            --warning: #ffc107; --success: #28a745; --info: #17a2b8;
+            --bg: #f0f2f5; --card: #fff; --text: #333; --muted: #888;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); min-height: 100vh; color: var(--text); }
+        a { color: var(--primary); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .top-bar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: #fff; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+        }
+        .top-bar h1 { font-size: 1.4em; }
+        .top-bar .links { display: flex; gap: 18px; font-size: .95em; }
+        .top-bar .links a { color: rgba(255,255,255,.85); }
+        .top-bar .links a:hover { color: #fff; }
+        .top-bar .links a.active { color: #fff; font-weight: 700; border-bottom: 2px solid #fff; }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+        .section { background: var(--card); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+        .section h2 { color: var(--primary); margin-bottom: 16px; font-size: 1.2em; border-left: 4px solid var(--primary); padding-left: 12px; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--card); border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.06); text-align: center; }
+        .stat-card .num { font-size: 2em; font-weight: 700; margin: 6px 0; }
+        .stat-card .lbl { font-size: .82em; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+        .stat-card.identical { border-left: 4px solid var(--success); }
+        .stat-card.identical .num { color: var(--success); }
+        .stat-card.minor { border-left: 4px solid var(--warning); }
+        .stat-card.minor .num { color: var(--warning); }
+        .stat-card.significant { border-left: 4px solid #ff6b6b; }
+        .stat-card.significant .num { color: #ff6b6b; }
+        .stat-card.critical { border-left: 4px solid var(--danger); }
+        .stat-card.critical .num { color: var(--danger); }
+
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: .82em; font-weight: 600; }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .badge-critical { background: var(--danger); color: #fff; }
+        .badge-pending { background: #e9ecef; color: #6c757d; }
+
+        .alert-banner { padding: 18px 24px; border-radius: 10px; margin-bottom: 20px; }
+        .alert-banner.warn { background: #fff8e1; color: #f57f17; border: 1px solid #ffe082; }
+        .alert-banner.info { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
+
+        .controls { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+        select { padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: .95em; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: .95em; cursor: pointer; font-weight: 600; transition: all .2s; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: #5a6fd6; }
+
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: .9em; }
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; font-weight: 600; color: #555; position: sticky; top: 0; }
+        tr:hover { background: #f8f9fc; }
+
+        .chart-container { position: relative; height: 350px; }
+
+        /* Comparison highlight */
+        .diff-zero { color: var(--success); }
+        .diff-low { color: var(--warning); }
+        .diff-mid { color: #ff6b6b; }
+        .diff-high { color: var(--danger); font-weight: 700; }
+
+        .how-it-works { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 12px; }
+        .how-card { background: #f8f9fc; border-radius: 10px; padding: 16px; border-left: 4px solid var(--primary); }
+        .how-card h4 { margin-bottom: 6px; color: var(--primary); }
+        .how-card p { font-size: .88em; color: #555; line-height: 1.5; }
+
+        .footer { text-align: center; padding: 24px; color: var(--muted); font-size: .9em; margin-top: 30px; }
+        .footer a { color: var(--primary); }
+
+        @media (max-width: 768px) {
+            .top-bar h1 { font-size: 1.1em; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h1>⚖️ เปรียบเทียบข้อมูล กกต. vs Vote62</h1>
+        <div class="links">
+            <a href="index.html">Dashboard</a>
+            <a href="compare.html" class="active">เปรียบเทียบ กกต./Vote62</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Status banner -->
+        <div class="alert-banner warn" id="statusBanner">
+            ⏳ <strong>รอข้อมูลจาก Vote62</strong> — ระบบพร้อมเปรียบเทียบแล้ว เมื่อได้ข้อมูล Vote62 จะเริ่มแสดงผลอัตโนมัติ
+        </div>
+
+        <!-- How it works -->
+        <div class="section">
+            <h2>📖 ระบบเปรียบเทียบทำงานอย่างไร</h2>
+            <div class="how-it-works">
+                <div class="how-card">
+                    <h4>1. ข้อมูล กกต.</h4>
+                    <p>ดึงผลคะแนนจากระบบ ECT Report (ectreport69.ect.go.th) รายเขตเลือกตั้ง ครอบคลุม 400 เขต 77 จังหวัด</p>
+                </div>
+                <div class="how-card">
+                    <h4>2. ข้อมูล Vote62</h4>
+                    <p>ข้อมูลจากอาสาสมัครภาคประชาชนที่ถ่ายรูปและกรอกคะแนนจากหน้าหน่วยเลือกตั้ง</p>
+                </div>
+                <div class="how-card">
+                    <h4>3. เปรียบเทียบ</h4>
+                    <p>ระบบเทียบคะแนนรายผู้สมัครในแต่ละเขต แล้วจัดระดับความแตกต่าง</p>
+                </div>
+                <div class="how-card">
+                    <h4>4. แจ้งเตือน</h4>
+                    <p>หากพบความผิดปกติระดับ "ร้ายแรง" (ต่างกัน >5%) ระบบจะแจ้งเตือนทันที</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison stats -->
+        <div class="stats-grid">
+            <div class="stat-card identical">
+                <div class="lbl">ตรงกัน</div>
+                <div class="num" id="c-identical">0</div>
+                <div class="lbl">ต่างกัน 0 คะแนน</div>
+            </div>
+            <div class="stat-card minor">
+                <div class="lbl">ต่างเล็กน้อย</div>
+                <div class="num" id="c-minor">0</div>
+                <div class="lbl">ต่างกัน < 1%</div>
+            </div>
+            <div class="stat-card significant">
+                <div class="lbl">ต่างมาก</div>
+                <div class="num" id="c-significant">0</div>
+                <div class="lbl">ต่างกัน 1-5%</div>
+            </div>
+            <div class="stat-card critical">
+                <div class="lbl">ร้ายแรง</div>
+                <div class="num" id="c-critical">0</div>
+                <div class="lbl">ต่างกัน > 5%</div>
+            </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="section" id="chartSection" style="display:none;">
+            <h2>📊 การกระจายของความแตกต่าง</h2>
+            <div class="chart-container">
+                <canvas id="diffChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="section">
+            <h2>📋 รายละเอียดรายเขต</h2>
+            <div class="controls">
+                <select id="filterLevel" onchange="renderCompareTable()">
+                    <option value="all">ทุกระดับ</option>
+                    <option value="critical">ร้ายแรง เท่านั้น</option>
+                    <option value="significant">ต่างมาก ขึ้นไป</option>
+                    <option value="minor">ต่างเล็กน้อย ขึ้นไป</option>
+                    <option value="pending">รอข้อมูล</option>
+                </select>
+                <select id="filterProvince" onchange="renderCompareTable()">
+                    <option value="all">ทุกจังหวัด</option>
+                </select>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>เขต</th>
+                            <th>จังหวัด</th>
+                            <th>คะแนน กกต.</th>
+                            <th>คะแนน Vote62</th>
+                            <th>ผลต่าง</th>
+                            <th>สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="compareBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Critical alerts -->
+        <div class="section" id="criticalSection" style="display:none;">
+            <h2 style="color:var(--danger);">🚨 เขตที่พบความผิดปกติร้ายแรง</h2>
+            <div id="criticalList"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Election Verification System &middot; #นับใหม่ทั้งประเทศ</p>
+        <p>ข้อมูลจาก <a href="https://ectreport69.ect.go.th" target="_blank">กกต.</a> | <a href="https://vote62.com" target="_blank">Vote62.com</a></p>
+    </div>
+
+    <script>
+        let data = null;
+
+        document.addEventListener('DOMContentLoaded', () => { loadData(); });
+
+        function loadData() {
+            fetch('data/election_data.json')
+                .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+                .then(json => {
+                    data = json;
+                    populateFilters();
+                    updateCompareStats();
+                    renderCompareTable();
+                    checkCritical();
+                })
+                .catch(err => {
+                    document.getElementById('statusBanner').innerHTML =
+                        '❌ <strong>โหลดข้อมูลไม่สำเร็จ:</strong> ' + err.message;
+                });
+        }
+
+        function populateFilters() {
+            const sel = document.getElementById('filterProvince');
+            if (!data || !data.provinces) return;
+            Object.values(data.provinces)
+                .sort((a, b) => a.name.localeCompare(b.name, 'th'))
+                .forEach(p => {
+                    const o = document.createElement('option');
+                    o.value = p.prov_id;
+                    o.textContent = p.name;
+                    sel.appendChild(o);
+                });
+        }
+
+        function updateCompareStats() {
+            const stats = data.statistics || {};
+            document.getElementById('c-identical').textContent = stats.identical || 0;
+            document.getElementById('c-minor').textContent = stats.minor || 0;
+            document.getElementById('c-significant').textContent = stats.significant || 0;
+            document.getElementById('c-critical').textContent = stats.critical || 0;
+
+            // Show chart if we have comparison data
+            const total = (stats.identical||0) + (stats.minor||0) + (stats.significant||0) + (stats.critical||0);
+            if (total > 0) {
+                document.getElementById('chartSection').style.display = '';
+                document.getElementById('statusBanner').className = 'alert-banner info';
+                document.getElementById('statusBanner').innerHTML =
+                    '✅ <strong>เปรียบเทียบแล้ว ' + total + ' เขต</strong>';
+                renderDiffChart();
+            }
+        }
+
+        function renderDiffChart() {
+            const ctx = document.getElementById('diffChart').getContext('2d');
+            const stats = data.statistics || {};
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['ตรงกัน', 'ต่างเล็กน้อย', 'ต่างมาก', 'ร้ายแรง'],
+                    datasets: [{
+                        data: [stats.identical||0, stats.minor||0, stats.significant||0, stats.critical||0],
+                        backgroundColor: ['#28a745', '#ffc107', '#ff6b6b', '#f5576c']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function getFilteredUnits() {
+            if (!data) return [];
+            let units = data.units;
+            const level = document.getElementById('filterLevel').value;
+            const prov = document.getElementById('filterProvince').value;
+
+            if (prov !== 'all') units = units.filter(u => u.prov_id === prov);
+            if (level === 'critical') units = units.filter(u => u.level === 'critical');
+            else if (level === 'significant') units = units.filter(u => u.level === 'significant' || u.level === 'critical');
+            else if (level === 'minor') units = units.filter(u => u.level !== 'identical' && u.level !== 'pending');
+            else if (level === 'pending') units = units.filter(u => u.level === 'pending');
+
+            return units;
+        }
+
+        function renderCompareTable() {
+            const tbody = document.getElementById('compareBody');
+            const units = getFilteredUnits();
+            let html = '';
+
+            units.forEach(u => {
+                const diff = u.difference || 0;
+                const diffClass = diff === 0 ? 'diff-zero' : diff < 100 ? 'diff-low' : diff < 1000 ? 'diff-mid' : 'diff-high';
+                const badge = levelBadge(u.level);
+
+                html += `<tr>
+                    <td><strong><a href="index.html" onclick="localStorage.setItem('goto','${u.unit_id}')">${u.constituency}</a></strong></td>
+                    <td>${u.province}</td>
+                    <td>${(u.ect_total||0).toLocaleString()}</td>
+                    <td>${u.vote62_total ? u.vote62_total.toLocaleString() : '<span style="color:var(--muted)">รอข้อมูล</span>'}</td>
+                    <td class="${diffClass}">${u.vote62_total ? (diff > 0 ? '+' : '') + diff.toLocaleString() : '-'}</td>
+                    <td>${badge}</td>
+                </tr>`;
+            });
+
+            if (units.length === 0) {
+                html = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px;">ไม่พบข้อมูลตามเงื่อนไขที่เลือก</td></tr>';
+            }
+
+            tbody.innerHTML = html;
+        }
+
+        function levelBadge(level) {
+            switch (level) {
+                case 'identical': return '<span class="badge badge-success">ตรงกัน</span>';
+                case 'minor': return '<span class="badge badge-warning">ต่างเล็กน้อย</span>';
+                case 'significant': return '<span class="badge badge-danger">ต่างมาก</span>';
+                case 'critical': return '<span class="badge badge-critical">ร้ายแรง</span>';
+                default: return '<span class="badge badge-pending">รอข้อมูล</span>';
+            }
+        }
+
+        function checkCritical() {
+            const critical = data.units.filter(u => u.level === 'critical');
+            if (critical.length > 0) {
+                document.getElementById('criticalSection').style.display = '';
+                let html = '';
+                critical.forEach(u => {
+                    html += `<div style="padding:12px;margin-bottom:8px;background:#fff5f5;border-radius:8px;border-left:4px solid var(--danger);">
+                        <strong>${u.constituency}</strong> (${u.province})<br>
+                        <span style="font-size:.9em;">กกต.: ${u.ect_total.toLocaleString()} | Vote62: ${u.vote62_total.toLocaleString()} | ผลต่าง: <strong style="color:var(--danger);">${u.difference.toLocaleString()}</strong></span>
+                    </div>`;
+                });
+                document.getElementById('criticalList').innerHTML = html;
+            }
+        }
+    </script>
+</body>
+</html>

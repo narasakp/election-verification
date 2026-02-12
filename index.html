@@ -12,698 +12,567 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
-    <!-- D3.js for advanced visualizations -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --primary: #667eea;
-            --secondary: #764ba2;
-            --danger: #f5576c;
-            --warning: #ffc107;
-            --success: #28a745;
-            --info: #17a2b8;
+            --primary: #667eea; --secondary: #764ba2; --danger: #f5576c;
+            --warning: #ffc107; --success: #28a745; --info: #17a2b8;
+            --bg: #f0f2f5; --card: #fff; --text: #333; --muted: #888;
         }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); min-height: 100vh; color: var(--text); }
+        a { color: var(--primary); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .top-bar {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            min-height: 100vh;
+            color: #fff; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
         }
-        
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            text-align: center;
-        }
-        
-        .header h1 {
-            color: var(--primary);
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            color: #666;
-            font-size: 1.1em;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-        
-        .stat-card .icon {
-            font-size: 2.5em;
-            margin-bottom: 15px;
-        }
-        
-        .stat-card .number {
-            font-size: 2.5em;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        
-        .stat-card .label {
-            color: #666;
-            font-size: 0.9em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .stat-card.identical .number { color: var(--success); }
-        .stat-card.minor .number { color: var(--warning); }
-        .stat-card.significant .number { color: #ff6b6b; }
-        .stat-card.critical .number { color: var(--danger); }
-        
-        .viz-section {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .viz-section h2 {
-            color: var(--primary);
-            margin-bottom: 20px;
-            border-left: 5px solid var(--primary);
-            padding-left: 15px;
-        }
-        
-        .chart-container {
-            position: relative;
-            height: 400px;
-            margin-bottom: 20px;
-        }
-        
-        .map-container {
-            height: 500px;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        select, input {
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1em;
-        }
-        
-        select:focus, input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        
-        .alert {
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border-left: 5px solid;
-        }
-        
-        .alert-info {
-            background: #d1ecf1;
-            border-color: var(--info);
-            color: #0c5460;
-        }
-        
-        .alert-warning {
-            background: #fff3cd;
-            border-color: var(--warning);
-            color: #856404;
-        }
-        
-        .alert-danger {
-            background: #f8d7da;
-            border-color: var(--danger);
-            color: #721c24;
-        }
-        
-        .table-responsive {
-            overflow-x: auto;
-            margin-top: 20px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        table th, table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        table th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #555;
-        }
-        
-        table tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-        }
-        
-        .badge-success { background: #d4edda; color: #155724; }
-        .badge-warning { background: #fff3cd; color: #856404; }
-        .badge-danger { background: #f8d7da; color: #721c24; }
-        .badge-critical { background: var(--danger); color: white; }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-        }
-        
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 30px;
-            color: white;
-            margin-top: 50px;
-        }
-        
-        .footer a {
-            color: white;
-            text-decoration: underline;
-        }
-        
-        /* Responsive */
+        .top-bar h1 { font-size: 1.4em; }
+        .top-bar .links { display: flex; gap: 18px; font-size: .95em; }
+        .top-bar .links a { color: rgba(255,255,255,.85); }
+        .top-bar .links a:hover { color: #fff; }
+        .top-bar .links a.active { color: #fff; font-weight: 700; border-bottom: 2px solid #fff; }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+        /* Breadcrumb */
+        .breadcrumb { display: flex; gap: 8px; align-items: center; margin-bottom: 18px; font-size: .95em; color: var(--muted); flex-wrap: wrap; }
+        .breadcrumb span { cursor: pointer; color: var(--primary); }
+        .breadcrumb span:hover { text-decoration: underline; }
+        .breadcrumb .sep { color: #ccc; cursor: default; }
+        .breadcrumb .current { color: var(--text); font-weight: 600; cursor: default; }
+
+        /* Stats grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--card); border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.06); border-left: 4px solid var(--primary); }
+        .stat-card .num { font-size: 1.8em; font-weight: 700; margin: 4px 0; }
+        .stat-card .lbl { font-size: .82em; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+        .stat-card.green { border-color: var(--success); }
+        .stat-card.blue { border-color: var(--info); }
+        .stat-card.orange { border-color: var(--warning); }
+        .stat-card.red { border-color: var(--danger); }
+
+        /* Sections */
+        .section { background: var(--card); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+        .section h2 { color: var(--primary); margin-bottom: 16px; font-size: 1.2em; border-left: 4px solid var(--primary); padding-left: 12px; }
+
+        /* Controls */
+        .controls { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+        select, input[type=text] { padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: .95em; background: #fff; }
+        select:focus, input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(102,126,234,.15); }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: .95em; cursor: pointer; font-weight: 600; transition: all .2s; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: #5a6fd6; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: #fff; }
+        .btn-sm { padding: 6px 14px; font-size: .85em; }
+
+        /* Chart */
+        .chart-container { position: relative; height: 380px; }
+
+        /* Table */
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: .92em; }
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; font-weight: 600; color: #555; position: sticky; top: 0; }
+        tr.clickable { cursor: pointer; }
+        tr.clickable:hover { background: #f0f4ff; }
+
+        /* Progress bar */
+        .progress { background: #e9ecef; border-radius: 6px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; border-radius: 6px; transition: width .4s; }
+        .progress-bar.green { background: var(--success); }
+        .progress-bar.blue { background: var(--info); }
+        .progress-bar.orange { background: var(--warning); }
+
+        /* Candidate detail panel */
+        .detail-panel { background: #f8f9fc; border: 1px solid #e0e3ea; border-radius: 10px; padding: 20px; margin-top: 10px; }
+        .detail-panel h3 { margin-bottom: 12px; color: var(--secondary); }
+        .cand-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #eee; }
+        .cand-row:last-child { border-bottom: none; }
+        .cand-rank { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .85em; color: #fff; flex-shrink: 0; }
+        .cand-rank.r1 { background: #ffd700; color: #333; }
+        .cand-rank.r2 { background: #c0c0c0; color: #333; }
+        .cand-rank.r3 { background: #cd7f32; color: #fff; }
+        .cand-rank.rn { background: #ddd; color: #666; }
+        .cand-info { flex: 1; min-width: 0; }
+        .cand-name { font-weight: 600; }
+        .cand-party { font-size: .85em; color: var(--muted); }
+        .cand-votes { text-align: right; font-weight: 600; white-space: nowrap; }
+        .cand-bar { flex: 0 0 120px; }
+        .cand-pct { font-size: .8em; color: var(--muted); text-align: right; }
+
+        /* Zone tags */
+        .zone-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .zone-tag { background: #e8ecf4; padding: 3px 10px; border-radius: 12px; font-size: .8em; color: #555; }
+
+        /* Station info */
+        .station-info { display: flex; gap: 24px; align-items: center; margin: 12px 0; flex-wrap: wrap; }
+        .station-info .item { display: flex; flex-direction: column; align-items: center; }
+        .station-info .val { font-size: 1.4em; font-weight: 700; }
+        .station-info .desc { font-size: .8em; color: var(--muted); }
+
+        /* Alert banner */
+        .alert-banner { padding: 14px 20px; border-radius: 8px; margin-bottom: 16px; font-size: .92em; }
+        .alert-banner.info { background: #e3f2fd; color: #1565c0; }
+        .alert-banner.warn { background: #fff8e1; color: #f57f17; }
+
+        /* Map */
+        .map-container { height: 450px; border-radius: 10px; overflow: hidden; }
+
+        /* Footer */
+        .footer { text-align: center; padding: 24px; color: var(--muted); font-size: .9em; margin-top: 30px; }
+        .footer a { color: var(--primary); }
+
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .controls {
-                flex-direction: column;
-            }
+            .top-bar h1 { font-size: 1.1em; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .chart-container { height: 280px; }
+            .cand-bar { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>🔍 ระบบตรวจสอบการเลือกตั้ง 2569</h1>
-            <p>Election Verification Dashboard - ข้อมูลจาก กกต. (รอข้อมูล Vote62 เพื่อเปรียบเทียบ)</p>
-            <p id="lastUpdate" style="color:#999;font-size:0.9em;margin-top:5px;"></p>
-        </div>
-        
-        <!-- Statistics Cards -->
-        <div class="stats-grid">
-            <div class="stat-card" style="border-left:4px solid var(--primary)">
-                <div class="icon">🗳️</div>
-                <div class="number" id="stat-turnout">-</div>
-                <div class="label">ผู้มาใช้สิทธิ</div>
-            </div>
-            <div class="stat-card" style="border-left:4px solid var(--success)">
-                <div class="icon">📍</div>
-                <div class="number" id="stat-units">-</div>
-                <div class="label">เขตเลือกตั้ง</div>
-            </div>
-            <div class="stat-card" style="border-left:4px solid var(--info)">
-                <div class="icon">�</div>
-                <div class="number" id="stat-percent">-</div>
-                <div class="label">นับคะแนนแล้ว (%)</div>
-            </div>
-            <div class="stat-card" style="border-left:4px solid var(--warning)">
-                <div class="icon">✅</div>
-                <div class="number" id="stat-valid">-</div>
-                <div class="label">คะแนนที่ถูกต้อง</div>
-            </div>
-        </div>
-        
-        <!-- Controls -->
-        <div class="viz-section">
-            <h2>🎛️ ตัวเลือกการแสดงผล</h2>
-            <div class="controls">
-                <select id="provinceSelect" onchange="filterByProvince()">
-                    <option value="all">ทุกจังหวัด</option>
-                </select>
-                
-                <select id="chartType">
-                    <option value="overview">ภาพรวม</option>
-                    <option value="comparison">เปรียบเทียบรายพรรค</option>
-                    <option value="timeline">Timeline</option>
-                    <option value="heatmap">Heatmap</option>
-                </select>
-                
-                <button class="btn btn-primary" onclick="loadData()">🔄 โหลดข้อมูล</button>
-                <button class="btn btn-primary" onclick="exportData()">📥 Export CSV</button>
-            </div>
-            
-            <div class="alert alert-info">
-                <strong>ℹ️ คำแนะนำ:</strong> ข้อมูลจะถูกโหลดจากไฟล์ JSON ที่วางไว้ใน GitHub Pages 
-                (สามารถอัพเดทข้อมูลด้วยการ push ไฟล์ใหม่)
-            </div>
-        </div>
-        
-        <!-- Chart: Overview -->
-        <div class="viz-section">
-            <h2>📊 คะแนนรวมรายพรรค (Top 10)</h2>
-            <div class="chart-container">
-                <canvas id="overviewChart"></canvas>
-            </div>
-        </div>
-        
-        <!-- Chart: Party Comparison -->
-        <div class="viz-section">
-            <h2>🏛️ บัญชีพรรค (เขต vs บัญชีรายชื่อ)</h2>
-            <div class="chart-container">
-                <canvas id="partyChart"></canvas>
-            </div>
-        </div>
-        
-        <!-- Chart: Turnout Distribution -->
-        <div class="viz-section">
-            <h2>📈 การกระจายของผู้มาใช้สิทธิ (%)</h2>
-            <div class="chart-container">
-                <canvas id="distributionChart"></canvas>
-            </div>
-        </div>
-        
-        <!-- Map -->
-        <div class="viz-section">
-            <h2>🗺️ แผนที่หน่วยที่มีความผิดปกติ</h2>
-            <div class="map-container" id="map"></div>
-        </div>
-        
-        <!-- Detailed Results Table -->
-        <div class="viz-section">
-            <h2>📋 รายละเอียดการเปรียบเทียบ</h2>
-            <div class="table-responsive">
-                <table id="resultsTable">
-                    <thead>
-                        <tr>
-                            <th>รหัสเขต</th>
-                            <th>เขตเลือกตั้ง</th>
-                            <th>ผู้ชนะ อันดับ 1</th>
-                            <th>คะแนน</th>
-                            <th>ผู้มาใช้สิทธิ</th>
-                            <th>นับแล้ว (%)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <!-- Data will be inserted here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        <!-- Critical Units Alert -->
-        <div id="criticalAlert" style="display:none;">
-            <div class="viz-section">
-                <div class="alert alert-danger">
-                    <h3 style="margin-bottom: 15px;">🚨 พบหน่วยที่มีความผิดปกติร้ายแรง!</h3>
-                    <div id="criticalList"></div>
-                </div>
-            </div>
+    <!-- Top navigation bar -->
+    <div class="top-bar">
+        <h1>🔍 ระบบตรวจสอบการเลือกตั้ง 2569</h1>
+        <div class="links">
+            <a href="index.html" class="active">Dashboard</a>
+            <a href="compare.html">เปรียบเทียบ กกต./Vote62</a>
         </div>
     </div>
-    
+
+    <div class="container">
+        <!-- Update time -->
+        <p id="lastUpdate" style="color:var(--muted);font-size:.85em;margin-bottom:12px;"></p>
+
+        <!-- Breadcrumb navigation -->
+        <div class="breadcrumb" id="breadcrumb">
+            <span class="current">ทั้งประเทศ</span>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card"><div class="lbl">ผู้มาใช้สิทธิ</div><div class="num" id="s-turnout">-</div></div>
+            <div class="stat-card green"><div class="lbl">เขตเลือกตั้ง</div><div class="num" id="s-units">-</div></div>
+            <div class="stat-card blue"><div class="lbl">นับคะแนนแล้ว</div><div class="num" id="s-percent">-</div></div>
+            <div class="stat-card orange"><div class="lbl">บัตรดี</div><div class="num" id="s-valid">-</div></div>
+            <div class="stat-card red"><div class="lbl">บัตรเสีย + ไม่ประสงค์</div><div class="num" id="s-invalid">-</div></div>
+        </div>
+
+        <!-- Controls -->
+        <div class="section" id="controlSection">
+            <div class="controls">
+                <select id="provinceSelect" onchange="navigateProvince()">
+                    <option value="all">-- เลือกจังหวัด --</option>
+                </select>
+                <input type="text" id="searchInput" placeholder="ค้นหาเขต / ผู้สมัคร..." oninput="handleSearch()" style="flex:1;min-width:180px;">
+                <button class="btn btn-primary" onclick="loadData()">🔄 โหลดใหม่</button>
+                <button class="btn btn-outline" onclick="exportData()">📥 CSV</button>
+            </div>
+        </div>
+
+        <!-- Alert: station data not yet available -->
+        <div class="alert-banner info" id="stationAlert">
+            ℹ️ <strong>กกต. ยังไม่เปิดข้อมูลรายหน่วยเลือกตั้ง</strong> — ปัจจุบันแสดงข้อมูลระดับเขต (400 เขต) พร้อมสถานะการนับ
+        </div>
+
+        <!-- Charts (only on national view) -->
+        <div id="chartsArea">
+            <div class="section">
+                <h2>📊 คะแนนรวมรายพรรค (Top 10)</h2>
+                <div class="chart-container"><canvas id="overviewChart"></canvas></div>
+            </div>
+            <div class="section">
+                <h2>🏛️ เขต vs บัญชีรายชื่อ</h2>
+                <div class="chart-container"><canvas id="partyChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- Main data area (table / detail) -->
+        <div class="section" id="dataSection">
+            <h2 id="dataTitle">📋 เขตเลือกตั้ง</h2>
+            <div id="dataContent">
+                <!-- dynamic content -->
+            </div>
+        </div>
+
+        <!-- Map -->
+        <div class="section">
+            <h2>🗺️ แผนที่</h2>
+            <div class="map-container" id="map"></div>
+        </div>
+    </div>
+
     <div class="footer">
-        <p>พัฒนาโดย Election Verification System Team</p>
-        <p>#นับใหม่ทั้งประเทศ #ระบอบหน้าด้าน</p>
-        <p>ข้อมูลจาก: <a href="https://www.ect.go.th">กกต.</a> และ <a href="https://vote62.com">Vote62.com</a></p>
+        <p>Election Verification System &middot; #นับใหม่ทั้งประเทศ</p>
+        <p>ข้อมูลจาก <a href="https://ectreport69.ect.go.th" target="_blank">กกต.</a> | เปรียบเทียบกับ <a href="https://vote62.com" target="_blank">Vote62.com</a></p>
     </div>
 
     <script>
-        // Global variables
-        let map;
-        let charts = {};
-        let data = null;
-        let filteredUnits = [];
-        
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            initMap();
-            loadData();
-        });
-        
-        // Load data from JSON file
+        // ───── State ─────
+        let map, charts = {}, data = null;
+        // view: 'national' | 'province' | 'constituency'
+        let view = 'national';
+        let selectedProvId = null;
+        let selectedUnitId = null;
+
+        // ───── Init ─────
+        document.addEventListener('DOMContentLoaded', () => { initMap(); loadData(); });
+
         function loadData() {
             fetch('data/election_data.json')
-                .then(r => {
-                    if (!r.ok) throw new Error('HTTP ' + r.status);
-                    return r.json();
-                })
+                .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
                 .then(json => {
                     data = json;
-                    filteredUnits = data.units;
                     populateProvinceFilter();
-                    updateUI();
+                    showNational();
                 })
                 .catch(err => {
-                    console.error('Failed to load data:', err);
-                    document.getElementById('lastUpdate').textContent = 
-                        'ไม่สามารถโหลดข้อมูลได้: ' + err.message;
+                    document.getElementById('lastUpdate').textContent = 'โหลดข้อมูลล้มเหลว: ' + err.message;
                 });
         }
-        
-        // Populate province dropdown
+
+        // ───── Province dropdown ─────
         function populateProvinceFilter() {
             const sel = document.getElementById('provinceSelect');
+            sel.innerHTML = '<option value="all">-- เลือกจังหวัด --</option>';
             if (!data || !data.provinces) return;
-            const provs = Object.values(data.provinces).sort((a,b) => a.name.localeCompare(b.name, 'th'));
-            provs.forEach(p => {
-                const opt = document.createElement('option');
-                opt.value = p.prov_id;
-                opt.textContent = p.name + ' (' + p.units + ' เขต)';
-                sel.appendChild(opt);
-            });
+            Object.values(data.provinces)
+                .sort((a, b) => a.name.localeCompare(b.name, 'th'))
+                .forEach(p => {
+                    const o = document.createElement('option');
+                    o.value = p.prov_id;
+                    o.textContent = p.name + ' (' + p.units + ' เขต)';
+                    sel.appendChild(o);
+                });
         }
-        
-        // Filter by province
-        function filterByProvince() {
-            const val = document.getElementById('provinceSelect').value;
-            if (val === 'all') {
-                filteredUnits = data.units;
-            } else {
-                filteredUnits = data.units.filter(u => u.prov_id === val);
-            }
-            updateTable();
+
+        // ───── Navigation ─────
+        function navigateProvince() {
+            const v = document.getElementById('provinceSelect').value;
+            if (v === 'all') { showNational(); return; }
+            selectedProvId = v;
+            showProvince(v);
         }
-        
-        // Update all UI components
-        function updateUI() {
-            if (!data) return;
+
+        function showNational() {
+            view = 'national'; selectedProvId = null; selectedUnitId = null;
+            document.getElementById('provinceSelect').value = 'all';
+            updateBreadcrumb();
             updateStats();
             updateCharts();
-            updateMap();
-            updateTable();
+            document.getElementById('chartsArea').style.display = '';
+            renderNationalTable();
         }
-        
-        // Update statistics cards
+
+        function showProvince(provId) {
+            view = 'province'; selectedProvId = provId; selectedUnitId = null;
+            document.getElementById('provinceSelect').value = provId;
+            updateBreadcrumb();
+            updateStatsProvince(provId);
+            document.getElementById('chartsArea').style.display = 'none';
+            renderProvinceTable(provId);
+        }
+
+        function showConstituency(unitId) {
+            view = 'constituency'; selectedUnitId = unitId;
+            const unit = data.units.find(u => u.unit_id === unitId);
+            if (!unit) return;
+            selectedProvId = unit.prov_id;
+            document.getElementById('provinceSelect').value = unit.prov_id;
+            updateBreadcrumb();
+            updateStatsUnit(unit);
+            document.getElementById('chartsArea').style.display = 'none';
+            renderConstituencyDetail(unit);
+        }
+
+        // ───── Breadcrumb ─────
+        function updateBreadcrumb() {
+            const bc = document.getElementById('breadcrumb');
+            let html = '';
+            if (view === 'national') {
+                html = '<span class="current">🇹🇭 ทั้งประเทศ</span>';
+            } else if (view === 'province') {
+                const prov = data.provinces[selectedProvId];
+                html = `<span onclick="showNational()">🇹🇭 ทั้งประเทศ</span><span class="sep">›</span>`;
+                html += `<span class="current">${prov ? prov.name : selectedProvId}</span>`;
+            } else {
+                const prov = data.provinces[selectedProvId];
+                const unit = data.units.find(u => u.unit_id === selectedUnitId);
+                html = `<span onclick="showNational()">🇹🇭 ทั้งประเทศ</span><span class="sep">›</span>`;
+                html += `<span onclick="showProvince('${selectedProvId}')">${prov ? prov.name : selectedProvId}</span><span class="sep">›</span>`;
+                html += `<span class="current">${unit ? unit.constituency : selectedUnitId}</span>`;
+            }
+            bc.innerHTML = html;
+        }
+
+        // ───── Stats ─────
         function updateStats() {
             const ns = data.metadata.national_stats || {};
-            document.getElementById('stat-turnout').textContent = 
-                (ns.turn_out || 0).toLocaleString();
-            document.getElementById('stat-units').textContent = 
-                (data.metadata.total_units || 0).toLocaleString();
-            document.getElementById('stat-percent').textContent = 
-                (ns.percent_count || 0).toFixed(2) + '%';
-            document.getElementById('stat-valid').textContent = 
-                (ns.valid_votes || 0).toLocaleString();
-            
+            setStats(ns.turn_out, data.metadata.total_units, ns.percent_count, ns.valid_votes, (ns.invalid_votes||0) + (ns.blank_votes||0));
             if (data.metadata.last_update) {
-                const d = new Date(data.metadata.last_update);
-                document.getElementById('lastUpdate').textContent = 
-                    'อัปเดตล่าสุด: ' + d.toLocaleString('th-TH');
+                document.getElementById('lastUpdate').textContent = 'อัปเดตล่าสุด: ' + new Date(data.metadata.last_update).toLocaleString('th-TH');
             }
         }
-        
-        // Update charts
+        function updateStatsProvince(provId) {
+            const p = data.provinces[provId];
+            if (!p) return;
+            const units = data.units.filter(u => u.prov_id === provId);
+            const inv = units.reduce((s,u)=>(s+(u.invalid_votes||0)+(u.blank_votes||0)),0);
+            setStats(p.turn_out, p.units, p.percent_count, p.valid_votes, inv);
+        }
+        function updateStatsUnit(u) {
+            setStats(u.turn_out, u.total_stations + ' หน่วย', u.percent_count, u.valid_votes, (u.invalid_votes||0) + (u.blank_votes||0));
+        }
+        function setStats(turnout, units, pct, valid, invalid) {
+            document.getElementById('s-turnout').textContent = typeof turnout === 'number' ? turnout.toLocaleString() : '-';
+            document.getElementById('s-units').textContent = typeof units === 'number' ? units.toLocaleString() : units;
+            document.getElementById('s-percent').textContent = typeof pct === 'number' ? pct.toFixed(2) + '%' : '-';
+            document.getElementById('s-valid').textContent = typeof valid === 'number' ? valid.toLocaleString() : '-';
+            document.getElementById('s-invalid').textContent = typeof invalid === 'number' ? invalid.toLocaleString() : '-';
+        }
+
+        // ───── Charts ─────
         function updateCharts() {
             createOverviewChart();
             createPartyChart();
-            createDistributionChart();
         }
-        
-        // Overview Chart - Top 10 parties by constituency votes
         function createOverviewChart() {
             const ctx = document.getElementById('overviewChart').getContext('2d');
             if (charts.overview) charts.overview.destroy();
-            
             const np = data.national_parties || [];
-            const labels = np.map(p => p.name);
-            const votes = np.map(p => p.cons_votes);
-            const colors = np.map(p => p.color || '#667eea');
-            
             charts.overview = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'คะแนนเขต',
-                        data: votes,
-                        backgroundColor: colors
-                    }]
+                    labels: np.map(p => p.name),
+                    datasets: [{ label: 'คะแนนเขต', data: np.map(p => p.cons_votes), backgroundColor: np.map(p => p.color || '#667eea') }]
                 },
                 options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        title: {
-                            display: true,
-                            text: 'คะแนนรวมรายพรรค (เขตเลือกตั้ง) - Top 10'
-                        }
-                    },
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: v => (v/1000000).toFixed(1) + 'M'
-                            }
-                        }
-                    }
+                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, title: { display: true, text: 'คะแนนรวมรายพรรค (เขตเลือกตั้ง) - Top 10' } },
+                    scales: { x: { beginAtZero: true, ticks: { callback: v => (v/1e6).toFixed(1)+'M' } } }
                 }
             });
         }
-        
-        // Party Chart - Constituency vs Party List votes
         function createPartyChart() {
             const ctx = document.getElementById('partyChart').getContext('2d');
             if (charts.party) charts.party.destroy();
-            
             const np = data.national_parties || [];
-            const labels = np.map(p => p.name);
-            const consVotes = np.map(p => p.cons_votes);
-            const listVotes = np.map(p => p.party_list_votes);
-            
             charts.party = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: np.map(p => p.name),
                     datasets: [
-                        {
-                            label: 'คะแนนเขต',
-                            data: consVotes,
-                            backgroundColor: 'rgba(102,126,234,0.8)'
-                        },
-                        {
-                            label: 'บัญชีรายชื่อ',
-                            data: listVotes,
-                            backgroundColor: 'rgba(245,87,108,0.8)'
-                        }
+                        { label: 'คะแนนเขต', data: np.map(p => p.cons_votes), backgroundColor: 'rgba(102,126,234,.8)' },
+                        { label: 'บัญชีรายชื่อ', data: np.map(p => p.party_list_votes), backgroundColor: 'rgba(245,87,108,.8)' }
                     ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'เปรียบเทียบคะแนนเขต vs บัญชีรายชื่อ'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: v => (v/1000000).toFixed(1) + 'M'
-                            }
-                        }
-                    }
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { title: { display: true, text: 'เปรียบเทียบคะแนนเขต vs บัญชีรายชื่อ' } },
+                    scales: { y: { beginAtZero: true, ticks: { callback: v => (v/1e6).toFixed(1)+'M' } } }
                 }
             });
         }
-        
-        // Distribution Chart - Turnout distribution
-        function createDistributionChart() {
-            const ctx = document.getElementById('distributionChart').getContext('2d');
-            if (charts.distribution) charts.distribution.destroy();
-            
-            const turnouts = data.units.map(u => u.percent_turn_out || 0);
-            const bins = [0, 50, 55, 60, 65, 70, 75, 80, 100];
-            const binLabels = ['<50%', '50-55%', '55-60%', '60-65%', '65-70%', '70-75%', '75-80%', '80%+'];
-            const counts = new Array(bins.length - 1).fill(0);
-            
-            turnouts.forEach(t => {
-                for (let i = 0; i < bins.length - 1; i++) {
-                    if (t >= bins[i] && t < bins[i + 1]) {
-                        counts[i]++;
-                        break;
-                    }
-                }
+
+        // ───── National table (provinces) ─────
+        function renderNationalTable() {
+            document.getElementById('dataTitle').textContent = '📋 ภาพรวมรายจังหวัด (77 จังหวัด)';
+            const provs = Object.values(data.provinces).sort((a,b) => a.name.localeCompare(b.name, 'th'));
+            let html = `<div class="table-responsive"><table>
+                <thead><tr>
+                    <th>จังหวัด</th><th>เขต</th><th>ผู้มาใช้สิทธิ</th><th>บัตรดี</th>
+                    <th>นับแล้ว</th><th>พรรคอันดับ 1</th>
+                </tr></thead><tbody>`;
+            provs.forEach(p => {
+                const top = (p.top_parties && p.top_parties[0]) ? p.top_parties[0] : null;
+                const pctBar = ((p.counted_stations || 0) / Math.max(p.total_stations || 1, 1) * 100);
+                html += `<tr class="clickable" onclick="showProvince('${p.prov_id}')">
+                    <td><strong>${p.name}</strong></td>
+                    <td>${p.units}</td>
+                    <td>${(p.turn_out||0).toLocaleString()}</td>
+                    <td>${(p.valid_votes||0).toLocaleString()}</td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div class="progress" style="flex:1;"><div class="progress-bar ${pctBar>=95?'green':pctBar>=80?'blue':'orange'}" style="width:${pctBar.toFixed(1)}%"></div></div>
+                            <span style="font-size:.8em;white-space:nowrap;">${(p.counted_stations||0)}/${p.total_stations||'?'}</span>
+                        </div>
+                    </td>
+                    <td>${top ? `<span style="color:${top.color};font-weight:600">${top.name}</span>` : '-'}</td>
+                </tr>`;
             });
-            
-            charts.distribution = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: binLabels,
-                    datasets: [{
-                        label: 'จำนวนเขต',
-                        data: counts,
-                        backgroundColor: '#667eea'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'การกระจายของผู้มาใช้สิทธิ (% ต่อเขต)'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: { display: true, text: 'จำนวนเขต' }
-                        },
-                        x: {
-                            title: { display: true, text: 'สัดส่วนผู้มาใช้สิทธิ' }
-                        }
-                    }
-                }
-            });
+            html += '</tbody></table></div>';
+            document.getElementById('dataContent').innerHTML = html;
         }
-        
-        // Initialize map
+
+        // ───── Province table (constituencies) ─────
+        function renderProvinceTable(provId) {
+            const prov = data.provinces[provId];
+            const units = data.units.filter(u => u.prov_id === provId).sort((a,b) => {
+                const na = parseInt(a.unit_id.split('_')[1]); const nb = parseInt(b.unit_id.split('_')[1]);
+                return na - nb;
+            });
+            document.getElementById('dataTitle').textContent = `📋 ${prov ? prov.name : provId} — ${units.length} เขตเลือกตั้ง`;
+            let html = `<div class="table-responsive"><table>
+                <thead><tr>
+                    <th>เขต</th><th>พื้นที่</th><th>ผู้ชนะ</th><th>คะแนน</th>
+                    <th>ผู้มาใช้สิทธิ</th><th>หน่วยนับแล้ว</th>
+                </tr></thead><tbody>`;
+            units.forEach(u => {
+                const pctSt = u.total_stations ? (u.counted_stations / u.total_stations * 100) : 0;
+                const zoneStr = (u.zone || []).slice(0, 3).join(', ') + ((u.zone||[]).length > 3 ? '...' : '');
+                html += `<tr class="clickable" onclick="showConstituency('${u.unit_id}')">
+                    <td><strong>เขต ${u.unit_id.split('_')[1]}</strong></td>
+                    <td style="font-size:.85em;color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${(u.zone||[]).join(', ')}">${zoneStr || '-'}</td>
+                    <td><span style="color:${u.winner_color||'inherit'};font-weight:600">${u.winner || '-'}</span></td>
+                    <td>${(u.winner_votes||0).toLocaleString()}</td>
+                    <td>${(u.turn_out||0).toLocaleString()}</td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div class="progress" style="flex:1;max-width:100px;"><div class="progress-bar ${pctSt>=95?'green':pctSt>=80?'blue':'orange'}" style="width:${pctSt.toFixed(1)}%"></div></div>
+                            <span style="font-size:.8em;white-space:nowrap;">${u.counted_stations}/${u.total_stations||'?'}</span>
+                        </div>
+                    </td>
+                </tr>`;
+            });
+            html += '</tbody></table></div>';
+            document.getElementById('dataContent').innerHTML = html;
+        }
+
+        // ───── Constituency detail (candidates) ─────
+        function renderConstituencyDetail(u) {
+            document.getElementById('dataTitle').textContent = `📋 ${u.constituency}`;
+            const cands = u.candidates || u.parties || [];
+            const maxVote = cands.length > 0 ? Math.max(...cands.map(c => c.ect_votes || c.ect || 0)) : 1;
+
+            let html = '';
+            // Station info
+            const pctSt = u.total_stations ? (u.counted_stations / u.total_stations * 100) : 0;
+            html += `<div class="station-info">
+                <div class="item"><div class="val">${u.counted_stations}</div><div class="desc">หน่วยนับแล้ว</div></div>
+                <div class="item"><div class="val">${u.total_stations || '?'}</div><div class="desc">หน่วยทั้งหมด</div></div>
+                <div class="item"><div class="val">${pctSt.toFixed(1)}%</div><div class="desc">ความคืบหน้า</div></div>
+                <div class="item"><div class="val">${(u.registered_vote||0).toLocaleString()}</div><div class="desc">ผู้มีสิทธิ</div></div>
+                <div class="item"><div class="val">${(u.turn_out||0).toLocaleString()}</div><div class="desc">มาใช้สิทธิ</div></div>
+                <div class="item"><div class="val">${(u.percent_turn_out||0).toFixed(1)}%</div><div class="desc">อัตราการมาใช้สิทธิ</div></div>
+            </div>`;
+
+            // Progress bar
+            html += `<div style="margin:10px 0 20px;"><div class="progress" style="height:14px;">
+                <div class="progress-bar ${pctSt>=95?'green':pctSt>=80?'blue':'orange'}" style="width:${pctSt.toFixed(1)}%"></div>
+            </div></div>`;
+
+            // Zone tags
+            if (u.zone && u.zone.length > 0) {
+                html += `<div style="margin-bottom:16px;"><strong style="font-size:.9em;">พื้นที่:</strong><div class="zone-tags">`;
+                u.zone.forEach(z => { html += `<span class="zone-tag">${z}</span>`; });
+                html += '</div></div>';
+            }
+
+            // Candidate list
+            html += `<div class="detail-panel"><h3>ผู้สมัคร (${cands.length} คน)</h3>`;
+            cands.forEach((c, i) => {
+                const votes = c.ect_votes || c.ect || 0;
+                const name = c.name || c.candidate_name || '';
+                const party = c.party || c.name || '';
+                const color = c.party_color || c.color || '#999';
+                const pct = c.percent || 0;
+                const barW = maxVote > 0 ? (votes / maxVote * 100) : 0;
+                const rankClass = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : 'rn';
+
+                html += `<div class="cand-row">
+                    <div class="cand-rank ${rankClass}">${i+1}</div>
+                    <div class="cand-info">
+                        <div class="cand-name">${name || '(ไม่ระบุชื่อ)'}</div>
+                        <div class="cand-party"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${color};margin-right:4px;"></span>${party}${c.number ? ' #'+c.number : ''}</div>
+                    </div>
+                    <div class="cand-bar">
+                        <div class="progress" style="height:8px;"><div class="progress-bar" style="width:${barW.toFixed(1)}%;background:${color};"></div></div>
+                    </div>
+                    <div class="cand-votes">${votes.toLocaleString()}<div class="cand-pct">${pct.toFixed(1)}%</div></div>
+                </div>`;
+            });
+            html += '</div>';
+
+            // Vote summary table
+            html += `<div style="margin-top:16px;font-size:.9em;">
+                <table style="max-width:400px;">
+                    <tr><td>บัตรดี</td><td style="text-align:right;font-weight:600;">${(u.valid_votes||0).toLocaleString()}</td></tr>
+                    <tr><td>บัตรเสีย</td><td style="text-align:right;font-weight:600;">${(u.invalid_votes||0).toLocaleString()}</td></tr>
+                    <tr><td>ไม่ประสงค์ลงคะแนน</td><td style="text-align:right;font-weight:600;">${(u.blank_votes||0).toLocaleString()}</td></tr>
+                    <tr style="border-top:2px solid #333;"><td><strong>รวมผู้มาใช้สิทธิ</strong></td><td style="text-align:right;font-weight:700;">${(u.turn_out||0).toLocaleString()}</td></tr>
+                </table>
+            </div>`;
+
+            document.getElementById('dataContent').innerHTML = html;
+        }
+
+        // ───── Search ─────
+        function handleSearch() {
+            const q = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!q) {
+                if (view === 'national') renderNationalTable();
+                else if (view === 'province') renderProvinceTable(selectedProvId);
+                return;
+            }
+            // Search across all units
+            const results = data.units.filter(u => {
+                if (u.constituency.toLowerCase().includes(q)) return true;
+                if (u.province.toLowerCase().includes(q)) return true;
+                if (u.unit_id.toLowerCase().includes(q)) return true;
+                if (u.winner && u.winner.toLowerCase().includes(q)) return true;
+                if (u.candidates) {
+                    for (const c of u.candidates) {
+                        if (c.name && c.name.toLowerCase().includes(q)) return true;
+                    }
+                }
+                return false;
+            });
+            renderSearchResults(results, q);
+        }
+        function renderSearchResults(results, q) {
+            document.getElementById('dataTitle').textContent = `🔎 ค้นหา "${q}" — พบ ${results.length} เขต`;
+            let html = `<div class="table-responsive"><table>
+                <thead><tr><th>เขต</th><th>จังหวัด</th><th>ผู้ชนะ</th><th>คะแนน</th><th>นับแล้ว</th></tr></thead><tbody>`;
+            results.forEach(u => {
+                html += `<tr class="clickable" onclick="showConstituency('${u.unit_id}')">
+                    <td><strong>${u.constituency}</strong></td>
+                    <td>${u.province}</td>
+                    <td><span style="color:${u.winner_color||'inherit'};font-weight:600">${u.winner||'-'}</span></td>
+                    <td>${(u.winner_votes||0).toLocaleString()}</td>
+                    <td>${(u.percent_count||0).toFixed(1)}%</td>
+                </tr>`;
+            });
+            html += '</tbody></table></div>';
+            document.getElementById('dataContent').innerHTML = html;
+        }
+
+        // ───── Map ─────
         function initMap() {
             map = L.map('map').setView([13.7563, 100.5018], 6);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
+                attribution: '&copy; OpenStreetMap'
             }).addTo(map);
         }
-        
-        // Update map (placeholder - no lat/lng in current data)
-        function updateMap() {
-            // Map markers will be added when we have lat/lng data
-        }
-        
-        // Update table
-        function updateTable() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-            
-            filteredUnits.forEach(unit => {
-                const row = tbody.insertRow();
-                const winnerStyle = unit.winner_color ? 
-                    `style="color:${unit.winner_color};font-weight:bold"` : '';
-                row.innerHTML = `
-                    <td>${unit.unit_id}</td>
-                    <td>${unit.constituency}</td>
-                    <td ${winnerStyle}>${unit.winner || '-'}</td>
-                    <td>${(unit.winner_votes || 0).toLocaleString()}</td>
-                    <td>${(unit.turn_out || 0).toLocaleString()}</td>
-                    <td>${(unit.percent_count || 0).toFixed(1)}%</td>
-                `;
-            });
-        }
-        
-        // Export data
+
+        // ───── Export ─────
         function exportData() {
             if (!data) return;
-            const headers = ['รหัสเขต', 'เขตเลือกตั้ง', 'จังหวัด', 'ผู้ชนะ', 'คะแนนผู้ชนะ', 
-                'ผู้มาใช้สิทธิ', 'คะแนนถูกต้อง', 'นับแล้ว(%)'];
-            const rows = filteredUnits.map(u => [
-                u.unit_id,
-                '"' + u.constituency + '"',
-                '"' + u.province + '"',
-                '"' + (u.winner || '') + '"',
-                u.winner_votes || 0,
-                u.turn_out || 0,
-                u.valid_votes || 0,
-                (u.percent_count || 0).toFixed(1)
+            const units = view === 'province' ? data.units.filter(u => u.prov_id === selectedProvId) : data.units;
+            const headers = ['รหัสเขต','เขตเลือกตั้ง','จังหวัด','ผู้ชนะ','คะแนนผู้ชนะ','ผู้มาใช้สิทธิ','บัตรดี','บัตรเสีย','นับแล้ว(%)','หน่วยนับแล้ว','หน่วยทั้งหมด'];
+            const rows = units.map(u => [
+                u.unit_id, '"'+u.constituency+'"', '"'+u.province+'"', '"'+(u.winner||'')+'"',
+                u.winner_votes||0, u.turn_out||0, u.valid_votes||0, u.invalid_votes||0,
+                (u.percent_count||0).toFixed(1), u.counted_stations||0, u.total_stations||0
             ]);
-            
-            let csv = headers.join(',') + '\n';
-            rows.forEach(row => { csv += row.join(',') + '\n'; });
-            
-            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'election_data_' + new Date().toISOString().split('T')[0] + '.csv';
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            let csv = headers.join(',')+'\n';
+            rows.forEach(r => { csv += r.join(',')+'\n'; });
+            const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8;'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'election_'+new Date().toISOString().split('T')[0]+'.csv';
+            a.click();
         }
     </script>
 </body>
