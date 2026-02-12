@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>วิเคราะห์ความผิดปกติ - Election Verification</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--primary:#667eea;--secondary:#764ba2;--danger:#f5576c;--warning:#ffc107;--success:#28a745;--info:#17a2b8;--bg:#f0f2f5;--card:#fff;--text:#333;--muted:#888}
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--bg);min-height:100vh;color:var(--text)}
+        a{color:var(--primary);text-decoration:none}a:hover{text-decoration:underline}
+        .top-bar{background:linear-gradient(135deg,var(--primary) 0%,var(--secondary) 100%);color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+        .top-bar h1{font-size:1.4em}.top-bar .links{display:flex;gap:18px;font-size:.95em}
+        .top-bar .links a{color:rgba(255,255,255,.85)}.top-bar .links a:hover{color:#fff}
+        .top-bar .links a.active{color:#fff;font-weight:700;border-bottom:2px solid #fff}
+        .container{max-width:1400px;margin:0 auto;padding:20px}
+        .section{background:var(--card);border-radius:12px;padding:24px;margin-bottom:24px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+        .section h2{color:var(--primary);margin-bottom:16px;font-size:1.15em;border-left:4px solid var(--primary);padding-left:12px}
+        .section h3{color:var(--secondary);margin:16px 0 10px;font-size:1em}
+        .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+        .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+        @media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+
+        /* Summary cards */
+        .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+        .s-card{background:var(--card);border-radius:10px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,.05);text-align:center;border-top:4px solid var(--primary)}
+        .s-card .num{font-size:1.9em;font-weight:700;margin:4px 0}
+        .s-card .lbl{font-size:.78em;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+        .s-card.red{border-color:var(--danger)}.s-card.red .num{color:var(--danger)}
+        .s-card.orange{border-color:var(--warning)}.s-card.orange .num{color:#e65100}
+        .s-card.green{border-color:var(--success)}.s-card.green .num{color:var(--success)}
+        .s-card.blue{border-color:var(--info)}.s-card.blue .num{color:var(--info)}
+
+        .chart-container{position:relative;height:340px;margin-bottom:10px}
+        .chart-sm{height:260px}
+
+        /* Flag table */
+        .table-responsive{overflow-x:auto}
+        table{width:100%;border-collapse:collapse;font-size:.88em}
+        th,td{padding:8px 10px;text-align:left;border-bottom:1px solid #eee}
+        th{background:#f8f9fa;font-weight:600;color:#555;position:sticky;top:0}
+        tr:hover{background:#f8f9fc}
+        .badge{display:inline-block;padding:3px 10px;border-radius:14px;font-size:.78em;font-weight:600}
+        .badge-high{background:#f8d7da;color:#721c24}.badge-medium{background:#fff3cd;color:#856404}
+        .badge-low{background:#d4edda;color:#155724}.badge-info{background:#e3f2fd;color:#1565c0}
+
+        /* Stat box */
+        .stat-box{background:#f8f9fc;border-radius:8px;padding:14px;margin:6px 0;border-left:3px solid var(--primary)}
+        .stat-box .key{font-size:.82em;color:var(--muted)}.stat-box .val{font-size:1.1em;font-weight:600}
+
+        /* Tabs */
+        .tabs{display:flex;gap:0;border-bottom:2px solid #e0e0e0;margin-bottom:20px;flex-wrap:wrap}
+        .tab{padding:10px 20px;cursor:pointer;font-weight:600;font-size:.92em;color:var(--muted);border-bottom:3px solid transparent;transition:all .2s}
+        .tab:hover{color:var(--primary)}.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+        .tab-panel{display:none}.tab-panel.active{display:block}
+
+        .verdict{padding:16px 20px;border-radius:10px;margin-bottom:16px;font-size:.95em}
+        .verdict.pass{background:#e8f5e9;color:#2e7d32;border-left:5px solid var(--success)}
+        .verdict.fail{background:#fce4ec;color:#c62828;border-left:5px solid var(--danger)}
+        .verdict.warn{background:#fff8e1;color:#f57f17;border-left:5px solid var(--warning)}
+
+        .footer{text-align:center;padding:24px;color:var(--muted);font-size:.9em;margin-top:30px}
+        .footer a{color:var(--primary)}
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h1>🔬 วิเคราะห์ความผิดปกติ</h1>
+        <div class="links">
+            <a href="index.html">Dashboard</a>
+            <a href="compare.html">เปรียบเทียบ</a>
+            <a href="anomaly.html" class="active">วิเคราะห์ผิดปกติ</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Executive summary -->
+        <div class="section" id="execSummary">
+            <h2>📋 สรุปผลวิเคราะห์ภาพรวม</h2>
+            <div class="summary-grid" id="summaryCards"></div>
+            <div id="verdictArea"></div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="section">
+            <div class="tabs" id="mainTabs">
+                <div class="tab active" data-tab="turnout">ผู้มาใช้สิทธิ</div>
+                <div class="tab" data-tab="invalid">บัตรเสีย</div>
+                <div class="tab" data-tab="blank">ไม่ประสงค์ฯ</div>
+                <div class="tab" data-tab="wasted">คะแนนสูญเปล่า</div>
+                <div class="tab" data-tab="dominance">ชนะขาดลอย</div>
+                <div class="tab" data-tab="close">เขตสูสี</div>
+                <div class="tab" data-tab="benford">Benford's Law</div>
+                <div class="tab" data-tab="province">จังหวัดผูกขาด</div>
+                <div class="tab" data-tab="math">ความสอดคล้อง</div>
+                <div class="tab" data-tab="counting">สถานะนับ</div>
+            </div>
+
+            <!-- Tab: Turnout -->
+            <div class="tab-panel active" id="panel-turnout">
+                <h3>📊 การกระจายอัตราการมาใช้สิทธิ</h3>
+                <div class="grid2">
+                    <div>
+                        <div class="chart-container"><canvas id="turnoutHist"></canvas></div>
+                        <div id="turnoutStats"></div>
+                    </div>
+                    <div>
+                        <div class="chart-container"><canvas id="turnoutScatter"></canvas></div>
+                    </div>
+                </div>
+                <h3>🚩 เขตที่ผิดปกติ (Outliers)</h3>
+                <div class="table-responsive" id="turnoutTable"></div>
+            </div>
+
+            <!-- Tab: Invalid -->
+            <div class="tab-panel" id="panel-invalid">
+                <h3>📊 การกระจายอัตราบัตรเสีย</h3>
+                <div class="grid2">
+                    <div><div class="chart-container"><canvas id="invalidHist"></canvas></div><div id="invalidStats"></div></div>
+                    <div><div class="chart-container"><canvas id="invalidBar"></canvas></div></div>
+                </div>
+                <h3>🚩 เขตที่บัตรเสียสูงผิดปกติ</h3>
+                <div class="table-responsive" id="invalidTable"></div>
+            </div>
+
+            <!-- Tab: Blank -->
+            <div class="tab-panel" id="panel-blank">
+                <h3>📊 การกระจายอัตราไม่ประสงค์ลงคะแนน</h3>
+                <div class="grid2">
+                    <div><div class="chart-container"><canvas id="blankHist"></canvas></div><div id="blankStats"></div></div>
+                    <div><div class="chart-container"><canvas id="blankBar"></canvas></div></div>
+                </div>
+                <h3>🚩 เขตที่ไม่ประสงค์ฯ สูงผิดปกติ</h3>
+                <div class="table-responsive" id="blankTable"></div>
+            </div>
+
+            <!-- Tab: Wasted -->
+            <div class="tab-panel" id="panel-wasted">
+                <h3>📊 คะแนนสูญเปล่า (บัตรเสีย + ไม่ประสงค์ฯ)</h3>
+                <div class="grid2">
+                    <div><div class="chart-container"><canvas id="wastedHist"></canvas></div><div id="wastedStats"></div></div>
+                    <div><div class="chart-container"><canvas id="wastedBar"></canvas></div></div>
+                </div>
+                <h3>🚩 เขตคะแนนสูญเปล่าสูง</h3>
+                <div class="table-responsive" id="wastedTable"></div>
+            </div>
+
+            <!-- Tab: Dominance -->
+            <div class="tab-panel" id="panel-dominance">
+                <h3>📊 ผู้ชนะได้คะแนน (% ของบัตรดี)</h3>
+                <div class="grid2">
+                    <div><div class="chart-container"><canvas id="domHist"></canvas></div></div>
+                    <div><div class="chart-container"><canvas id="domParty"></canvas></div></div>
+                </div>
+                <h3>🚩 เขตที่ผู้ชนะได้คะแนน >60%</h3>
+                <div class="table-responsive" id="domTable"></div>
+            </div>
+
+            <!-- Tab: Close races -->
+            <div class="tab-panel" id="panel-close">
+                <h3>⚔️ เขตเลือกตั้งที่ผลสูสี (margin &lt;3%)</h3>
+                <div class="chart-container chart-sm"><canvas id="closeChart"></canvas></div>
+                <div class="table-responsive" id="closeTable"></div>
+            </div>
+
+            <!-- Tab: Benford -->
+            <div class="tab-panel" id="panel-benford">
+                <h3>🔢 Benford's Law — ตรวจสอบความเป็นธรรมชาติของตัวเลข</h3>
+                <div id="benfordVerdict"></div>
+                <div class="grid2">
+                    <div><div class="chart-container"><canvas id="benfordChart"></canvas></div></div>
+                    <div><div class="chart-container"><canvas id="benfordDev"></canvas></div></div>
+                </div>
+                <div id="benfordExplain" style="margin-top:12px;font-size:.9em;color:#555;line-height:1.6;"></div>
+            </div>
+
+            <!-- Tab: Province patterns -->
+            <div class="tab-panel" id="panel-province">
+                <h3>🗺️ จังหวัดที่พรรคเดียวชนะทุกเขต</h3>
+                <div class="chart-container"><canvas id="monopolyChart"></canvas></div>
+                <div class="table-responsive" id="monopolyTable"></div>
+            </div>
+
+            <!-- Tab: Math consistency -->
+            <div class="tab-panel" id="panel-math">
+                <h3>🧮 ตรวจสอบความสอดคล้องทางคณิตศาสตร์</h3>
+                <div id="mathVerdict"></div>
+                <div id="mathDetail"></div>
+            </div>
+
+            <!-- Tab: Counting -->
+            <div class="tab-panel" id="panel-counting">
+                <h3>⏳ สถานะการนับคะแนน</h3>
+                <div id="countingStats"></div>
+                <h3>🚩 เขตที่หยุดรายงาน (Paused)</h3>
+                <div class="table-responsive" id="pausedTable"></div>
+                <h3>เขตที่นับได้น้อยที่สุด</h3>
+                <div class="table-responsive" id="incompleteTable"></div>
+            </div>
+        </div>
+
+        <!-- All flags summary -->
+        <div class="section">
+            <h2>🚩 รายการเขตที่ถูก Flag ทั้งหมด</h2>
+            <div class="table-responsive" id="allFlagsTable"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Election Verification System — วิเคราะห์ความผิดปกติจากข้อมูล กกต.</p>
+        <p>ข้อมูลจาก <a href="https://ectreport69.ect.go.th" target="_blank">กกต.</a></p>
+    </div>
+
+    <script>
+    let AD = null; // anomaly data
+    const charts = {};
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('data/anomaly_data.json')
+            .then(r => r.json())
+            .then(d => { AD = d; render(); })
+            .catch(e => { document.getElementById('execSummary').innerHTML = '<p style="color:red">โหลดข้อมูลล้มเหลว: '+e.message+'</p>'; });
+
+        // Tab switching
+        document.getElementById('mainTabs').addEventListener('click', e => {
+            if (!e.target.classList.contains('tab')) return;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            e.target.classList.add('active');
+            document.getElementById('panel-' + e.target.dataset.tab).classList.add('active');
+        });
+    });
+
+    function render() {
+        renderSummary();
+        renderTurnout();
+        renderInvalid();
+        renderBlank();
+        renderWasted();
+        renderDominance();
+        renderClose();
+        renderBenford();
+        renderProvince();
+        renderMath();
+        renderCounting();
+        renderAllFlags();
+    }
+
+    // ═══ Summary ═══
+    function renderSummary() {
+        const m = AD.metadata;
+        const t = AD.turnout.summary, inv = AD.invalid_ballots.summary, bl = AD.blank_votes.summary;
+        const dom = AD.winner_dominance.summary, cl = AD.close_races.summary;
+        const bf = AD.benford.summary, prov = AD.province_patterns;
+
+        let html = `
+            <div class="s-card"><div class="lbl">เขตทั้งหมด</div><div class="num">${m.total_units}</div></div>
+            <div class="s-card red"><div class="lbl">เขตที่ถูก flag</div><div class="num">${m.flagged_units}</div><div class="lbl">${(m.flagged_units/m.total_units*100).toFixed(1)}%</div></div>
+            <div class="s-card orange"><div class="lbl">Turnout ผิดปกติ</div><div class="num">${t.outlier_count}</div></div>
+            <div class="s-card orange"><div class="lbl">บัตรเสียสูง</div><div class="num">${inv.outlier_count}</div></div>
+            <div class="s-card orange"><div class="lbl">ไม่ประสงค์ฯ สูง</div><div class="num">${bl.outlier_count}</div></div>
+            <div class="s-card red"><div class="lbl">ชนะขาดลอย >60%</div><div class="num">${dom.extreme_count}</div></div>
+            <div class="s-card blue"><div class="lbl">เขตสูสี <3%</div><div class="num">${cl.total_close}</div></div>
+            <div class="s-card ${bf.passes_test?'green':'red'}"><div class="lbl">Benford's Law</div><div class="num">${bf.passes_test?'ผ่าน':'ไม่ผ่าน'}</div></div>
+            <div class="s-card orange"><div class="lbl">จว.ผูกขาด</div><div class="num">${prov.monopoly.length}</div></div>
+        `;
+        document.getElementById('summaryCards').innerHTML = html;
+
+        // Verdict
+        let vhtml = '';
+        if (m.flagged_units > m.total_units * 0.3) {
+            vhtml += '<div class="verdict fail">🚨 พบเขตที่มีข้อมูลน่าสงสัย >30% — ควรตรวจสอบอย่างละเอียด</div>';
+        } else if (m.flagged_units > m.total_units * 0.1) {
+            vhtml += '<div class="verdict warn">⚠️ พบเขตที่มีข้อมูลน่าสงสัย '+m.flagged_units+' เขต ('+((m.flagged_units/m.total_units*100).toFixed(1))+'%) — ควรเฝ้าระวัง</div>';
+        }
+        if (!bf.passes_test) {
+            vhtml += '<div class="verdict fail">🚨 ข้อมูลคะแนน <strong>ไม่ผ่าน</strong> Benford\'s Law (χ²='+bf.chi_square+' > เกณฑ์ '+bf.chi_critical_005+') — ตัวเลขอาจไม่เป็นธรรมชาติ</div>';
+        }
+        if (prov.monopoly.length > 10) {
+            vhtml += '<div class="verdict warn">⚠️ พบ '+prov.monopoly.length+' จังหวัดที่พรรคเดียวชนะทุกเขต — อาจบ่งชี้โครงข่ายอิทธิพล</div>';
+        }
+        document.getElementById('verdictArea').innerHTML = vhtml;
+    }
+
+    // ═══ Turnout ═══
+    function renderTurnout() {
+        const s = AD.turnout.summary, dist = AD.turnout.distribution;
+        makeHistChart('turnoutHist', dist, 'อัตราการมาใช้สิทธิ', '#667eea');
+        // Scatter: turnout vs registered
+        const all = AD.turnout.all;
+        makeChart('turnoutScatter', 'scatter', {
+            datasets: [{
+                label: 'เขตเลือกตั้ง',
+                data: all.map(t => ({x: t.registered, y: t.turnout_pct, label: t.constituency})),
+                backgroundColor: all.map(t => t.is_outlier ? '#f5576c' : 'rgba(102,126,234,.4)'),
+                pointRadius: all.map(t => t.is_outlier ? 5 : 3),
+            }]
+        }, {
+            plugins: {title:{display:true,text:'Turnout % vs ผู้มีสิทธิ'}},
+            scales:{x:{title:{display:true,text:'ผู้มีสิทธิ (คน)'}},y:{title:{display:true,text:'Turnout %'}}}
+        });
+
+        let stats = `<div class="stat-box"><span class="key">เฉลี่ย:</span> <span class="val">${s.mean}%</span></div>
+            <div class="stat-box"><span class="key">ค่ามัธยฐาน:</span> <span class="val">${s.median}%</span></div>
+            <div class="stat-box"><span class="key">ส่วนเบี่ยงเบน:</span> <span class="val">${s.stdev}%</span></div>
+            <div class="stat-box"><span class="key">ขอบเขตล่าง (Q1-1.5×IQR):</span> <span class="val">${s.lower_fence}%</span></div>
+            <div class="stat-box"><span class="key">ขอบเขตบน (Q3+1.5×IQR):</span> <span class="val">${s.upper_fence}%</span></div>`;
+        document.getElementById('turnoutStats').innerHTML = stats;
+
+        let tbl = '<table><thead><tr><th>เขต</th><th>จังหวัด</th><th>Turnout</th><th>ผู้มีสิทธิ</th><th>มาใช้สิทธิ</th><th>Z-score</th><th>สถานะ</th></tr></thead><tbody>';
+        AD.turnout.outliers.forEach(t => {
+            tbl += `<tr><td>${t.constituency}</td><td>${t.province}</td><td><strong>${t.turnout_pct}%</strong></td>
+                <td>${t.registered.toLocaleString()}</td><td>${t.came.toLocaleString()}</td>
+                <td>${t.z_score}</td><td><span class="badge ${Math.abs(t.z_score)>3?'badge-high':'badge-medium'}">${t.flag}</span></td></tr>`;
+        });
+        tbl += '</tbody></table>';
+        document.getElementById('turnoutTable').innerHTML = tbl;
+    }
+
+    // ═══ Invalid ═══
+    function renderInvalid() {
+        const s = AD.invalid_ballots.summary, dist = AD.invalid_ballots.distribution;
+        makeHistChart('invalidHist', dist, 'อัตราบัตรเสีย (%)', '#ff6b6b');
+        // Top outliers bar
+        const top = AD.invalid_ballots.outliers.slice(0, 15);
+        makeChart('invalidBar', 'bar', {
+            labels: top.map(t => t.constituency.replace(/\s*เขต\s*/, ' ').substring(0,20)),
+            datasets: [{label:'บัตรเสีย %', data: top.map(t=>t.invalid_rate), backgroundColor:'#ff6b6b'}]
+        }, {indexAxis:'y',plugins:{legend:{display:false},title:{display:true,text:'เขตที่บัตรเสียสูงสุด'}},scales:{x:{beginAtZero:true}}});
+
+        let stats = `<div class="stat-box"><span class="key">เฉลี่ย:</span> <span class="val">${s.mean}%</span></div>
+            <div class="stat-box"><span class="key">ขอบเขตบน (Q3+1.5×IQR):</span> <span class="val">${s.upper_fence}%</span></div>
+            <div class="stat-box"><span class="key">Outlier:</span> <span class="val">${s.outlier_count} เขต</span></div>`;
+        document.getElementById('invalidStats').innerHTML = stats;
+
+        document.getElementById('invalidTable').innerHTML = makeOutlierTable(AD.invalid_ballots.outliers,
+            ['constituency','province','invalid_rate','invalid_votes','turn_out','z_score','flag'],
+            ['เขต','จังหวัด','บัตรเสีย %','จำนวน','ผู้มาใช้สิทธิ','Z-score','สถานะ'], 'invalid_rate');
+    }
+
+    // ═══ Blank ═══
+    function renderBlank() {
+        const dist = AD.blank_votes.distribution, s = AD.blank_votes.summary;
+        makeHistChart('blankHist', dist, 'อัตราไม่ประสงค์ฯ (%)', '#ffa726');
+        const top = AD.blank_votes.outliers.slice(0, 15);
+        makeChart('blankBar', 'bar', {
+            labels: top.map(t => t.constituency.replace(/\s*เขต\s*/, ' ').substring(0,20)),
+            datasets: [{label:'ไม่ประสงค์ฯ %', data: top.map(t=>t.blank_rate), backgroundColor:'#ffa726'}]
+        }, {indexAxis:'y',plugins:{legend:{display:false},title:{display:true,text:'เขตที่ไม่ประสงค์ฯ สูงสุด'}},scales:{x:{beginAtZero:true}}});
+
+        let stats = `<div class="stat-box"><span class="key">เฉลี่ย:</span> <span class="val">${s.mean}%</span></div>
+            <div class="stat-box"><span class="key">ขอบเขตบน:</span> <span class="val">${s.upper_fence}%</span></div>
+            <div class="stat-box"><span class="key">Outlier:</span> <span class="val">${s.outlier_count} เขต</span></div>`;
+        document.getElementById('blankStats').innerHTML = stats;
+        document.getElementById('blankTable').innerHTML = makeOutlierTable(AD.blank_votes.outliers,
+            ['constituency','province','blank_rate','blank_votes','turn_out','z_score','flag'],
+            ['เขต','จังหวัด','ไม่ประสงค์ฯ %','จำนวน','ผู้มาใช้สิทธิ','Z-score','สถานะ'], 'blank_rate');
+    }
+
+    // ═══ Wasted ═══
+    function renderWasted() {
+        const dist = AD.wasted_votes.distribution, s = AD.wasted_votes.summary;
+        makeHistChart('wastedHist', dist, 'คะแนนสูญเปล่า (%)', '#7e57c2');
+        const top = AD.wasted_votes.outliers.slice(0, 15);
+        makeChart('wastedBar', 'bar', {
+            labels: top.map(t => t.constituency.replace(/\s*เขต\s*/, ' ').substring(0,20)),
+            datasets: [{label:'สูญเปล่า %', data: top.map(t=>t.wasted_rate), backgroundColor:'#7e57c2'}]
+        }, {indexAxis:'y',plugins:{legend:{display:false},title:{display:true,text:'เขตที่คะแนนสูญเปล่าสูงสุด'}},scales:{x:{beginAtZero:true}}});
+
+        let stats = `<div class="stat-box"><span class="key">เฉลี่ย:</span> <span class="val">${s.mean}%</span></div>
+            <div class="stat-box"><span class="key">ขอบเขตบน:</span> <span class="val">${s.upper_fence}%</span></div>
+            <div class="stat-box"><span class="key">Outlier:</span> <span class="val">${s.outlier_count} เขต</span></div>`;
+        document.getElementById('wastedStats').innerHTML = stats;
+        document.getElementById('wastedTable').innerHTML = makeOutlierTable(AD.wasted_votes.outliers,
+            ['constituency','province','wasted_rate','wasted_votes','invalid_votes','blank_votes','turn_out','flag'],
+            ['เขต','จังหวัด','สูญเปล่า %','รวม','บัตรเสีย','ไม่ประสงค์ฯ','ผู้มาใช้สิทธิ','สถานะ'], 'wasted_rate');
+    }
+
+    // ═══ Dominance ═══
+    function renderDominance() {
+        const dist = AD.winner_dominance.distribution;
+        makeHistChart('domHist', dist, 'คะแนนผู้ชนะ (% ของบัตรดี)', '#42a5f5');
+
+        // Party breakdown of extreme winners
+        const ext = AD.winner_dominance.extreme;
+        const partyCounts = {};
+        ext.forEach(e => { partyCounts[e.winner] = (partyCounts[e.winner]||0)+1; });
+        const parties = Object.entries(partyCounts).sort((a,b)=>b[1]-a[1]);
+        makeChart('domParty', 'doughnut', {
+            labels: parties.map(p=>p[0]),
+            datasets: [{data: parties.map(p=>p[1]), backgroundColor:['#fd6512','#0c149c','#e02020','#06aff3','#ffc107','#28a745','#764ba2','#999']}]
+        }, {plugins:{title:{display:true,text:'พรรคที่ชนะขาดลอย (>60%) แยกตามพรรค'}}});
+
+        let tbl = '<table><thead><tr><th>เขต</th><th>จังหวัด</th><th>ผู้ชนะ</th><th>คะแนน %</th><th>Margin</th><th>อันดับ 2</th></tr></thead><tbody>';
+        ext.forEach(e => {
+            tbl += `<tr><td>${e.constituency}</td><td>${e.province}</td>
+                <td><span style="color:${e.winner_color};font-weight:600">${e.winner}</span></td>
+                <td><strong>${e.winner_pct}%</strong></td><td>${e.margin}%</td><td>${e.runner_up}</td></tr>`;
+        });
+        tbl += '</tbody></table>';
+        document.getElementById('domTable').innerHTML = tbl;
+    }
+
+    // ═══ Close Races ═══
+    function renderClose() {
+        const races = AD.close_races.close_races;
+        makeChart('closeChart', 'bar', {
+            labels: races.map(r => r.constituency.replace(/\s*เขต\s*/, ' ').substring(0,18)),
+            datasets: [{label:'Margin %', data: races.map(r=>r.margin_pct), backgroundColor: races.map(r=>r.margin_pct<1?'#f5576c':'#ffc107')}]
+        }, {plugins:{title:{display:true,text:'เขตสูสี — margin %'}},scales:{y:{beginAtZero:true}}});
+
+        let tbl = '<table><thead><tr><th>เขต</th><th>จังหวัด</th><th>อันดับ 1</th><th>คะแนน</th><th>อันดับ 2</th><th>คะแนน</th><th>Margin</th><th>นับแล้ว</th></tr></thead><tbody>';
+        races.forEach(r => {
+            tbl += `<tr><td>${r.constituency}</td><td>${r.province}</td>
+                <td><strong>${r.winner}</strong><br><small>${r.winner_name}</small></td><td>${r.winner_votes.toLocaleString()}</td>
+                <td>${r.runner_up}<br><small>${r.runner_up_name}</small></td><td>${r.runner_up_votes.toLocaleString()}</td>
+                <td><strong>${r.margin_pct}%</strong><br>(${r.margin_votes.toLocaleString()} คะแนน)</td>
+                <td>${r.counted_pct.toFixed(1)}%</td></tr>`;
+        });
+        tbl += '</tbody></table>';
+        document.getElementById('closeTable').innerHTML = tbl;
+    }
+
+    // ═══ Benford ═══
+    function renderBenford() {
+        const bf = AD.benford, digits = bf.digits;
+        makeChart('benfordChart', 'bar', {
+            labels: digits.map(d=>''+d.digit),
+            datasets: [
+                {label:'พบจริง %', data: digits.map(d=>d.observed_pct), backgroundColor:'rgba(102,126,234,.7)'},
+                {label:'คาดหวัง (Benford) %', data: digits.map(d=>d.expected_pct), backgroundColor:'rgba(245,87,108,.5)'}
+            ]
+        }, {plugins:{title:{display:true,text:'Benford\'s Law — เลขหลักแรกของคะแนนผู้สมัคร'}},scales:{y:{beginAtZero:true,title:{display:true,text:'%'}},x:{title:{display:true,text:'เลขหลักแรก'}}}});
+
+        makeChart('benfordDev', 'bar', {
+            labels: digits.map(d=>''+d.digit),
+            datasets: [{label:'ส่วนเบี่ยงเบน %', data: digits.map(d=>d.deviation), backgroundColor: digits.map(d=>Math.abs(d.deviation)>2?'#f5576c':'#667eea')}]
+        }, {plugins:{title:{display:true,text:'ส่วนเบี่ยงเบนจาก Benford\'s Law'}},scales:{y:{title:{display:true,text:'เบี่ยงเบน (%)'}},x:{title:{display:true,text:'เลขหลักแรก'}}}});
+
+        const v = bf.summary;
+        document.getElementById('benfordVerdict').innerHTML = v.passes_test
+            ? '<div class="verdict pass">✅ <strong>ผ่าน</strong> Benford\'s Law — ตัวเลขดูเป็นธรรมชาติ (χ²='+v.chi_square+' < '+v.chi_critical_005+')</div>'
+            : '<div class="verdict fail">❌ <strong>ไม่ผ่าน</strong> Benford\'s Law — ตัวเลขอาจไม่เป็นธรรมชาติ (χ²='+v.chi_square+' > '+v.chi_critical_005+')</div>';
+
+        document.getElementById('benfordExplain').innerHTML = `
+            <strong>Benford's Law คืออะไร?</strong><br>
+            กฎของเบนฟอร์ดระบุว่าในชุดข้อมูลตัวเลขที่เกิดขึ้นตามธรรมชาติ เลข 1 จะปรากฏเป็นหลักแรกบ่อยที่สุด (~30.1%) และเลข 9 จะปรากฏน้อยที่สุด (~4.6%)
+            หากข้อมูลคะแนนเลือกตั้งเบี่ยงเบนจาก Benford's Law อย่างมีนัยสำคัญ อาจบ่งชี้ว่ามีการแก้ไขหรือปลอมแปลงตัวเลข<br><br>
+            <strong>การทดสอบ:</strong> ใช้ Chi-square test เปรียบเทียบการกระจายเลขหลักแรกที่พบจริง vs ที่คาดหวังจาก Benford's Law
+            ค่า χ² = ${v.chi_square} ${v.passes_test ? '< ' : '> '} ${v.chi_critical_005} (เกณฑ์ที่ α=0.05, df=8)<br>
+            <strong>จำนวนคะแนนที่ใช้วิเคราะห์:</strong> ${v.total_values.toLocaleString()} ค่า
+        `;
+    }
+
+    // ═══ Province ═══
+    function renderProvince() {
+        const mono = AD.province_patterns.monopoly;
+        makeChart('monopolyChart', 'bar', {
+            labels: mono.map(m=>m.province),
+            datasets: [{label:'จำนวนเขต', data: mono.map(m=>m.total_cons), backgroundColor: mono.map(m=>'#f5576c')}]
+        }, {plugins:{title:{display:true,text:'จังหวัดที่พรรคเดียวชนะทุกเขต'}},scales:{y:{beginAtZero:true}}});
+
+        let tbl = '<table><thead><tr><th>จังหวัด</th><th>เขตทั้งหมด</th><th>พรรคที่ชนะ</th><th>Turnout เฉลี่ย</th><th>บัตรเสียเฉลี่ย</th></tr></thead><tbody>';
+        mono.forEach(m => {
+            tbl += `<tr><td><strong>${m.province}</strong></td><td>${m.total_cons}</td>
+                <td><strong>${m.dominant_party}</strong></td><td>${m.avg_turnout}%</td><td>${m.avg_invalid_rate}%</td></tr>`;
+        });
+        tbl += '</tbody></table>';
+        document.getElementById('monopolyTable').innerHTML = tbl;
+    }
+
+    // ═══ Math ═══
+    function renderMath() {
+        const mc = AD.math_consistency;
+        let v = '';
+        if (mc.summary.turnout_math_errors === 0 && mc.summary.candidate_sum_errors === 0) {
+            v = '<div class="verdict pass">✅ <strong>ผ่าน</strong> — ผลรวมคะแนนตรงกับจำนวนผู้มาใช้สิทธิทุกเขต และผลรวมรายผู้สมัครตรงกับบัตรดีทุกเขต</div>';
+        } else {
+            v = '<div class="verdict fail">❌ พบความไม่สอดคล้อง — Turnout errors: '+mc.summary.turnout_math_errors+', Candidate sum errors: '+mc.summary.candidate_sum_errors+'</div>';
+        }
+        document.getElementById('mathVerdict').innerHTML = v;
+
+        let detail = `<div class="stat-box"><span class="key">ตรวจสอบ 1:</span> <span class="val">บัตรดี + บัตรเสีย + ไม่ประสงค์ฯ = ผู้มาใช้สิทธิ → ผิดพลาด ${mc.summary.turnout_math_errors} เขต</span></div>
+            <div class="stat-box"><span class="key">ตรวจสอบ 2:</span> <span class="val">ผลรวมคะแนนรายผู้สมัคร = บัตรดี → ผิดพลาด ${mc.summary.candidate_sum_errors} เขต</span></div>`;
+
+        if (mc.candidate_sum_errors.length > 0) {
+            detail += '<h3 style="margin-top:16px">เขตที่ผลรวมไม่ตรง</h3><table><thead><tr><th>เขต</th><th>บัตรดี</th><th>ผลรวมผู้สมัคร</th><th>ผลต่าง</th></tr></thead><tbody>';
+            mc.candidate_sum_errors.forEach(e => {
+                detail += `<tr><td>${e.constituency}</td><td>${e.valid_votes.toLocaleString()}</td><td>${e.candidate_sum.toLocaleString()}</td><td>${e.difference.toLocaleString()}</td></tr>`;
+            });
+            detail += '</tbody></table>';
+        }
+        document.getElementById('mathDetail').innerHTML = detail;
+    }
+
+    // ═══ Counting ═══
+    function renderCounting() {
+        const cp = AD.counting_progress;
+        let stats = `<div class="stat-box"><span class="key">นับครบ 100%:</span> <span class="val">${cp.summary.complete} เขต</span></div>
+            <div class="stat-box"><span class="key">ยังไม่ครบ:</span> <span class="val">${cp.summary.incomplete} เขต</span></div>
+            <div class="stat-box"><span class="key">หยุดรายงาน:</span> <span class="val">${cp.summary.paused} เขต</span></div>`;
+        document.getElementById('countingStats').innerHTML = stats;
+
+        if (cp.paused.length > 0) {
+            let tbl = '<table><thead><tr><th>เขต</th><th>จังหวัด</th><th>หน่วยนับแล้ว</th><th>หน่วยทั้งหมด</th><th>%</th></tr></thead><tbody>';
+            cp.paused.forEach(p => {
+                tbl += `<tr><td>${p.constituency}</td><td>${p.province}</td><td>${p.counted_stations}</td><td>${p.total_stations}</td><td>${p.percent_count}%</td></tr>`;
+            });
+            tbl += '</tbody></table>';
+            document.getElementById('pausedTable').innerHTML = tbl;
+        } else {
+            document.getElementById('pausedTable').innerHTML = '<p style="color:var(--muted)">ไม่มีเขตที่หยุดรายงาน</p>';
+        }
+
+        let tbl2 = '<table><thead><tr><th>เขต</th><th>จังหวัด</th><th>นับแล้ว</th><th>ทั้งหมด</th><th>คงเหลือ</th><th>%</th></tr></thead><tbody>';
+        cp.most_incomplete.forEach(p => {
+            tbl2 += `<tr><td>${p.constituency}</td><td>${p.province}</td><td>${p.counted_stations}</td><td>${p.total_stations}</td><td>${p.remaining}</td><td>${p.percent_count}%</td></tr>`;
+        });
+        tbl2 += '</tbody></table>';
+        document.getElementById('incompleteTable').innerHTML = tbl2;
+    }
+
+    // ═══ All flags ═══
+    function renderAllFlags() {
+        const flags = AD.all_flags.sort((a,b) => b.severity === 'high' ? 1 : -1);
+        let tbl = '<table><thead><tr><th>เขต</th><th>จังหวัด</th><th>ประเภท</th><th>รายละเอียด</th><th>ระดับ</th></tr></thead><tbody>';
+        flags.forEach(f => {
+            const catMap = {turnout:'Turnout',invalid:'บัตรเสีย',blank:'ไม่ประสงค์ฯ',wasted:'สูญเปล่า',dominance:'ชนะขาดลอย'};
+            tbl += `<tr><td>${f.constituency}</td><td>${f.province}</td>
+                <td>${catMap[f.category]||f.category}</td><td>${f.detail}</td>
+                <td><span class="badge badge-${f.severity}">${f.severity==='high'?'สูง':'ปานกลาง'}</span></td></tr>`;
+        });
+        tbl += '</tbody></table>';
+        document.getElementById('allFlagsTable').innerHTML = tbl;
+    }
+
+    // ═══ Chart helpers ═══
+    function makeHistChart(id, dist, label, color) {
+        makeChart(id, 'bar', {
+            labels: dist.labels,
+            datasets: [{label: label, data: dist.counts, backgroundColor: color}]
+        }, {plugins:{legend:{display:false},title:{display:true,text:label}},scales:{y:{beginAtZero:true,title:{display:true,text:'จำนวนเขต'}}}});
+    }
+
+    function makeChart(id, type, data, options) {
+        if (charts[id]) charts[id].destroy();
+        const ctx = document.getElementById(id);
+        if (!ctx) return;
+        charts[id] = new Chart(ctx.getContext('2d'), {
+            type, data, options: Object.assign({responsive:true,maintainAspectRatio:false}, options||{})
+        });
+    }
+
+    function makeOutlierTable(items, keys, headers, highlightKey) {
+        let tbl = '<table><thead><tr>' + headers.map(h=>'<th>'+h+'</th>').join('') + '</tr></thead><tbody>';
+        items.forEach(item => {
+            tbl += '<tr>';
+            keys.forEach(k => {
+                let v = item[k];
+                if (typeof v === 'number' && !Number.isInteger(v)) v = v.toFixed(2);
+                if (typeof v === 'number' && v > 999) v = v.toLocaleString();
+                if (k === highlightKey) v = '<strong>'+v+'%</strong>';
+                if (k === 'flag') v = '<span class="badge badge-medium">'+v+'</span>';
+                tbl += '<td>'+v+'</td>';
+            });
+            tbl += '</tr>';
+        });
+        tbl += '</tbody></table>';
+        return tbl;
+    }
+    </script>
+</body>
+</html>
