@@ -287,31 +287,32 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>🔍 ระบบตรวจสอบการเลือกตั้ง 2026</h1>
-            <p>Election Verification Dashboard - เปรียบเทียบข้อมูล กกต. vs Vote62.com</p>
+            <h1>🔍 ระบบตรวจสอบการเลือกตั้ง 2569</h1>
+            <p>Election Verification Dashboard - ข้อมูลจาก กกต. (รอข้อมูล Vote62 เพื่อเปรียบเทียบ)</p>
+            <p id="lastUpdate" style="color:#999;font-size:0.9em;margin-top:5px;"></p>
         </div>
         
         <!-- Statistics Cards -->
         <div class="stats-grid">
-            <div class="stat-card identical">
+            <div class="stat-card" style="border-left:4px solid var(--primary)">
+                <div class="icon">🗳️</div>
+                <div class="number" id="stat-turnout">-</div>
+                <div class="label">ผู้มาใช้สิทธิ</div>
+            </div>
+            <div class="stat-card" style="border-left:4px solid var(--success)">
+                <div class="icon">📍</div>
+                <div class="number" id="stat-units">-</div>
+                <div class="label">เขตเลือกตั้ง</div>
+            </div>
+            <div class="stat-card" style="border-left:4px solid var(--info)">
+                <div class="icon">�</div>
+                <div class="number" id="stat-percent">-</div>
+                <div class="label">นับคะแนนแล้ว (%)</div>
+            </div>
+            <div class="stat-card" style="border-left:4px solid var(--warning)">
                 <div class="icon">✅</div>
-                <div class="number" id="stat-identical">0</div>
-                <div class="label">เหมือนกันเป๊ะ</div>
-            </div>
-            <div class="stat-card minor">
-                <div class="icon">⚠️</div>
-                <div class="number" id="stat-minor">0</div>
-                <div class="label">แตกต่างเล็กน้อย</div>
-            </div>
-            <div class="stat-card significant">
-                <div class="icon">🚨</div>
-                <div class="number" id="stat-significant">0</div>
-                <div class="label">แตกต่างมาก</div>
-            </div>
-            <div class="stat-card critical">
-                <div class="icon">🔴</div>
-                <div class="number" id="stat-critical">0</div>
-                <div class="label">แตกต่างร้ายแรง</div>
+                <div class="number" id="stat-valid">-</div>
+                <div class="label">คะแนนที่ถูกต้อง</div>
             </div>
         </div>
         
@@ -319,11 +320,8 @@
         <div class="viz-section">
             <h2>🎛️ ตัวเลือกการแสดงผล</h2>
             <div class="controls">
-                <select id="provinceSelect">
+                <select id="provinceSelect" onchange="filterByProvince()">
                     <option value="all">ทุกจังหวัด</option>
-                    <option value="bangkok">กรุงเทพมหานคร</option>
-                    <option value="chiangmai">เชียงใหม่</option>
-                    <option value="phuket">ภูเก็ต</option>
                 </select>
                 
                 <select id="chartType">
@@ -345,7 +343,7 @@
         
         <!-- Chart: Overview -->
         <div class="viz-section">
-            <h2>📊 ภาพรวมการเปรียบเทียบ</h2>
+            <h2>📊 คะแนนรวมรายพรรค (Top 10)</h2>
             <div class="chart-container">
                 <canvas id="overviewChart"></canvas>
             </div>
@@ -353,15 +351,15 @@
         
         <!-- Chart: Party Comparison -->
         <div class="viz-section">
-            <h2>🏛️ เปรียบเทียบคะแนนรายพรรค</h2>
+            <h2>🏛️ บัญชีพรรค (เขต vs บัญชีรายชื่อ)</h2>
             <div class="chart-container">
                 <canvas id="partyChart"></canvas>
             </div>
         </div>
         
-        <!-- Chart: Discrepancy Distribution -->
+        <!-- Chart: Turnout Distribution -->
         <div class="viz-section">
-            <h2>📈 การกระจายของความแตกต่าง</h2>
+            <h2>📈 การกระจายของผู้มาใช้สิทธิ (%)</h2>
             <div class="chart-container">
                 <canvas id="distributionChart"></canvas>
             </div>
@@ -380,12 +378,12 @@
                 <table id="resultsTable">
                     <thead>
                         <tr>
-                            <th>รหัสหน่วย</th>
-                            <th>เขต</th>
-                            <th>กกต.</th>
-                            <th>Vote62</th>
-                            <th>ส่วนต่าง</th>
-                            <th>สถานะ</th>
+                            <th>รหัสเขต</th>
+                            <th>เขตเลือกตั้ง</th>
+                            <th>ผู้ชนะ อันดับ 1</th>
+                            <th>คะแนน</th>
+                            <th>ผู้มาใช้สิทธิ</th>
+                            <th>นับแล้ว (%)</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
@@ -417,56 +415,7 @@
         let map;
         let charts = {};
         let data = null;
-        
-        // Sample data structure (will be loaded from JSON file)
-        const sampleData = {
-            metadata: {
-                last_update: "2026-02-12T15:30:00",
-                total_units: 31200,
-                compared_units: 5000
-            },
-            statistics: {
-                identical: 4200,
-                minor: 500,
-                significant: 250,
-                critical: 50
-            },
-            units: [
-                {
-                    unit_id: "001001",
-                    constituency: "กรุงเทพมหานคร เขต 1",
-                    province: "bangkok",
-                    ect_total: 3550,
-                    vote62_total: 3550,
-                    difference: 0,
-                    level: "identical",
-                    lat: 13.7563,
-                    lng: 100.5018,
-                    parties: [
-                        { name: "พรรค A", ect: 1500, vote62: 1500 },
-                        { name: "พรรค B", ect: 1200, vote62: 1200 },
-                        { name: "พรรค C", ect: 800, vote62: 800 }
-                    ]
-                },
-                {
-                    unit_id: "001002",
-                    constituency: "กรุงเทพมหานคร เขต 1",
-                    province: "bangkok",
-                    ect_total: 3680,
-                    vote62_total: 3550,
-                    difference: 130,
-                    level: "critical",
-                    lat: 13.7600,
-                    lng: 100.5100,
-                    parties: [
-                        { name: "พรรค A", ect: 1630, vote62: 1500 },
-                        { name: "พรรค B", ect: 1200, vote62: 1200 },
-                        { name: "พรรค C", ect: 850, vote62: 850 }
-                    ]
-                }
-                // More units...
-            ]
-        };
+        let filteredUnits = [];
         
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -474,35 +423,76 @@
             loadData();
         });
         
-        // Load data (from JSON file or sample data)
+        // Load data from JSON file
         function loadData() {
-            // In production, load from: fetch('data/election_data.json')
-            // For now, use sample data
-            data = sampleData;
-            updateUI();
+            fetch('data/election_data.json')
+                .then(r => {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                })
+                .then(json => {
+                    data = json;
+                    filteredUnits = data.units;
+                    populateProvinceFilter();
+                    updateUI();
+                })
+                .catch(err => {
+                    console.error('Failed to load data:', err);
+                    document.getElementById('lastUpdate').textContent = 
+                        'ไม่สามารถโหลดข้อมูลได้: ' + err.message;
+                });
+        }
+        
+        // Populate province dropdown
+        function populateProvinceFilter() {
+            const sel = document.getElementById('provinceSelect');
+            if (!data || !data.provinces) return;
+            const provs = Object.values(data.provinces).sort((a,b) => a.name.localeCompare(b.name, 'th'));
+            provs.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.prov_id;
+                opt.textContent = p.name + ' (' + p.units + ' เขต)';
+                sel.appendChild(opt);
+            });
+        }
+        
+        // Filter by province
+        function filterByProvince() {
+            const val = document.getElementById('provinceSelect').value;
+            if (val === 'all') {
+                filteredUnits = data.units;
+            } else {
+                filteredUnits = data.units.filter(u => u.prov_id === val);
+            }
+            updateTable();
         }
         
         // Update all UI components
         function updateUI() {
             if (!data) return;
-            
             updateStats();
             updateCharts();
             updateMap();
             updateTable();
-            checkCriticalUnits();
         }
         
         // Update statistics cards
         function updateStats() {
-            document.getElementById('stat-identical').textContent = 
-                data.statistics.identical.toLocaleString();
-            document.getElementById('stat-minor').textContent = 
-                data.statistics.minor.toLocaleString();
-            document.getElementById('stat-significant').textContent = 
-                data.statistics.significant.toLocaleString();
-            document.getElementById('stat-critical').textContent = 
-                data.statistics.critical.toLocaleString();
+            const ns = data.metadata.national_stats || {};
+            document.getElementById('stat-turnout').textContent = 
+                (ns.turn_out || 0).toLocaleString();
+            document.getElementById('stat-units').textContent = 
+                (data.metadata.total_units || 0).toLocaleString();
+            document.getElementById('stat-percent').textContent = 
+                (ns.percent_count || 0).toFixed(2) + '%';
+            document.getElementById('stat-valid').textContent = 
+                (ns.valid_votes || 0).toLocaleString();
+            
+            if (data.metadata.last_update) {
+                const d = new Date(data.metadata.last_update);
+                document.getElementById('lastUpdate').textContent = 
+                    'อัปเดตล่าสุด: ' + d.toLocaleString('th-TH');
+            }
         }
         
         // Update charts
@@ -512,73 +502,58 @@
             createDistributionChart();
         }
         
-        // Overview Chart
+        // Overview Chart - Top 10 parties by constituency votes
         function createOverviewChart() {
             const ctx = document.getElementById('overviewChart').getContext('2d');
+            if (charts.overview) charts.overview.destroy();
             
-            if (charts.overview) {
-                charts.overview.destroy();
-            }
+            const np = data.national_parties || [];
+            const labels = np.map(p => p.name);
+            const votes = np.map(p => p.cons_votes);
+            const colors = np.map(p => p.color || '#667eea');
             
             charts.overview = new Chart(ctx, {
-                type: 'doughnut',
+                type: 'bar',
                 data: {
-                    labels: ['✅ เหมือนกันเป๊ะ', '⚠️ แตกต่างเล็กน้อย', 
-                             '🚨 แตกต่างมาก', '🔴 แตกต่างร้ายแรง'],
+                    labels: labels,
                     datasets: [{
-                        data: [
-                            data.statistics.identical,
-                            data.statistics.minor,
-                            data.statistics.significant,
-                            data.statistics.critical
-                        ],
-                        backgroundColor: [
-                            '#28a745',
-                            '#ffc107',
-                            '#ff6b6b',
-                            '#f5576c'
-                        ]
+                        label: 'คะแนนเขต',
+                        data: votes,
+                        backgroundColor: colors
                     }]
                 },
                 options: {
+                    indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
+                        legend: { display: false },
                         title: {
                             display: true,
-                            text: 'สัดส่วนผลการเปรียบเทียบ'
+                            text: 'คะแนนรวมรายพรรค (เขตเลือกตั้ง) - Top 10'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: v => (v/1000000).toFixed(1) + 'M'
+                            }
                         }
                     }
                 }
             });
         }
         
-        // Party Comparison Chart
+        // Party Chart - Constituency vs Party List votes
         function createPartyChart() {
             const ctx = document.getElementById('partyChart').getContext('2d');
+            if (charts.party) charts.party.destroy();
             
-            if (charts.party) {
-                charts.party.destroy();
-            }
-            
-            // Aggregate party data
-            const partyData = {};
-            data.units.forEach(unit => {
-                unit.parties.forEach(party => {
-                    if (!partyData[party.name]) {
-                        partyData[party.name] = { ect: 0, vote62: 0 };
-                    }
-                    partyData[party.name].ect += party.ect;
-                    partyData[party.name].vote62 += party.vote62;
-                });
-            });
-            
-            const labels = Object.keys(partyData);
-            const ectData = labels.map(name => partyData[name].ect);
-            const vote62Data = labels.map(name => partyData[name].vote62);
+            const np = data.national_parties || [];
+            const labels = np.map(p => p.name);
+            const consVotes = np.map(p => p.cons_votes);
+            const listVotes = np.map(p => p.party_list_votes);
             
             charts.party = new Chart(ctx, {
                 type: 'bar',
@@ -586,14 +561,14 @@
                     labels: labels,
                     datasets: [
                         {
-                            label: 'กกต.',
-                            data: ectData,
-                            backgroundColor: '#667eea'
+                            label: 'คะแนนเขต',
+                            data: consVotes,
+                            backgroundColor: 'rgba(102,126,234,0.8)'
                         },
                         {
-                            label: 'Vote62',
-                            data: vote62Data,
-                            backgroundColor: '#f5576c'
+                            label: 'บัญชีรายชื่อ',
+                            data: listVotes,
+                            backgroundColor: 'rgba(245,87,108,0.8)'
                         }
                     ]
                 },
@@ -603,34 +578,34 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'เปรียบเทียบคะแนนรวมรายพรรค'
+                            text: 'เปรียบเทียบคะแนนเขต vs บัญชีรายชื่อ'
                         }
                     },
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            ticks: {
+                                callback: v => (v/1000000).toFixed(1) + 'M'
+                            }
                         }
                     }
                 }
             });
         }
         
-        // Distribution Chart
+        // Distribution Chart - Turnout distribution
         function createDistributionChart() {
             const ctx = document.getElementById('distributionChart').getContext('2d');
+            if (charts.distribution) charts.distribution.destroy();
             
-            if (charts.distribution) {
-                charts.distribution.destroy();
-            }
-            
-            // Create histogram of differences
-            const differences = data.units.map(u => u.difference);
-            const bins = [0, 10, 50, 100, 200, 500, Infinity];
+            const turnouts = data.units.map(u => u.percent_turn_out || 0);
+            const bins = [0, 50, 55, 60, 65, 70, 75, 80, 100];
+            const binLabels = ['<50%', '50-55%', '55-60%', '60-65%', '65-70%', '70-75%', '75-80%', '80%+'];
             const counts = new Array(bins.length - 1).fill(0);
             
-            differences.forEach(diff => {
+            turnouts.forEach(t => {
                 for (let i = 0; i < bins.length - 1; i++) {
-                    if (diff >= bins[i] && diff < bins[i + 1]) {
+                    if (t >= bins[i] && t < bins[i + 1]) {
                         counts[i]++;
                         break;
                     }
@@ -640,9 +615,9 @@
             charts.distribution = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['0-10', '10-50', '50-100', '100-200', '200-500', '500+'],
+                    labels: binLabels,
                     datasets: [{
-                        label: 'จำนวนหน่วย',
+                        label: 'จำนวนเขต',
                         data: counts,
                         backgroundColor: '#667eea'
                     }]
@@ -653,22 +628,16 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'การกระจายของความแตกต่าง (คะแนน)'
+                            text: 'การกระจายของผู้มาใช้สิทธิ (% ต่อเขต)'
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'จำนวนหน่วยเลือกตั้ง'
-                            }
+                            title: { display: true, text: 'จำนวนเขต' }
                         },
                         x: {
-                            title: {
-                                display: true,
-                                text: 'ช่วงความแตกต่าง (คะแนน)'
-                            }
+                            title: { display: true, text: 'สัดส่วนผู้มาใช้สิทธิ' }
                         }
                     }
                 }
@@ -678,48 +647,14 @@
         // Initialize map
         function initMap() {
             map = L.map('map').setView([13.7563, 100.5018], 6);
-            
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
+                attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
         }
         
-        // Update map with markers
+        // Update map (placeholder - no lat/lng in current data)
         function updateMap() {
-            // Clear existing markers
-            map.eachLayer(layer => {
-                if (layer instanceof L.Marker) {
-                    map.removeLayer(layer);
-                }
-            });
-            
-            // Add markers for each unit
-            data.units.forEach(unit => {
-                if (unit.lat && unit.lng) {
-                    const color = unit.level === 'critical' ? 'red' :
-                                 unit.level === 'significant' ? 'orange' :
-                                 unit.level === 'minor' ? 'yellow' : 'green';
-                    
-                    const marker = L.circleMarker([unit.lat, unit.lng], {
-                        radius: 8,
-                        fillColor: color,
-                        color: '#fff',
-                        weight: 2,
-                        opacity: 1,
-                        fillOpacity: 0.8
-                    }).addTo(map);
-                    
-                    marker.bindPopup(`
-                        <strong>หน่วย ${unit.unit_id}</strong><br>
-                        ${unit.constituency}<br>
-                        <hr>
-                        กกต.: ${unit.ect_total.toLocaleString()}<br>
-                        Vote62: ${unit.vote62_total.toLocaleString()}<br>
-                        ส่วนต่าง: ${unit.difference.toLocaleString()}<br>
-                        <strong style="color: ${color}">${getLevelText(unit.level)}</strong>
-                    `);
-                }
-            });
+            // Map markers will be added when we have lat/lng data
         }
         
         // Update table
@@ -727,70 +662,44 @@
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
             
-            data.units.forEach(unit => {
+            filteredUnits.forEach(unit => {
                 const row = tbody.insertRow();
+                const winnerStyle = unit.winner_color ? 
+                    `style="color:${unit.winner_color};font-weight:bold"` : '';
                 row.innerHTML = `
                     <td>${unit.unit_id}</td>
                     <td>${unit.constituency}</td>
-                    <td>${unit.ect_total.toLocaleString()}</td>
-                    <td>${unit.vote62_total.toLocaleString()}</td>
-                    <td>${unit.difference.toLocaleString()}</td>
-                    <td><span class="badge badge-${unit.level}">${getLevelText(unit.level)}</span></td>
+                    <td ${winnerStyle}>${unit.winner || '-'}</td>
+                    <td>${(unit.winner_votes || 0).toLocaleString()}</td>
+                    <td>${(unit.turn_out || 0).toLocaleString()}</td>
+                    <td>${(unit.percent_count || 0).toFixed(1)}%</td>
                 `;
             });
-        }
-        
-        // Check for critical units
-        function checkCriticalUnits() {
-            const critical = data.units.filter(u => u.level === 'critical');
-            
-            if (critical.length > 0) {
-                document.getElementById('criticalAlert').style.display = 'block';
-                const list = document.getElementById('criticalList');
-                list.innerHTML = '<ul>' + critical.map(u => 
-                    `<li><strong>หน่วย ${u.unit_id}</strong> (${u.constituency}): 
-                     ต่าง ${u.difference.toLocaleString()} คะแนน</li>`
-                ).join('') + '</ul>';
-            }
-        }
-        
-        // Helper function
-        function getLevelText(level) {
-            const map = {
-                'identical': '✅ เหมือนกันเป๊ะ',
-                'minor': '⚠️ แตกต่างเล็กน้อย',
-                'significant': '🚨 แตกต่างมาก',
-                'critical': '🔴 แตกต่างร้ายแรง'
-            };
-            return map[level] || level;
         }
         
         // Export data
         function exportData() {
             if (!data) return;
-            
-            // Convert to CSV
-            const headers = ['รหัสหน่วย', 'เขต', 'กกต.', 'Vote62', 'ส่วนต่าง', 'สถานะ'];
-            const rows = data.units.map(u => [
+            const headers = ['รหัสเขต', 'เขตเลือกตั้ง', 'จังหวัด', 'ผู้ชนะ', 'คะแนนผู้ชนะ', 
+                'ผู้มาใช้สิทธิ', 'คะแนนถูกต้อง', 'นับแล้ว(%)'];
+            const rows = filteredUnits.map(u => [
                 u.unit_id,
-                u.constituency,
-                u.ect_total,
-                u.vote62_total,
-                u.difference,
-                getLevelText(u.level)
+                '"' + u.constituency + '"',
+                '"' + u.province + '"',
+                '"' + (u.winner || '') + '"',
+                u.winner_votes || 0,
+                u.turn_out || 0,
+                u.valid_votes || 0,
+                (u.percent_count || 0).toFixed(1)
             ]);
             
             let csv = headers.join(',') + '\n';
-            rows.forEach(row => {
-                csv += row.join(',') + '\n';
-            });
+            rows.forEach(row => { csv += row.join(',') + '\n'; });
             
-            // Download
             const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'election_verification_' + new Date().toISOString().split('T')[0] + '.csv');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'election_data_' + new Date().toISOString().split('T')[0] + '.csv';
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
