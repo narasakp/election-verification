@@ -18,3 +18,15 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Dependencies
+node_modules/
+
+# Review app sample images (large binary files)
+review-app/public/
+
+# Secrets
+.env
+credentials.json
+token.json
+token_full.json
