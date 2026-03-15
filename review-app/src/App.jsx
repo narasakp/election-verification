@@ -502,10 +502,45 @@ function App() {
   if (!user) return <AuthGate renderButton={renderButton} />
 
   if (loading) return <div className="flex items-center justify-center h-screen"><div className="text-xl text-gray-500 animate-pulse">Loading...</div></div>
-  if (error) return (
-    <div className="flex flex-col items-center justify-center h-screen gap-4">
-      <div className="text-xl text-red-500">Error: {error}</div>
-      <div className="text-sm text-gray-400">Run: <code className="bg-gray-100 px-2 py-1 rounded">python scripts/prepare_review_data.py</code></div>
+  if (error && allItems.length === 0) return (
+    <div className="flex flex-col items-center justify-center h-screen gap-6 px-4">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold text-indigo-900 mb-2">🔍 OCR Review — สส.5/16</h1>
+        <p className="text-gray-500">ระบบตรวจสอบผลการนับคะแนนเลือกตั้ง สส. 2569</p>
+      </div>
+      <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
+        <FolderUp size={48} className="mx-auto text-indigo-400 mb-4" />
+        <h2 className="text-lg font-semibold text-gray-800 mb-2">อัปโหลดข้อมูลเพื่อเริ่มตรวจสอบ</h2>
+        <p className="text-sm text-gray-500 mb-4">เลือกไฟล์ JSON ที่สร้างจาก <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs">prepare_review_data.py</code></p>
+        <label className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-lg cursor-pointer hover:bg-indigo-700 transition font-medium">
+          <Upload size={18} /> เลือกไฟล์ JSON
+          <input type="file" accept=".json" className="hidden" onChange={(e) => {
+            const file = e.target.files?.[0]
+            if (!file) return
+            const reader = new FileReader()
+            reader.onload = (ev) => {
+              try {
+                const data = JSON.parse(ev.target.result)
+                const items = Array.isArray(data) ? data : (data.items || data.data || [])
+                if (items.length > 0) {
+                  setAllItems(items)
+                  setError(null)
+                } else {
+                  alert('ไม่พบข้อมูลในไฟล์')
+                }
+              } catch { alert('ไฟล์ JSON ไม่ถูกต้อง') }
+            }
+            reader.readAsText(file)
+          }} />
+        </label>
+      </div>
+      {user && (
+        <div className="flex items-center gap-2 text-sm text-gray-400">
+          <img src={user.picture} alt="" className="w-5 h-5 rounded-full" />
+          <span>{user.name}</span>
+          <button onClick={signOut} className="text-indigo-500 hover:underline ml-2">ออกจากระบบ</button>
+        </div>
+      )}
     </div>
   )
 
