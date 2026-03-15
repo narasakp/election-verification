@@ -23,7 +23,8 @@ Thumbs.db
 node_modules/
 
 # Review app sample images (large binary files)
-review-app/public/
+review-app/public/images/
+review-app/public/data/*.png
 
 # Secrets
 .env
