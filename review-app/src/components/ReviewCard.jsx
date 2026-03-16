@@ -306,8 +306,16 @@ export default function ReviewCard({ item, review, reviewSummary, isFirstPage, s
                 loading="lazy"
               />
             ) : (
-              <div className="flex items-center justify-center h-[400px] text-gray-500 text-sm">
-                ไม่มีภาพ
+              <div className="flex flex-col items-center justify-center h-[400px] text-gray-400 text-sm gap-3 px-4">
+                <span className="text-4xl">📄</span>
+                <span>ไม่มีภาพตัวอย่างออนไลน์</span>
+                <span className="text-xs text-gray-500 text-center">รายการนี้ใช้ Vision OCR จากไฟล์ local<br/>สามารถตรวจสอบข้อมูลจากตารางด้านขวาได้</span>
+                {item.drive_view_url && (
+                  <a href={item.drive_view_url} target="_blank" rel="noopener noreferrer"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition">
+                    เปิด PDF ใน Google Drive
+                  </a>
+                )}
               </div>
             )}
           </div>
