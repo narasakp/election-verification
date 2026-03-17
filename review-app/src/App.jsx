@@ -3,6 +3,7 @@ import ReviewCard from './components/ReviewCard'
 import FilterBar from './components/FilterBar'
 import StatsBar from './components/StatsBar'
 import DataStatsPanel from './components/DataStatsPanel'
+import BackupDashboard from './components/BackupDashboard'
 import UploadPanel from './components/UploadPanel'
 import AdminPanel from './components/AdminPanel'
 import AuthGate from './components/AuthGate'
@@ -636,6 +637,9 @@ function App() {
 
       {/* Data Stats */}
       <DataStatsPanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} anomalyMeta={anomalyMeta} />
+
+      {/* ECT Backup Dashboard */}
+      <BackupDashboard />
 
       {/* Navigation */}
       <div className="max-w-[1400px] mx-auto px-4 py-2 flex items-center justify-between">
