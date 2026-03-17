@@ -106,7 +106,7 @@ function EditInput({ field, value, isText, intOnly, edits, onEdit, shared, share
   )
 }
 
-export default function ReviewCard({ item, review, reviewSummary, isFirstPage, sharedEdits, onSetStatus, onSetNote, onEdit, onSharedEdit }) {
+export default function ReviewCard({ item, review, reviewSummary, isFirstPage, sharedEdits, anomalyFlags, onSetStatus, onSetNote, onEdit, onSharedEdit }) {
   const [showOcrText, setShowOcrText] = useState(false)
   const [zoomed, setZoomed] = useState(false)
   const [rotation, setRotation] = useState(0)
@@ -261,6 +261,29 @@ export default function ReviewCard({ item, review, reviewSummary, isFirstPage, s
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {/* ECT Anomaly Flags (cross-reference from constituency-level analysis) */}
+      {anomalyFlags && anomalyFlags.length > 0 && (
+        <div className="px-4 py-2 border-b bg-purple-50 border-purple-200">
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className="text-sm">🔬</span>
+            <span className="text-xs font-semibold text-purple-800 uppercase tracking-wider">ข้อมูล กกต. ระดับเขต — {item.province} เขต {item.constituency}</span>
+            <a href="https://narasakp.github.io/election-verification/anomaly.html" target="_blank" rel="noopener noreferrer"
+               className="ml-auto text-[10px] text-purple-600 hover:text-purple-800 underline flex items-center gap-0.5">
+              <ExternalLink size={10} /> ดูวิเคราะห์ฉบับเต็ม
+            </a>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {anomalyFlags.map((f, i) => (
+              <span key={i} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                f.severity === 'high' ? 'bg-red-100 text-red-800 border border-red-200' : 'bg-amber-100 text-amber-800 border border-amber-200'
+              }`}>
+                {f.severity === 'high' ? '🚨' : '⚠️'} {f.detail}
+              </span>
+            ))}
+          </div>
         </div>
       )}
 

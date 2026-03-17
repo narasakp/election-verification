@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
-import { ChevronDown, ChevronRight, BarChart3, AlertTriangle, FileText, Info } from 'lucide-react'
+import { ChevronDown, ChevronRight, BarChart3, AlertTriangle, FileText, Info, ExternalLink } from 'lucide-react'
 
-export default function DataStatsPanel({ allItems, review }) {
+export default function DataStatsPanel({ allItems, review, anomalyFlags }) {
   const [expanded, setExpanded] = useState(false)
 
   const provStats = useMemo(() => {
@@ -155,6 +155,70 @@ export default function DataStatsPanel({ allItems, review }) {
                 </p>
               </div>
             )}
+
+            {/* ECT Anomaly Analysis cross-reference */}
+            {anomalyFlags && Object.keys(anomalyFlags).length > 0 && (() => {
+              // Compute summary from flags
+              const allFlags = Object.values(anomalyFlags).flat()
+              const highCount = allFlags.filter(f => f.severity === 'high').length
+              const categories = {}
+              allFlags.forEach(f => { categories[f.category] = (categories[f.category] || 0) + 1 })
+              const catLabels = { turnout: 'Turnout ผิดปกติ', invalid: 'บัตรเสียสูง', blank: 'ไม่ประสงค์ฯ สูง', wasted: 'คะแนนสูญเปล่า', dominance: 'ชนะขาดลอย' }
+              // Which flagged constituencies overlap with our provinces?
+              const ourProvs = new Set(allItems.map(d => d.province))
+              const relevantFlags = Object.entries(anomalyFlags).filter(([key]) => {
+                const prov = key.split('_')[0]
+                return ourProvs.has(prov)
+              })
+              return (
+                <div className="mb-4 bg-purple-50 border border-purple-200 rounded-lg px-4 py-3">
+                  <h4 className="text-xs font-bold text-purple-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <span>🔬</span>
+                    วิเคราะห์ความผิดปกติ — ข้อมูล กกต. ระดับเขต (400 เขตทั่วประเทศ)
+                    <a href="https://narasakp.github.io/election-verification/anomaly.html" target="_blank" rel="noopener noreferrer"
+                       className="ml-auto text-[11px] text-purple-600 hover:text-purple-800 underline flex items-center gap-0.5 font-medium normal-case">
+                      <ExternalLink size={11} /> เปิดหน้าวิเคราะห์ฉบับเต็ม
+                    </a>
+                  </h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 mb-2">
+                    <div className="bg-white border border-purple-100 rounded px-2.5 py-1.5 text-center">
+                      <div className="text-base font-bold text-purple-700">{Object.keys(anomalyFlags).length}</div>
+                      <div className="text-[10px] text-gray-500">เขตที่ถูก flag</div>
+                    </div>
+                    {highCount > 0 && (
+                      <div className="bg-white border border-red-100 rounded px-2.5 py-1.5 text-center">
+                        <div className="text-base font-bold text-red-600">{highCount}</div>
+                        <div className="text-[10px] text-gray-500">flag ระดับสูง</div>
+                      </div>
+                    )}
+                    {Object.entries(categories).sort((a,b) => b[1]-a[1]).map(([cat, cnt]) => (
+                      <div key={cat} className="bg-white border border-purple-100 rounded px-2.5 py-1.5 text-center">
+                        <div className="text-base font-bold text-purple-700">{cnt}</div>
+                        <div className="text-[10px] text-gray-500">{catLabels[cat] || cat}</div>
+                      </div>
+                    ))}
+                  </div>
+                  {relevantFlags.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-[11px] font-semibold text-purple-700 mb-1">เขตในข้อมูล OCR ที่ถูก flag:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {relevantFlags.map(([key, flags]) => {
+                          const [prov, con] = [key.substring(0, key.lastIndexOf('_')), key.substring(key.lastIndexOf('_') + 1)]
+                          const hasHigh = flags.some(f => f.severity === 'high')
+                          return (
+                            <span key={key} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium ${
+                              hasHigh ? 'bg-red-100 text-red-800 border border-red-200' : 'bg-amber-100 text-amber-800 border border-amber-200'
+                            }`}>
+                              {hasHigh ? '🚨' : '⚠️'} {prov} เขต {con}: {flags.map(f => f.flag).join(', ')}
+                            </span>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )
+            })()}
 
             {/* Data Quality Warnings */}
             {qualityIssues.length > 0 && (

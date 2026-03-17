@@ -13,6 +13,7 @@ import { validateItem, getWorstSeverity } from './utils/validation'
 import { ChevronLeft, ChevronRight, Download, Upload, FolderUp, LogOut, ShieldCheck, ChevronDown } from 'lucide-react'
 
 const DATA_URL = './data/review_data.json'
+const ANOMALY_FLAGS_URL = './data/anomaly_flags.json'
 
 function App() {
   const { user, loading: authLoading, signOut, renderButton } = useAuth()
@@ -33,6 +34,7 @@ function App() {
   const [showExportMenu, setShowExportMenu] = useState(false)
   const [rateLimitWarning, setRateLimitWarning] = useState(null)
   const [showAdminPanel, setShowAdminPanel] = useState(false)
+  const [anomalyFlags, setAnomalyFlags] = useState({})
   const exportMenuRef = React.useRef(null)
 
   // Close export menu on outside click
@@ -55,6 +57,14 @@ function App() {
   }, [])
 
   useEffect(() => { loadData() }, [loadData])
+
+  // Load anomaly flags (constituency-level ECT anomalies)
+  useEffect(() => {
+    fetch(ANOMALY_FLAGS_URL)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.flags_by_prov_con) setAnomalyFlags(d.flags_by_prov_con) })
+      .catch(() => {}) // silently ignore if not available
+  }, [])
 
   // Load saved review from per-user localStorage + global review log
   useEffect(() => {
@@ -621,7 +631,7 @@ function App() {
       />
 
       {/* Data Stats */}
-      <DataStatsPanel allItems={allItems} review={review} />
+      <DataStatsPanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} />
 
       {/* Navigation */}
       <div className="max-w-[1400px] mx-auto px-4 py-2 flex items-center justify-between">
@@ -647,6 +657,7 @@ function App() {
             reviewSummary={reviewSummaries[currentItem.id] || null}
             isFirstPage={isFirstPage}
             sharedEdits={sharedEdits[currentConstKey] || {}}
+            anomalyFlags={anomalyFlags[`${currentItem.province}_${currentItem.constituency}`] || null}
             onSetStatus={(status) => setItemStatus(currentItem.id, status)}
             onSetNote={(note) => setItemNote(currentItem.id, note)}
             onEdit={(field, value, orig) => setItemEdit(currentItem.id, field, value, orig)}
