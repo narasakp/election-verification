@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { ChevronDown, ChevronRight, BarChart3, AlertTriangle } from 'lucide-react'
+import { ChevronDown, ChevronRight, BarChart3, AlertTriangle, FileText, Info } from 'lucide-react'
 
 export default function DataStatsPanel({ allItems, review }) {
   const [expanded, setExpanded] = useState(false)
@@ -11,7 +11,7 @@ export default function DataStatsPanel({ allItems, review }) {
       if (!map[p]) map[p] = {
         total: 0, constituency: 0, partyList: 0, other: 0,
         withCands: 0, flagged: 0, reviewed: 0,
-        visionOcr: 0, noBallotData: 0, candMismatch: 0, noStationNo: 0,
+        visionOcr: 0, noBallotData: 0, candMismatch: 0, noStationNo: 0, multiPage: 0,
         bkStations: new Set(), bnStations: new Set(), byZone: {}
       }
       const s = map[p]
@@ -25,6 +25,7 @@ export default function DataStatsPanel({ allItems, review }) {
       if (d._source_type === 'vision') s.visionOcr++
       if (d._candidate_mismatch) s.candMismatch++
       if (!d.ocr_station_no && !d.station_no) s.noStationNo++
+      if ((d.total_pages || 1) > 2) s.multiPage++
       const hasBallot = ['registered_voters', 'turnout', 'ballots_received', 'valid_ballots', 'invalid_ballots', 'remaining_ballots']
         .some(f => d[f] != null)
       if (!hasBallot) s.noBallotData++
@@ -45,6 +46,34 @@ export default function DataStatsPanel({ allItems, review }) {
     return map
   }, [allItems, review])
 
+  // PDF document statistics
+  const pdfStats = useMemo(() => {
+    const multiPageItems = allItems.filter(d => (d.total_pages || 1) > 2)
+    const singlePageItems = allItems.filter(d => (d.total_pages || 1) <= 2)
+    let maxPages = 0
+    let maxPageFile = ''
+    // Group by pdf_url to find shared PDFs
+    const pdfGroups = {}
+    allItems.forEach(d => {
+      const tp = d.total_pages || 1
+      if (tp > maxPages) { maxPages = tp; maxPageFile = d.file || '' }
+      const url = d.pdf_url || ''
+      if (url) {
+        if (!pdfGroups[url]) pdfGroups[url] = { count: 0, totalPages: tp }
+        pdfGroups[url].count++
+      }
+    })
+    // Find most shared PDF
+    let maxShared = 0
+    let maxSharedPages = 0
+    Object.values(pdfGroups).forEach(g => {
+      if (g.count > maxShared) { maxShared = g.count; maxSharedPages = g.totalPages }
+    })
+    const splitDone = singlePageItems.length
+    const splitRemaining = multiPageItems.length
+    return { multiPageItems: splitRemaining, singlePageItems: splitDone, maxPages, maxPageFile, maxShared, maxSharedPages, total: allItems.length }
+  }, [allItems])
+
   // Global data quality issues
   const qualityIssues = useMemo(() => {
     const issues = []
@@ -55,12 +84,13 @@ export default function DataStatsPanel({ allItems, review }) {
       totals.mismatch += s.candMismatch
       totals.noStation += s.noStationNo
     })
+    if (pdfStats.multiPageItems > 0) issues.push({ icon: '📄', text: `${pdfStats.multiPageItems.toLocaleString()} รายการยัง PDF รวมหลายหน้า (กกต. รวมหลายหน่วยใน PDF เดียว สูงสุด ${pdfStats.maxPages} หน้า / ${pdfStats.maxShared} items) — กำลังตัดอัตโนมัติ`, severity: 'warn' })
     if (totals.vision > 0) issues.push({ icon: '👁', text: `${totals.vision} หน้าใช้ Vision OCR (คุณภาพต่ำกว่า Gemini) — ควรตรวจละเอียด`, severity: 'warn' })
     if (totals.noBallot > 0) issues.push({ icon: '📭', text: `${totals.noBallot} หน้าไม่มีข้อมูลตัวเลข (บัตร/คะแนน) — OCR อาจอ่านไม่ออก`, severity: 'warn' })
     if (totals.mismatch > 0) issues.push({ icon: '⚠', text: `${totals.mismatch} หน้าผู้สมัครไม่ตรง กกต. — อาจมีแถวผีหรืออ่านผิด`, severity: 'warn' })
     if (totals.noStation > 0) issues.push({ icon: '📍', text: `${totals.noStation} หน้าไม่ทราบหมายเลขหน่วย — จับคู่ข้ามไฟล์ยาก`, severity: 'info' })
     return issues
-  }, [provStats])
+  }, [provStats, pdfStats])
 
   if (allItems.length === 0) return null
 
@@ -85,6 +115,47 @@ export default function DataStatsPanel({ allItems, review }) {
 
         {expanded && (
           <div className="pb-4">
+            {/* PDF Document Info */}
+            {pdfStats.multiPageItems > 0 && (
+              <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3">
+                <h4 className="text-xs font-bold text-blue-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <FileText size={13} />
+                  สถานะเอกสาร PDF
+                </h4>
+                <p className="text-xs text-blue-800 mb-2">
+                  <strong>ปัญหา:</strong> กกต. รวมหลายหน่วยเลือกตั้งไว้ใน PDF เดียว (เช่น 14, 18 หรือสูงสุด {pdfStats.maxPages} หน้า)
+                  แต่ OCR แต่ละรายการใช้เพียง 1–2 หน้า ทำให้ผู้ตรวจสอบต้องเลื่อนหาหน้าที่ถูกต้องเอง
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2">
+                  <div className="bg-white border border-blue-100 rounded px-2.5 py-1.5 text-center">
+                    <div className="text-base font-bold text-green-700">{pdfStats.singlePageItems.toLocaleString()}</div>
+                    <div className="text-[10px] text-gray-500">ตัดเป็นหน้าเดียวแล้ว</div>
+                  </div>
+                  <div className="bg-white border border-blue-100 rounded px-2.5 py-1.5 text-center">
+                    <div className="text-base font-bold text-amber-600">{pdfStats.multiPageItems.toLocaleString()}</div>
+                    <div className="text-[10px] text-gray-500">ยังรวมหลายหน้า (กำลังตัด)</div>
+                  </div>
+                  <div className="bg-white border border-blue-100 rounded px-2.5 py-1.5 text-center">
+                    <div className="text-base font-bold text-red-600">{pdfStats.maxPages}</div>
+                    <div className="text-[10px] text-gray-500">PDF ใหญ่สุด (หน้า)</div>
+                  </div>
+                  <div className="bg-white border border-blue-100 rounded px-2.5 py-1.5 text-center">
+                    <div className="text-base font-bold text-indigo-700">{pdfStats.maxShared}</div>
+                    <div className="text-[10px] text-gray-500">items ชี้ PDF เดียวกัน (สูงสุด)</div>
+                  </div>
+                </div>
+                <div className="w-full bg-blue-100 rounded-full h-2 mb-1">
+                  <div
+                    className="bg-green-500 h-2 rounded-full transition-all"
+                    style={{ width: `${Math.round(pdfStats.singlePageItems / pdfStats.total * 100)}%` }}
+                  />
+                </div>
+                <p className="text-[10px] text-blue-600">
+                  ตัดแล้ว {Math.round(pdfStats.singlePageItems / pdfStats.total * 100)}% — รายการที่เหลือกำลังตัดอัตโนมัติ อาจใช้เวลาหลายชั่วโมง
+                </p>
+              </div>
+            )}
+
             {/* Data Quality Warnings */}
             {qualityIssues.length > 0 && (
               <div className="mb-4 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
@@ -120,6 +191,7 @@ export default function DataStatsPanel({ allItems, review }) {
                     <StatCard label="มีปัญหา" value={`${s.flagged} (${flagPct}%)`} color={flagPct > 20 ? 'red' : flagPct > 10 ? 'amber' : 'gray'} />
                     {s.visionOcr > 0 && <StatCard label="Vision OCR" value={s.visionOcr} color="amber" />}
                     {s.noBallotData > 0 && <StatCard label="ไม่มีตัวเลข" value={s.noBallotData} color="red" />}
+                    {s.multiPage > 0 && <StatCard label="PDF หลายหน้า" value={s.multiPage} color="amber" />}
                   </div>
 
                   {/* Zone table */}
