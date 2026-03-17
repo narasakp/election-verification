@@ -181,7 +181,7 @@ export default function DataStatsPanel({ allItems, review, anomalyFlags, anomaly
                   <h4 className="text-xs font-bold text-purple-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                     <span>🔬</span>
                     วิเคราะห์ความผิดปกติ — ข้อมูล กกต. ระดับเขต ({anomalyMeta?.total_units || 400} เขตทั่วประเทศ)
-                    <a href="https://narasakp.github.io/election-verification/anomaly.html" target="_blank" rel="noopener noreferrer"
+                    <a href="./anomaly.html" target="_blank" rel="noopener noreferrer"
                        className="ml-auto text-[11px] text-purple-600 hover:text-purple-800 underline flex items-center gap-0.5 font-medium normal-case">
                       <ExternalLink size={11} /> เปิดหน้าวิเคราะห์ฉบับเต็ม
                     </a>
