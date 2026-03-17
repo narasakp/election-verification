@@ -35,6 +35,7 @@ function App() {
   const [rateLimitWarning, setRateLimitWarning] = useState(null)
   const [showAdminPanel, setShowAdminPanel] = useState(false)
   const [anomalyFlags, setAnomalyFlags] = useState({})
+  const [anomalyMeta, setAnomalyMeta] = useState(null)
   const exportMenuRef = React.useRef(null)
 
   // Close export menu on outside click
@@ -62,7 +63,10 @@ function App() {
   useEffect(() => {
     fetch(ANOMALY_FLAGS_URL)
       .then(r => r.ok ? r.json() : null)
-      .then(d => { if (d?.flags_by_prov_con) setAnomalyFlags(d.flags_by_prov_con) })
+      .then(d => {
+        if (d?.flags_by_prov_con) setAnomalyFlags(d.flags_by_prov_con)
+        if (d?.metadata) setAnomalyMeta(d.metadata)
+      })
       .catch(() => {}) // silently ignore if not available
   }, [])
 
@@ -631,7 +635,7 @@ function App() {
       />
 
       {/* Data Stats */}
-      <DataStatsPanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} />
+      <DataStatsPanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} anomalyMeta={anomalyMeta} />
 
       {/* Navigation */}
       <div className="max-w-[1400px] mx-auto px-4 py-2 flex items-center justify-between">

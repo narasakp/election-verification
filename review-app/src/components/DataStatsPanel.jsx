@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { ChevronDown, ChevronRight, BarChart3, AlertTriangle, FileText, Info, ExternalLink } from 'lucide-react'
 
-export default function DataStatsPanel({ allItems, review, anomalyFlags }) {
+export default function DataStatsPanel({ allItems, review, anomalyFlags, anomalyMeta }) {
   const [expanded, setExpanded] = useState(false)
 
   const provStats = useMemo(() => {
@@ -172,9 +172,15 @@ export default function DataStatsPanel({ allItems, review, anomalyFlags }) {
               })
               return (
                 <div className="mb-4 bg-purple-50 border border-purple-200 rounded-lg px-4 py-3">
+                  {anomalyMeta?.disclaimer && (
+                    <div className="mb-2 px-2.5 py-1.5 bg-amber-50 border border-amber-200 rounded text-[11px] text-amber-800 flex items-start gap-1.5">
+                      <Info size={13} className="flex-shrink-0 mt-0.5" />
+                      <span><strong>ข้อจำกัดของข้อมูล:</strong> {anomalyMeta.disclaimer}{anomalyMeta.data_snapshot ? ` (${anomalyMeta.data_snapshot})` : ''}</span>
+                    </div>
+                  )}
                   <h4 className="text-xs font-bold text-purple-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                     <span>🔬</span>
-                    วิเคราะห์ความผิดปกติ — ข้อมูล กกต. ระดับเขต (400 เขตทั่วประเทศ)
+                    วิเคราะห์ความผิดปกติ — ข้อมูล กกต. ระดับเขต ({anomalyMeta?.total_units || 400} เขตทั่วประเทศ)
                     <a href="https://narasakp.github.io/election-verification/anomaly.html" target="_blank" rel="noopener noreferrer"
                        className="ml-auto text-[11px] text-purple-600 hover:text-purple-800 underline flex items-center gap-0.5 font-medium normal-case">
                       <ExternalLink size={11} /> เปิดหน้าวิเคราะห์ฉบับเต็ม

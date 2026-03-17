@@ -270,6 +270,9 @@ export default function ReviewCard({ item, review, reviewSummary, isFirstPage, s
           <div className="flex items-center gap-1.5 mb-1">
             <span className="text-sm">🔬</span>
             <span className="text-xs font-semibold text-purple-800 uppercase tracking-wider">ข้อมูล กกต. ระดับเขต — {item.province} เขต {item.constituency}</span>
+            {anomalyFlags.some(f => f.incomplete) && (
+              <span className="text-[9px] text-amber-600 italic">(ข้อมูลยังนับไม่ครบ 100%)</span>
+            )}
             <a href="https://narasakp.github.io/election-verification/anomaly.html" target="_blank" rel="noopener noreferrer"
                className="ml-auto text-[10px] text-purple-600 hover:text-purple-800 underline flex items-center gap-0.5">
               <ExternalLink size={10} /> ดูวิเคราะห์ฉบับเต็ม
