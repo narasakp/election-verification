@@ -25,7 +25,7 @@ const VOTE_TYPE_TABS = [
   { key: 'นอกเขต', label: 'นอกเขต', icon: '📮', desc: null },
 ]
 
-export default function FilterBar({
+export default React.memo(function FilterBar({
   filterStatus, setFilterStatus,
   filterProvince, setFilterProvince,
   provinces,
@@ -122,4 +122,4 @@ export default function FilterBar({
       </div>
     </div>
   )
-}
+})

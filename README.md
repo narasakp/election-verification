@@ -1,368 +1,270 @@
-# 🗳️ ระบบตรวจสอบการเลือกตั้ง 2026 - Election Verification System
+# Election Verification System
 
-## 📊 ภาพรวมโปรเจค
+Open-source system for verifying Thailand's 2026 general election results by OCR-ing official station-level tally sheets (Form สส.5/16, สส.5/18) and cross-referencing with ECT (Election Commission of Thailand) digital data.
 
-ระบบตรวจสอบความโปร่งใสของข้อมูลการเลือกตั้งโดยเปรียบเทียบข้อมูลจาก **กกต. (Electoral Commission of Thailand)** กับข้อมูลจากภาคประชาชนผ่าน **Vote62.com** (โดย iLaw, Rocket Media Lab และ Opendream)
-
-### 🎯 วัตถุประสงค์
-
-1. ✅ เปรียบเทียบข้อมูลจากสองแหล่งอิสระ
-2. ✅ ตรวจหาความผิดปกติด้วยสถิติและ Machine Learning
-3. ✅ แสดงผลด้วย Interactive Dashboard
-4. ✅ สร้างหลักฐานสำหรับการตรวจสอบและฟ้องร้อง
-5. ✅ รองรับการ deploy บน GitHub Pages (ฟรี)
+**Live Demo:** [narasakp.github.io/election-verification](https://narasakp.github.io/election-verification/)
 
 ---
 
-## 📦 ไฟล์ในโปรเจค
+## Overview
 
-```
-election-verification-system/
-├── 📄 README.md (ไฟล์นี้)
-│
-├── 🐍 Python Scripts (สำหรับประมวลผลข้อมูล)
-│   ├── election_verification_system.py    # ระบบหลัก
-│   ├── vote62_comparator.py              # เปรียบเทียบ กกต. vs Vote62
-│   ├── advanced_analytics.py             # วิเคราะห์ทางสถิติขั้นสูง
-│   ├── generate_json_data.py             # สร้างข้อมูล JSON
-│   └── examples.py                       # ตัวอย่างการใช้งาน
-│
-├── 🌐 Web Dashboards (แสดงผลข้อมูล)
-│   ├── dashboard.html                    # Dashboard พื้นฐาน
-│   ├── vote62_dashboard.html             # Dashboard เปรียบเทียบ
-│   └── github_pages_dashboard.html       # Dashboard สำหรับ GitHub Pages
-│
-├── 📚 Documentation (คู่มือ)
-│   ├── VOTE62_COMPARISON_GUIDE.md        # คู่มือเปรียบเทียบข้อมูล
-│   └── GITHUB_PAGES_DEPLOYMENT.md        # คู่มือ deploy บน GitHub Pages
-│
-└── 📊 Sample Data
-    └── election_data_sample.json         # ข้อมูลตัวอย่าง
-```
+| Metric | Value |
+|--------|-------|
+| PDF documents scraped | 149,936 (77 provinces) |
+| Provinces with OCR | 3 (Chaiyaphum, Tak, Phetchabun) |
+| OCR records | 12,376 |
+| Review items | 6,111 |
+| React components | 5 |
+| Python scripts | 60+ |
+| Total dev hours | 256+ |
+
+### What this project does
+
+1. **Scrape** official election tally PDFs from all 77 ECT provincial websites
+2. **Back up** all PDFs to Google Drive (149,936 files)
+3. **OCR** handwritten Thai documents using multi-model AI (Gemini Flash, Cloud Vision, Claude)
+4. **Postprocess** with a 9-rule pipeline to fix OCR errors and normalize data
+5. **Cross-validate** against ECT digital results and Killernay ground truth
+6. **Detect anomalies** across 8 statistical dimensions (turnout, invalid ballots, etc.)
+7. **Citizen review** via React web app with Google Sign-In authentication
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
-### สำหรับผู้ใช้งานทั่วไป (ไม่ต้องเขียนโค้ด)
+### View the Review App (no setup needed)
 
-**วิธีที่ 1: ใช้ Web Dashboard**
-1. เปิดไฟล์ `github_pages_dashboard.html` ในเบราว์เซอร์
-2. Dashboard จะแสดงข้อมูลทันที (ใช้ sample data)
-3. ดูผลการเปรียบเทียบเป็นกราฟและตาราง
+Visit [narasakp.github.io/election-verification](https://narasakp.github.io/election-verification/) to browse OCR results, view scanned PDFs, and check anomaly flags.
 
-**วิธีที่ 2: ดู GitHub Pages (ถ้ามี)**
-- เข้า URL: `https://YOUR_USERNAME.github.io/election-verification/`
-- ข้อมูลจะอัพเดทอัตโนมัติ
-
-### สำหรับนักพัฒนา/นักวิเคราะห์
-
-**ติดตั้ง Dependencies:**
-```bash
-pip install requests pandas numpy scipy matplotlib
-```
-
-**รันโปรแกรม:**
-```bash
-# ตัวอย่างการใช้งาน
-python examples.py
-
-# เปรียบเทียบหน่วยเดี่ยว
-python -c "from vote62_comparator import Vote62Comparator; \
-           c = Vote62Comparator(); \
-           c.compare_unit_results('001001', 'กรุงเทพฯ เขต 1')"
-
-# วิเคราะห์ทางสถิติ
-python advanced_analytics.py
-```
-
----
-
-## 💡 ฟีเจอร์หลัก
-
-### 1️⃣ การเปรียบเทียบข้อมูล (vote62_comparator.py)
-
-```python
-from vote62_comparator import Vote62Comparator
-
-comparator = Vote62Comparator()
-
-# เปรียบเทียบหน่วยเดี่ยว
-result = comparator.compare_unit_results("001001", "กรุงเทพฯ เขต 1")
-
-# เปรียบเทียบหลายหน่วยพร้อมกัน
-unit_ids = ["001001", "001002", "001003"]
-constituencies = {
-    "001001": "กรุงเทพฯ เขต 1",
-    "001002": "กรุงเทพฯ เขต 1",
-    "001003": "กรุงเทพฯ เขต 1"
-}
-df = comparator.batch_compare(unit_ids, constituencies)
-
-# สร้างรายงาน
-comparator.print_summary()
-comparator.export_to_csv("results.csv")
-```
-
-**ระดับความแตกต่าง:**
-- ✅ **IDENTICAL**: เหมือนกันเป๊ะ (0 คะแนน)
-- ⚠️ **MINOR**: แตกต่างเล็กน้อย (1-10 คะแนน)
-- 🚨 **SIGNIFICANT**: แตกต่างมาก (11-50 คะแนน)
-- 🔴 **CRITICAL**: แตกต่างร้ายแรง (>50 คะแนน)
-
-### 2️⃣ การวิเคราะห์ทางสถิติ (advanced_analytics.py)
-
-```python
-from advanced_analytics import AdvancedElectionAnalytics
-
-analytics = AdvancedElectionAnalytics()
-
-# Benford's Law Test
-result = analytics.benford_law_test(votes_list)
-print(result['interpretation'])
-
-# ตรวจหารูปแบบการยัดบัตร
-patterns = analytics.detect_vote_stuffing_patterns(df)
-
-# สร้างรายงานเต็ม
-report = analytics.generate_full_report(df)
-print(f"Risk Level: {report['risk_level']}")
-```
-
-**การวิเคราะห์:**
-- 📊 **Benford's Law**: ตรวจสอบความเป็นธรรมชาติของตัวเลข
-- 🔢 **Round Numbers**: หาตัวเลขกลมๆ ที่ผิดปกติ
-- 📈 **Variance Analysis**: วิเคราะห์ความแปรปรวน
-- 📉 **Outlier Detection**: หาค่าผิดปกติ
-
-### 3️⃣ Interactive Dashboard
-
-**ฟีเจอร์:**
-- 📊 กราฟแสดงสัดส่วนผลการเปรียบเทียบ (Doughnut Chart)
-- 🏛️ เปรียบเทียบคะแนนรายพรรค (Bar Chart)
-- 📈 การกระจายของความแตกต่าง (Histogram)
-- 🗺️ แผนที่แสดงหน่วยที่มีปัญหา (Interactive Map)
-- 📋 ตารางรายละเอียด (Sortable Table)
-- 🚨 แจ้งเตือนหน่วย Critical
-
----
-
-## 📖 Use Cases
-
-### Use Case 1: ตรวจสอบเขตของคุณ
-
-```python
-# ใช้ examples.py
-python examples.py
-# เลือก 2: ตรวจสอบทั้งเขต
-
-# กรอกรายการหน่วยในเขตของคุณ
-# ระบบจะแสดงหน่วยที่น่าสงสัย
-```
-
-### Use Case 2: สืบสวนหน่วยที่มีข่าวลือ
-
-```python
-# ใช้ examples.py
-python examples.py
-# เลือก 4: สืบสวนแบบเป้าหมาย
-
-# กรอกรายการหน่วยที่ต้องการตรวจสอบ
-# ระบบจะเปรียบเทียบและสร้างหลักฐาน
-```
-
-### Use Case 3: วิเคราะห์ระดับจังหวัด
-
-```python
-# เตรียมไฟล์ CSV: province_units.csv
-# Format: unit_id, constituency, province
-
-# รัน
-python examples.py
-# เลือก 3: ตรวจสอบระดับจังหวัด
-```
-
-### Use Case 4: Deploy บน GitHub Pages
-
-ดูคู่มือเต็มที่ `GITHUB_PAGES_DEPLOYMENT.md`
+### Run locally
 
 ```bash
-# 1. Clone repo
-git clone https://github.com/YOUR_USERNAME/election-verification.git
+# Clone
+git clone https://github.com/narasakp/election-verification.git
+cd election-verification
 
-# 2. Copy ไฟล์
-cp github_pages_dashboard.html index.html
-mkdir data
-cp election_data_sample.json data/election_data.json
+# Setup API keys
+cp .env.example .env
+# Edit .env with your API keys (see .env.example for details)
 
-# 3. Push
-git add .
-git commit -m "Initial commit"
-git push origin main
+# Install Python dependencies
+pip install -r requirements.txt
 
-# 4. เปิดใช้งาน GitHub Pages ใน Settings
+# Run the React Review App
+cd review-app
+npm install
+npm run dev -- --port 3000
+# Open http://localhost:3000
+```
+
+### Run OCR pipeline
+
+```bash
+# OCR a province (requires Gemini API key)
+python scripts/ocr_multimodel.py --province chaiyaphum --all --resume
+
+# Postprocess OCR results
+python scripts/postprocess.py --province chaiyaphum
+
+# Generate review data for the React app
+python scripts/prepare_review_data.py
 ```
 
 ---
 
-## 🎯 การใช้งานตามเอกสาร Vote62
+## Architecture
 
-ตามที่เอกสารจาก Vote62 แนะนำ ระบบนี้รองรับ:
-
-### ✅ ขั้นตอนที่ 1: อัพโหลดภาพ
-- ระบบนี้ **ไม่ได้จัดการภาพโดยตรง**
-- กรุณาอัพโหลดภาพไปที่ vote62.com ตามปกติ
-
-### ✅ ขั้นตอนที่ 2: ช่วยกรอกคะแนน
-- เข้า vote62.com และกรอกคะแนนตามภาพ
-- ระบบนี้จะดึงข้อมูลที่กรอกแล้วมาเปรียบเทียบ
-
-### ✅ ขั้นตอนที่ 3: ดาวน์โหลดจาก กกต.
-- ระบบดึงข้อมูลอัตโนมัติจาก กกต. API
-
-### ✅ ขั้นตอนที่ 4: เปรียบเทียบ
-- **นี่คือจุดเด่นของระบบ!**
-- เปรียบเทียบอัตโนมัติและแจ้งเตือนความผิดปกติ
-
----
-
-## 🔍 Digital Audit Trail
-
-ระบบตรวจสอบจุดสำคัญ 3 จุดตามที่เอกสารระบุ:
-
-### 1. เปรียบเทียบภาพถ่ายกับตัวเลข
-```python
-# ตรวจสอบว่าตัวเลขใน กกต. ตรงกับภาพถ่ายใน Vote62 หรือไม่
-comparator.compare_with_photos(photo_data, digital_data)
 ```
-
-### 2. ตรวจสอบจุดเปลี่ยนแปลงข้อมูล
-```python
-# เปรียบเทียบข้อมูลระหว่างขั้นตอนที่ 5 (อำเภอ) กับขั้นตอนที่ 8 (Dashboard)
-comparator.verify_data_consistency(step5_data, step8_data)
-```
-
-### 3. วิเคราะห์ความเร็วการส่งข้อมูล
-```python
-# หาความผิดปกติ: หน่วยห่างไกลส่งข้อมูลเร็วกว่าในเมือง
-comparator.analyze_timing_anomalies(df)
+ECT Provincial Websites (77 provinces)
+        |
+        | download_ss518.py
+        v
+Google Drive (149,936 PDFs, 77 provinces)
+        |
+        | split_and_upload.py → single-page PDFs
+        | build_drive_index.py
+        v
+OCR Pipeline
+  ├── Gemini Flash (primary)
+  ├── Gemini Flash-Lite (fallback)
+  └── Cloud Vision + rule-based parser
+        |
+        | ocr_multimodel.py
+        v
+Postprocessing Pipeline (9 rules)
+  R0a/b → R0c/d → R3/R4 → R5/R6 → R7 → R8/R9 → cross-val
+        |
+        v
+React Review App (GitHub Pages)
+  ├── ReviewCard — OCR data + PDF side-by-side
+  ├── DataStatsPanel — statistics & quality metrics
+  ├── BackupDashboard — Google Drive backup status
+  ├── CandidateTable — candidate vote comparison
+  └── Anomaly flags with incomplete-data awareness
 ```
 
 ---
 
-## 🌐 Tech Stack
+## Project Structure
 
-### ✅ รองรับ GitHub Pages 100%
-
-**Frontend (Client-side only):**
-- HTML5 + CSS3 + JavaScript (Vanilla)
-- Chart.js 4.4.0 (กราฟ)
-- Leaflet.js 1.9.4 (แผนที่)
-- D3.js v7 (Visualization ขั้นสูง)
-
-**Data Storage:**
-- JSON Files (Static files on GitHub)
-- ไม่ต้องการ database
-
-**Backend (สำหรับประมวลผลข้อมูล):**
-- Python 3.11+
-- pandas, numpy, scipy
-- requests
-
-**Deployment:**
-- GitHub Pages (ฟรี, HTTPS, Custom domain)
-- ไม่ต้องการ server
-
----
-
-## 📊 ข้อมูลปัจจุบัน (12 กุมภาพันธ์ 2026)
-
-จากข้อมูล Vote62.com:
-- 📸 **31,200+ หน่วย** มีภาพถ่ายแล้ว (เกือบ 1/3 ของทั้งหมด)
-- 🎯 **95,000 หน่วย** ทั้งประเทศ
-- 📈 ยังต้องการอาสาสมัครกรอกคะแนนอีกมาก
-
----
-
-## 🚨 เมื่อพบความผิดปกติ
-
-### ขั้นตอนการรายงาน
-
-1. **บันทึกหลักฐาน**
-   - Screenshot ผลการเปรียบเทียบ
-   - บันทึกรหัสหน่วย + เขต
-   - Export CSV
-
-2. **ตรวจสอบซ้ำ**
-   - ดูภาพถ่ายใน Vote62 อีกครั้ง
-   - เปรียบเทียบกับแหล่งอื่น (ถ้ามี)
-
-3. **รายงานไปยัง**
-   - 📧 iLaw: https://ilaw.or.th
-   - 📧 Vote62: https://vote62.com
-   - 📞 กกต. สายด่วน: 1-444
-   - 📱 Social Media: #นับใหม่ทั้งประเทศ
+```
+election-verification/
+├── review-app/                # React Review App (Vite + TailwindCSS)
+│   ├── src/
+│   │   ├── App.jsx            # Main app with filters, pagination, review logic
+│   │   ├── components/
+│   │   │   ├── ReviewCard.jsx      # OCR data display + PDF viewer
+│   │   │   ├── DataStatsPanel.jsx  # Stats dashboard + anomaly summary
+│   │   │   ├── BackupDashboard.jsx # Google Drive backup status
+│   │   │   └── CandidateTable.jsx  # Candidate vote table
+│   │   ├── hooks/
+│   │   │   └── useAuth.js     # Google Sign-In authentication
+│   │   └── utils/
+│   │       ├── validation.js  # Data validation rules
+│   │       └── reviewLog.js   # Review state management
+│   └── public/data/           # Static JSON data files
+│       ├── review_data.json   # OCR results for review
+│       ├── anomaly_flags.json # Anomaly detection results
+│       └── backup_status.json # Drive backup status
+│
+├── scripts/                   # Python processing scripts
+│   ├── download_ss518.py      # Scrape PDFs from ECT websites
+│   ├── ocr_multimodel.py      # Multi-model OCR pipeline
+│   ├── ocr_cloud_vision.py    # Cloud Vision OCR + parser
+│   ├── postprocess.py         # 9-rule postprocessing pipeline
+│   ├── prepare_review_data.py # Generate review JSON
+│   ├── analyze_anomalies.py   # 8-dimension anomaly detection
+│   ├── backup_to_drive.py     # Upload PDFs to Google Drive
+│   ├── split_and_upload.py    # Split multi-page PDFs
+│   ├── build_drive_index.py   # Index Drive files
+│   ├── dashboard.py           # Backup status dashboard (port 8899)
+│   └── ...                    # Various analysis & utility scripts
+│
+├── cloud/                     # Cloud Function for distributed OCR
+│   ├── function/main.py       # Cloud Function entry point
+│   ├── dispatch.py            # Parallel task dispatcher
+│   └── deploy.ps1             # Deployment script
+│
+├── data/                      # Data files (large, not in git)
+├── .github/workflows/
+│   └── deploy.yml             # CI/CD: auto-deploy to GitHub Pages
+│
+├── .env.example               # API key template
+├── DEVELOPMENT_LOG.md         # Detailed development history (20 phases)
+├── SECURITY.md                # API key security guide
+└── README.md                  # This file
+```
 
 ---
 
-## 🤝 การมีส่วนร่วม
+## Tech Stack
 
-### ต้องการอาสาสมัคร
-
-**1. กรอกคะแนนใน Vote62:**
-- เข้า vote62.com
-- คลิก "กรอกคะแนน"
-- ใช้เวลา 4-5 นาที/หน่วย
-
-**2. ช่วยตรวจสอบหน่วยในเขตของคุณ:**
-- ดาวน์โหลดระบบนี้
-- รันการเปรียบเทียบ
-- รายงานความผิดปกติ
-
-**3. ช่วยพัฒนาระบบ:**
-- Fork repository
-- เพิ่มฟีเจอร์
-- สร้าง Pull Request
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | React 18, Vite, TailwindCSS, Lucide icons |
+| **Auth** | Google Identity Services (GIS), Google Forms |
+| **OCR** | Gemini Flash/Flash-Lite, Cloud Vision API, Claude |
+| **Backend** | Python 3.7+, Google Cloud Functions |
+| **Storage** | Google Drive API, Google Cloud Storage |
+| **Deploy** | GitHub Pages, GitHub Actions CI/CD |
+| **Data** | Static JSON (zero-backend architecture) |
 
 ---
 
-## 📝 License
+## Key Features
 
-MIT License - ใช้ได้เพื่อการศึกษาและพัฒนาสาธารณะ
+### Multi-Model OCR Pipeline
+- **3 AI models** with automatic fallback: Gemini Flash → Flash-Lite → Cloud Vision
+- **Adaptive DPI** for large PDFs (200 → 150 → 100)
+- **Self-consistency checks** with temperature variation
+- **JSON repair** for malformed API responses
+- **Incremental save** — resume interrupted batches
+
+### 9-Rule Postprocessing Pipeline
+- **R0a/R0b**: Metadata extraction from file paths
+- **R0c/R0d**: Deduplication (interleaved combined PDFs)
+- **R3/R4**: Vote total validation and repair
+- **R5/R6**: Ballot count consistency (with safety checks)
+- **R7**: Candidate normalization via ECT reference
+- **R8/R9**: Confidence scoring and flagging
+- **Cross-validation**: Against Killernay ground truth data
+
+### Anomaly Detection (8 dimensions)
+- Turnout rate outliers (z-score + IQR)
+- Invalid ballot ratio
+- Blank ballot ratio
+- Wasted vote ratio
+- Candidate dominance
+- Total vote vs ballot mismatch
+- Registered voter anomalies
+- Counting completeness awareness (filters unreliable flags from incomplete data)
+
+### React Review App
+- Side-by-side PDF viewer + OCR data
+- Editable fields with validation
+- Anomaly flags per item
+- Google Drive backup status dashboard
+- Province/constituency/search filters
+- Keyboard shortcuts (J/K navigate)
+- Google Sign-In for verified reviews
+- CSV/JSON export
+- Auto-deploy via GitHub Actions
 
 ---
 
-## 📞 ติดต่อ
+## Security
 
-- **GitHub Issues**: สำหรับรายงานบั๊กหรือเสนอฟีเจอร์
-- **Email**: [your-email]
-- **Social Media**: #นับใหม่ทั้งประเทศ #ระบอบหน้าด้าน
+See [SECURITY.md](SECURITY.md) for detailed API key management guidelines.
 
----
-
-## 🙏 Credits
-
-**พัฒนาโดย:** Election Verification System Team
-
-**ขอบคุณ:**
-- iLaw - Internet Law Reform Dialogue
-- Rocket Media Lab
-- Opendream
-- Vote62.com Team
-- อาสาสมัครทุกท่านที่กรอกข้อมูล
+**Quick checklist:**
+- [ ] API keys in `.env` only (never commit)
+- [ ] Budget alert set in Google Cloud Console
+- [ ] API key restricted to specific APIs + IPs
+- [ ] Gemini API daily quota configured
+- [ ] Cloud Function uses IAM authentication
 
 ---
 
-## 📚 เอกสารเพิ่มเติม
+## Development
 
-- [คู่มือการเปรียบเทียบข้อมูล](VOTE62_COMPARISON_GUIDE.md)
-- [คู่มือ Deploy บน GitHub Pages](GITHUB_PAGES_DEPLOYMENT.md)
-- [Vote62.com](https://vote62.com)
-- [กกต.](https://www.ect.go.th)
+See [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md) for the full 20-phase development history with commit hashes, problems, solutions, and results for each phase.
+
+### Running tests
+
+```bash
+cd review-app
+npm test
+```
+
+### Building for production
+
+```bash
+cd review-app
+npm run build
+# Output in review-app/dist/
+```
+
+### Deployment
+
+Push to `main` branch triggers automatic deployment to GitHub Pages via GitHub Actions.
 
 ---
 
-**เวอร์ชัน:** 2.0  
-**อัพเดทล่าสุด:** 12 กุมภาพันธ์ 2026  
+## Related Projects
 
-#นับใหม่ทั้งประเทศ #ระบอบหน้าด้าน #Vote62 #ElectionTransparency
+| Project | Coverage | Form |
+|---------|----------|------|
+| **This project** | Station-level (สส.5/18) — 3 provinces | Handwritten tally sheets |
+| [Killernay](https://github.com/killernay/election-69-OCR-result) | Constituency-level (สส.6/1) — nationwide | Summary forms |
+| [Luengnat](https://luengnat.github.io/election-69-dashboard) | Constituency-level dashboard | ECT + Drive + Killernay |
+
+---
+
+## License
+
+MIT License — free for educational and public interest use.
+
+---
+
+**Version:** 3.0  
+**Last updated:** 18 March 2026

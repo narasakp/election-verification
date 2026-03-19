@@ -1,7 +1,22 @@
 import React, { useMemo, useState } from 'react'
 import { ChevronDown, ChevronRight, BarChart3, AlertTriangle, FileText, Info, ExternalLink } from 'lucide-react'
+import ErrorBoundary from './ErrorBoundary'
 
-export default function DataStatsPanel({ allItems, review, anomalyFlags, anomalyMeta }) {
+function ProgressRing({ percent, size = 40, strokeWidth = 4, color = '#4f46e5' }) {
+  const radius = (size - strokeWidth) / 2
+  const circumference = 2 * Math.PI * radius
+  const offset = circumference - (percent / 100) * circumference
+  return (
+    <svg width={size} height={size} className="-rotate-90">
+      <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke="#e5e7eb" strokeWidth={strokeWidth} />
+      <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke={color} strokeWidth={strokeWidth}
+        strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round"
+        className="transition-all duration-500" />
+    </svg>
+  )
+}
+
+function DataStatsPanelInner({ allItems, review, anomalyFlags, anomalyMeta }) {
   const [expanded, setExpanded] = useState(false)
 
   const provStats = useMemo(() => {
@@ -249,7 +264,14 @@ export default function DataStatsPanel({ allItems, review, anomalyFlags, anomaly
               const flagPct = s.total > 0 ? Math.round(s.flagged / s.total * 100) : 0
               return (
                 <div key={prov} className="mb-4">
-                  <h4 className="text-sm font-bold text-gray-800 mb-2">{prov}</h4>
+                  <div className="flex items-center gap-3 mb-2">
+                    <h4 className="text-sm font-bold text-gray-800">{prov}</h4>
+                    <div className="flex items-center gap-1.5">
+                      <ProgressRing percent={reviewPct} size={28} strokeWidth={3}
+                        color={reviewPct > 80 ? '#16a34a' : reviewPct > 30 ? '#d97706' : '#9ca3af'} />
+                      <span className="text-xs text-gray-500">ตรวจ {reviewPct}%</span>
+                    </div>
+                  </div>
 
                   {/* Stat cards */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 mb-3">
@@ -304,6 +326,14 @@ export default function DataStatsPanel({ allItems, review, anomalyFlags, anomaly
         )}
       </div>
     </div>
+  )
+}
+
+export default function DataStatsPanel(props) {
+  return (
+    <ErrorBoundary compact>
+      <DataStatsPanelInner {...props} />
+    </ErrorBoundary>
   )
 }
 

@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function StatsBar({ stats }) {
+export default React.memo(function StatsBar({ stats }) {
   const reviewed = stats.confirmed + stats.flagged + stats.rejected
   const pct = stats.total > 0 ? Math.round((reviewed / stats.total) * 100) : 0
 
@@ -27,4 +27,4 @@ export default function StatsBar({ stats }) {
       <span className="sm:hidden text-xs font-bold opacity-90">{pct}% ({reviewed}/{stats.total})</span>
     </div>
   )
-}
+})

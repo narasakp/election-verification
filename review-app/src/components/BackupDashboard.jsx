@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { HardDrive, CheckCircle2, FileText, ChevronDown, ChevronRight, Search } from 'lucide-react'
+import { HardDrive, CheckCircle2, FileText, ChevronDown, ChevronRight, Search, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
+import ErrorBoundary from './ErrorBoundary'
 
 const BACKUP_URL = './data/backup_status.json'
 
@@ -7,10 +8,12 @@ function fmt(n) {
   return n == null ? '—' : n.toLocaleString()
 }
 
-export default function BackupDashboard() {
+function BackupDashboardInner() {
   const [data, setData] = useState(null)
   const [expanded, setExpanded] = useState(false)
   const [search, setSearch] = useState('')
+  const [sortCol, setSortCol] = useState('name')
+  const [sortAsc, setSortAsc] = useState(true)
 
   useEffect(() => {
     fetch(BACKUP_URL)
@@ -19,12 +22,32 @@ export default function BackupDashboard() {
       .catch(() => {})
   }, [])
 
+  const toggleSort = (col) => {
+    if (sortCol === col) setSortAsc(v => !v)
+    else { setSortCol(col); setSortAsc(col === 'name') }
+  }
+
   const filteredProvs = useMemo(() => {
     if (!data?.provinces) return []
-    if (!search.trim()) return data.provinces
-    const q = search.trim().toLowerCase()
-    return data.provinces.filter(p => p.name.toLowerCase().includes(q))
-  }, [data, search])
+    let list = data.provinces
+    if (search.trim()) {
+      const q = search.trim().toLowerCase()
+      list = list.filter(p => p.name.toLowerCase().includes(q))
+    }
+    const sorted = [...list].sort((a, b) => {
+      let va, vb
+      switch (sortCol) {
+        case 'name': va = a.name; vb = b.name; return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va)
+        case 'actual': va = a.actual || 0; vb = b.actual || 0; break
+        case 'expected': va = a.expected || 0; vb = b.expected || 0; break
+        case 'pct': va = a.pct || 0; vb = b.pct || 0; break
+        case 'status': va = a.complete ? 2 : (a.actual || 0) > 0 ? 1 : 0; vb = b.complete ? 2 : (b.actual || 0) > 0 ? 1 : 0; break
+        default: return 0
+      }
+      return sortAsc ? va - vb : vb - va
+    })
+    return sorted
+  }, [data, search, sortCol, sortAsc])
 
   if (!data) return null
 
@@ -126,11 +149,11 @@ export default function BackupDashboard() {
                   <thead className="sticky top-0 z-10">
                     <tr className="text-[10px] text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
                       <th className="px-3 py-1.5 text-left w-8">#</th>
-                      <th className="px-3 py-1.5 text-left">จังหวัด</th>
-                      <th className="px-3 py-1.5 text-center">สถานะ</th>
-                      <th className="px-3 py-1.5 text-right">PDF บน Drive</th>
-                      <th className="px-3 py-1.5 text-right">คาดหวัง</th>
-                      <th className="px-3 py-1.5 text-center w-52">ความคืบหน้า</th>
+                      <SortTh col="name" current={sortCol} asc={sortAsc} onClick={toggleSort} align="left">จังหวัด</SortTh>
+                      <SortTh col="status" current={sortCol} asc={sortAsc} onClick={toggleSort} align="center">สถานะ</SortTh>
+                      <SortTh col="actual" current={sortCol} asc={sortAsc} onClick={toggleSort} align="right">PDF บน Drive</SortTh>
+                      <SortTh col="expected" current={sortCol} asc={sortAsc} onClick={toggleSort} align="right">คาดหวัง</SortTh>
+                      <SortTh col="pct" current={sortCol} asc={sortAsc} onClick={toggleSort} align="center" className="w-52">ความคืบหน้า</SortTh>
                     </tr>
                   </thead>
                   <tbody>
@@ -184,6 +207,29 @@ export default function BackupDashboard() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function BackupDashboard(props) {
+  return (
+    <ErrorBoundary compact>
+      <BackupDashboardInner {...props} />
+    </ErrorBoundary>
+  )
+}
+
+function SortTh({ col, current, asc, onClick, align = 'left', className = '', children }) {
+  const active = current === col
+  return (
+    <th
+      className={`px-3 py-1.5 text-${align} cursor-pointer select-none hover:text-gray-700 transition ${className}`}
+      onClick={() => onClick(col)}
+    >
+      <span className="inline-flex items-center gap-0.5">
+        {children}
+        {active ? (asc ? <ArrowUp size={10} /> : <ArrowDown size={10} />) : <ArrowUpDown size={9} className="opacity-30" />}
+      </span>
+    </th>
   )
 }
 

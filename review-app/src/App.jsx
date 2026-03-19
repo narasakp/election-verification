@@ -277,6 +277,11 @@ function App() {
   // Keyboard navigation
   useEffect(() => {
     const handler = (e) => {
+      // Escape: blur active input so shortcuts work again
+      if (e.key === 'Escape') {
+        if (document.activeElement) document.activeElement.blur()
+        return
+      }
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return
       if (e.key === 'ArrowRight' || e.key === 'j') goNext()
       if (e.key === 'ArrowLeft' || e.key === 'k') goPrev()
@@ -678,7 +683,7 @@ function App() {
 
       {/* Footer */}
       <footer className="fixed bottom-0 left-0 right-0 bg-white border-t py-1 text-center text-xs text-gray-400">
-        ←→ / j k เลื่อน | <b>1</b> ยืนยัน | <b>2</b> ตรวจอีกรอบ | <b>3</b> ใช้ไม่ได้ | <b>r</b> รีเซ็ต | อัตโนมัติข้ามหน้าหลังกดตรวจ
+        ←→ / j k เลื่อน | <b>1</b> ยืนยัน | <b>2</b> ตรวจอีกรอบ | <b>3</b> ใช้ไม่ได้ | <b>r</b> รีเซ็ต | <b>Esc</b> ออกจากช่อง | อัตโนมัติข้ามหน้าหลังกดตรวจ
       </footer>
 
       {/* Rate limit warning toast (F2) */}

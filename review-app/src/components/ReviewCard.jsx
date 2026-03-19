@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import CandidateTable from './CandidateTable'
-import { Eye, EyeOff, RotateCw, ExternalLink, AlertTriangle, AlertCircle, Info } from 'lucide-react'
+import ErrorBoundary from './ErrorBoundary'
+import { Eye, EyeOff, RotateCw, ExternalLink, AlertTriangle, AlertCircle, Info, Loader2 } from 'lucide-react'
 import { validateItem, getWorstSeverity } from '../utils/validation'
 import { validateEditValue } from '../utils/reviewLog'
 
@@ -106,11 +107,12 @@ function EditInput({ field, value, isText, intOnly, edits, onEdit, shared, share
   )
 }
 
-export default function ReviewCard({ item, review, reviewSummary, isFirstPage, sharedEdits, anomalyFlags, onSetStatus, onSetNote, onEdit, onSharedEdit }) {
+function ReviewCardInner({ item, review, reviewSummary, isFirstPage, sharedEdits, anomalyFlags, onSetStatus, onSetNote, onEdit, onSharedEdit }) {
   const [showOcrText, setShowOcrText] = useState(false)
   const [zoomed, setZoomed] = useState(false)
   const [rotation, setRotation] = useState(0)
   const [confirmAction, setConfirmAction] = useState(null)
+  const [pdfLoading, setPdfLoading] = useState(true)
   const status = review.status || 'pending'
   const edits = review.edits || {}
 
@@ -294,35 +296,44 @@ export default function ReviewCard({ item, review, reviewSummary, isFirstPage, s
       <div className="flex flex-col lg:flex-row">
         {/* Left: Image or PDF */}
         <div className="lg:w-[45%] flex-shrink-0 relative">
-          {/* Tool buttons */}
-          <div className="absolute top-2 right-2 z-10 flex flex-col gap-1.5">
-            {item.drive_view_url && (
-              <a href={item.drive_view_url} target="_blank" rel="noopener noreferrer"
-                 className="p-1.5 bg-white/90 hover:bg-white rounded-full shadow-md border border-gray-200 text-gray-600 hover:text-blue-600 transition"
-                 title="เปิดใน Drive" onClick={e => e.stopPropagation()}>
-                <ExternalLink size={16} />
-              </a>
-            )}
+          {/* Tool buttons — covers browser's PDF pop-out icon */}
+          <div className="absolute top-0 right-0 z-10 flex flex-col">
             <button
               onClick={() => setRotation(r => (r + 90) % 360)}
-              className="p-1.5 bg-white/90 hover:bg-white rounded-full shadow-md border border-gray-200 text-gray-600 hover:text-gray-900 transition"
+              className="w-14 h-14 flex items-center justify-center bg-white hover:bg-gray-100 shadow-lg border border-gray-300 text-gray-700 hover:text-gray-900 transition"
               title="หมุน 90°"
             >
-              <RotateCw size={16} />
+              <RotateCw size={26} />
             </button>
+            {item.drive_view_url && (
+              <a href={item.drive_view_url} target="_blank" rel="noopener noreferrer"
+                 className="w-14 h-14 flex items-center justify-center bg-white hover:bg-blue-50 shadow-lg border border-gray-300 border-t-0 text-gray-700 hover:text-blue-600 transition"
+                 title="เปิดใน Drive" onClick={e => e.stopPropagation()}>
+                <ExternalLink size={26} />
+              </a>
+            )}
           </div>
           <div
             className={`overflow-auto bg-gray-800 ${item.pdf_url ? '' : 'cursor-zoom-in max-h-[700px]'} ${zoomed ? 'cursor-zoom-out' : ''}`}
             onClick={() => !item.pdf_url && setZoomed(!zoomed)}
           >
             {item.pdf_url ? (
-              <iframe
-                src={`${item.pdf_url}#toolbar=1&scrollbar=1`}
-                title="PDF preview"
-                className="w-full border-0"
-                style={{ height: '700px', transform: `rotate(${rotation}deg)`, transformOrigin: 'center center' }}
-                allow="autoplay"
-              />
+              <div className="relative">
+                {pdfLoading && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 z-[5] animate-pulse">
+                    <Loader2 size={32} className="text-gray-400 animate-spin mb-2" />
+                    <span className="text-sm text-gray-400">กำลังโหลด PDF...</span>
+                  </div>
+                )}
+                <iframe
+                  src={`${item.pdf_url}#toolbar=0&navpanes=0&scrollbar=1`}
+                  title="PDF preview"
+                  className="w-full border-0"
+                  style={{ height: '700px', transform: `rotate(${rotation}deg)`, transformOrigin: 'center center' }}
+                  allow="autoplay"
+                  onLoad={() => setPdfLoading(false)}
+                />
+              </div>
             ) : item.image_url ? (
               <img
                 src={item.image_url}
@@ -524,5 +535,13 @@ export default function ReviewCard({ item, review, reviewSummary, isFirstPage, s
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ReviewCard(props) {
+  return (
+    <ErrorBoundary compact>
+      <ReviewCardInner {...props} />
+    </ErrorBoundary>
   )
 }

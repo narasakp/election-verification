@@ -26,8 +26,37 @@ node_modules/
 review-app/public/images/
 review-app/public/data/*.png
 
-# Secrets
+# Secrets & tokens — NEVER commit these
 .env
+.env.*
+!.env.example
 credentials.json
 token.json
 token_full.json
+token_dashboard.json
+token_*.json
+service_account*.json
+*-service-key.json
+*.pem
+*.p12
+
+# Google Cloud credentials
+gcloud-*.json
+client_secret*.json
+
+# Temp files (analysis/debug/logs)
+_*.txt
+_*.json
+_upload_to_drive/
+cors.json
+data/_*/
+data/ocr_debug*/
+data/backup_*_pre_*.json
+data/ocr_multimodel_*_backup*.json
+data/*_backup_*.json
+data/dispatch_*.json
+data/doc_extraction_results.json
+data/enriched_*.json
+
+# Build output
+review-app/dist/
