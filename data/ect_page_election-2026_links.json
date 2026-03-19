@@ -1,0 +1,17 @@
+{
+  "url": "https://www.ect.go.th/ect_th/api/election-2026",
+  "final_url": "https://www.ect.go.th/ect_th/th/api/election-2026",
+  "status": 200,
+  "total_links": 85,
+  "document_links": [
+    "https://www.ect.go.th/ect_th/th/api/~/assets/app/images/favicon.png"
+  ],
+  "ect_page_links": [
+    "https://www.ect.go.th/ect_th/en/api/election-2026",
+    "https://www.ect.go.th/en/api/election-2026",
+    "https://www.ect.go.th/ect_th/th/ect-province-offices"
+  ],
+  "iframes": [
+    "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1936.642989202417!2d100.566045!3d13.881841!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e28323d10290b5%3A0x946e22bc8754445a!2z4Liq4Liz4LiZ4Lix4LiB4LiH4Liy4LiZ4LiE4LiT4Liw4LiB4Lij4Lij4Lih4LiB4Liy4Lij4LiB4Liy4Lij4LmA4Lil4Li34Lit4LiB4LiV4Lix4LmJ4LiH!5e0!3m2!1sth!2sus!4v1664900696900!5m2!1sth!2sus"
+  ]
+}

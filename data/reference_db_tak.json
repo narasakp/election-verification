@@ -1,0 +1,232 @@
+{
+  "1_1": {
+    "official_name": "นายธนัสถ์ ทวีเกื้อกูลกิจ",
+    "killernay_name": "นายธนัสถ์ ทวีเกื้อกูลกิจ",
+    "party": "ภูมิใจไทย",
+    "party_id": 63,
+    "ect_id": "TAK_1_1",
+    "killernay_votes": 37819,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "1_2": {
+    "official_name": "นางศิริกุล อนุตรพงศ์",
+    "killernay_name": "นางศิริกุล อนุตรพงศ์",
+    "party": "รวมไทยสร้างชาติ",
+    "party_id": 229,
+    "ect_id": "TAK_1_2",
+    "killernay_votes": 1387,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "1_3": {
+    "official_name": "พันตำรวจโทพิษณุ พลบุตร",
+    "killernay_name": "พันตำรวจโทพิษณุ พลบุตร",
+    "party": "เพื่อไทย",
+    "party_id": 34,
+    "ect_id": "TAK_1_3",
+    "killernay_votes": 17054,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "1_4": {
+    "official_name": "นายชนะพล อ่อนพรม",
+    "killernay_name": "นายชนะพล อ่อนพรม",
+    "party": "รวมใจไทย",
+    "party_id": 250,
+    "ect_id": "TAK_1_4",
+    "killernay_votes": 539,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "1_5": {
+    "official_name": "นายคริษฐ์ ปานเนียม",
+    "killernay_name": "นายคริษฐ์ ปานเนียม",
+    "party": "ประชาชน",
+    "party_id": 129,
+    "ect_id": "TAK_1_5",
+    "killernay_votes": 28996,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "1_6": {
+    "official_name": "นายปองภพ วณิชศิริ",
+    "killernay_name": "นายปองภพ วณิชศิริ",
+    "party": "เศรษฐกิจ",
+    "party_id": 173,
+    "ect_id": "TAK_1_6",
+    "killernay_votes": 1565,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "1_7": {
+    "official_name": "นายพิทักษ์ อ่อนน้อม",
+    "killernay_name": "นายพิทักษ์ อ่อนน้อม",
+    "party": "กล้าธรรม",
+    "party_id": 218,
+    "ect_id": "TAK_1_7",
+    "killernay_votes": 1916,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "1_8": {
+    "official_name": "นายวริศ มีไชโย",
+    "killernay_name": "นายวริศ มีไชโย",
+    "party": "ประชาธิปัตย์",
+    "party_id": 1,
+    "ect_id": "TAK_1_8",
+    "killernay_votes": 6170,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "1_9": {
+    "official_name": "นายธนพล อิ่มอ้น",
+    "killernay_name": "นายธนพล อิ่มอ้น",
+    "party": "พลังไทยรักชาติ",
+    "party_id": 155,
+    "ect_id": "TAK_1_9",
+    "killernay_votes": 944,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "2_1": {
+    "official_name": "นายธีรยุทธ วงษ์แหวน",
+    "killernay_name": "นายธีรยุทธ วงษ์แหวน",
+    "party": "รวมใจไทย",
+    "party_id": 250,
+    "ect_id": "TAK_2_1",
+    "killernay_votes": 1501,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "2_2": {
+    "official_name": "นายชิงชัย ก่อประภากิจ",
+    "killernay_name": "นายชิงชัย ก่อประภากิจ",
+    "party": "กล้าธรรม",
+    "party_id": 218,
+    "ect_id": "TAK_2_2",
+    "killernay_votes": 25259,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "2_3": {
+    "official_name": "นายวราทิต ไชยนันทน์",
+    "killernay_name": "นายวราทิต ไชยนันทน์",
+    "party": "เพื่อไทย",
+    "party_id": 34,
+    "ect_id": "TAK_2_3",
+    "killernay_votes": 19144,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "2_4": {
+    "official_name": "นายพิสิษฐ ใชยลังกา",
+    "killernay_name": "นายพิสิษฐ ใชยลังกา",
+    "party": "ภูมิใจไทย",
+    "party_id": 63,
+    "ect_id": "TAK_2_4",
+    "killernay_votes": 2278,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "2_5": {
+    "official_name": "นายสราวุธ หาญเมืองใจ",
+    "killernay_name": "นายสราวุธ หาญเมืองใจ",
+    "party": "ประชาธิปัตย์",
+    "party_id": 1,
+    "ect_id": "TAK_2_5",
+    "killernay_votes": 11936,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "2_7": {
+    "official_name": "นายศิวกรณ์ ลำจวน",
+    "killernay_name": "นายศิวกรณ์ ลำจวน",
+    "party": "เศรษฐกิจ",
+    "party_id": 173,
+    "ect_id": "TAK_2_7",
+    "killernay_votes": 1522,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "3_1": {
+    "official_name": "นายเวสารัตน์ เลิศสิริโชคสกุล",
+    "killernay_name": "นายเวสารัตน์ เสิศสิริโชคสกุล",
+    "party": "เศรษฐกิจ",
+    "party_id": 173,
+    "ect_id": "TAK_3_1",
+    "killernay_votes": 1393,
+    "name_match": false,
+    "name_score": 1.0
+  },
+  "3_2": {
+    "official_name": "นายชัยณรงค์ มะเดชะ",
+    "killernay_name": "นายชัยณรงค์ มะเดชะ",
+    "party": "เพื่อไทย",
+    "party_id": 34,
+    "ect_id": "TAK_3_2",
+    "killernay_votes": 17179,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "3_3": {
+    "official_name": "นายพิพัฒชัย แก้วสีเขียว",
+    "killernay_name": "นายพิพัฒชัย แก้วสีเขียว",
+    "party": "รวมไทยสร้างชาติ",
+    "party_id": 229,
+    "ect_id": "TAK_3_3",
+    "killernay_votes": 887,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "3_4": {
+    "official_name": "นายวสันต์ บุญลือ",
+    "killernay_name": "นายวสันต์ บุญลือ",
+    "party": "รวมใจไทย",
+    "party_id": 250,
+    "ect_id": "TAK_3_4",
+    "killernay_votes": 558,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "3_5": {
+    "official_name": "นายอรรถสิทธิ์ ต๊ะทองคำ",
+    "killernay_name": "นายอรรถสิทธิ์ ต๊ะทองคำ",
+    "party": "ภูมิใจไทย",
+    "party_id": 63,
+    "ect_id": "TAK_3_5",
+    "killernay_votes": 18757,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "3_6": {
+    "official_name": "นายภาคภูมิ บูลย์ประมุข",
+    "killernay_name": "นายภาคภูมิ บูลย์ประมุข",
+    "party": "กล้าธรรม",
+    "party_id": 218,
+    "ect_id": "TAK_3_6",
+    "killernay_votes": 30644,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "3_7": {
+    "official_name": "นายปรัชญา ปุณหะกิจ",
+    "killernay_name": "นายปรัชญา ปุณหะกิจ",
+    "party": "ประชาชน",
+    "party_id": 129,
+    "ect_id": "TAK_3_7",
+    "killernay_votes": 15052,
+    "name_match": true,
+    "name_score": 1.0
+  },
+  "3_8": {
+    "official_name": "นายเทวฤทธิ์ เชี่ยวชาญคีรี",
+    "killernay_name": "นายเทวฤทธิ์ เชี่ยวชาญคีรี",
+    "party": "ประชาธิปัตย์",
+    "party_id": 1,
+    "ect_id": "TAK_3_8",
+    "killernay_votes": 1484,
+    "name_match": true,
+    "name_score": 1.0
+  }
+}

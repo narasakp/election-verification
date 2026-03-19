@@ -1,0 +1,18 @@
+{
+  "drive_folder": "สส.5_18_ข้อมูลเลือกตั้ง_2569",
+  "total_provinces": 1,
+  "completed": 1,
+  "total_pdfs": 0,
+  "total_uploaded": 0,
+  "total_skipped": 0,
+  "total_failed": 0,
+  "elapsed_seconds": 0,
+  "provinces": [
+    {
+      "slug": "maehongson",
+      "status": "ok",
+      "pdf_count": 0,
+      "pdfs": []
+    }
+  ]
+}

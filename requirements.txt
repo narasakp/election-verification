@@ -1,0 +1,11 @@
+flask>=2.2
+flask-cors>=4.0
+gdown>=4.6,<5
+rarfile>=4.1
+requests>=2.28
+werkzeug>=2.2
+# Google Drive upload (for download_to_drive.py)
+google-api-python-client>=2.100
+google-auth-oauthlib>=1.1
+# Optional: py7zr (for .7z support, requires C compiler)
+# pip install py7zr

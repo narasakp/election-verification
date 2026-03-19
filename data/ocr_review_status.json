@@ -1,0 +1,22 @@
+{
+  "เขตเลือกตั้งที่ 7\\อำเภอแก้งคร้อ\\ต.หนองขาม-แบ่งเขต-หน่วยที่ 1-14.pdf::p1": {
+    "status": "pending",
+    "note": "",
+    "edits": {
+      "registered_voters": "486",
+      "turnout": "317",
+      "ballots_received": "480",
+      "valid_ballots": "309",
+      "invalid_ballots": "7",
+      "no_vote_ballots": "1",
+      "remaining_ballots": "163",
+      "cand_0_votes": "40",
+      "cand_1_votes": "2"
+    }
+  },
+  "เขตเลือกตั้งที่ 3\\อำเภอเทพสถิต\\วะตะแบก-001-แบ่งเขต.PDF::p1": {
+    "status": "pending",
+    "note": "",
+    "edits": {}
+  }
+}

@@ -1,0 +1,159 @@
+[
+  {
+    "file": "07-แบบ ส.ส.5_17-แบ่งเขต-นอกเขต.pdf",
+    "size_bytes": 67926,
+    "pages": 2,
+    "has_text": false,
+    "has_images": true,
+    "text_sample": "(no text found)",
+    "image_count": 2,
+    "page_dimensions": [
+      {
+        "page": 1,
+        "width": 612.0,
+        "height": 792.0
+      },
+      {
+        "page": 2,
+        "width": 612.0,
+        "height": 792.0
+      }
+    ],
+    "relative_path": "เขตเลือกตั้งที่ 7\\07-แบบ ส.ส.5_17-แบ่งเขต-นอกเขต.pdf"
+  },
+  {
+    "file": "โนนสำราญ-001-บัญชีรายชื่อ.PDF",
+    "size_bytes": 8117141,
+    "pages": 44,
+    "has_text": false,
+    "has_images": true,
+    "text_sample": "(no text found)",
+    "image_count": 3,
+    "page_dimensions": [
+      {
+        "page": 1,
+        "width": 593.3,
+        "height": 763.2
+      },
+      {
+        "page": 2,
+        "width": 593.3,
+        "height": 768.2
+      },
+      {
+        "page": 3,
+        "width": 593.3,
+        "height": 766.8
+      }
+    ],
+    "relative_path": "เขตเลือกตั้งที่ 1\\อำเภอเมืองชัยภูมิ\\โนนสำราญ-001-บัญชีรายชื่อ.PDF"
+  },
+  {
+    "file": "ต.ช่องสามหมอ-บัญชีรายชื่อ-หน่วยที่ 1-9.pdf",
+    "size_bytes": 16020121,
+    "pages": 36,
+    "has_text": false,
+    "has_images": true,
+    "text_sample": "(no text found)",
+    "image_count": 3,
+    "page_dimensions": [
+      {
+        "page": 1,
+        "width": 595.0,
+        "height": 842.0
+      },
+      {
+        "page": 2,
+        "width": 595.0,
+        "height": 842.0
+      },
+      {
+        "page": 3,
+        "width": 595.0,
+        "height": 842.0
+      }
+    ],
+    "relative_path": "เขตเลือกตั้งที่ 7\\อำเภอแก้งคร้อ\\ต.ช่องสามหมอ-บัญชีรายชื่อ-หน่วยที่ 1-9.pdf"
+  },
+  {
+    "file": "ผักปัง-บัญชีรายชื่อ-หน่วยที่ 1-21.pdf",
+    "size_bytes": 232417887,
+    "pages": 84,
+    "has_text": false,
+    "has_images": true,
+    "text_sample": "(no text found)",
+    "image_count": 3,
+    "page_dimensions": [
+      {
+        "page": 1,
+        "width": 2306.9,
+        "height": 3193.9
+      },
+      {
+        "page": 2,
+        "width": 2893.2,
+        "height": 3866.6
+      },
+      {
+        "page": 3,
+        "width": 2527.5,
+        "height": 3838.3
+      }
+    ],
+    "relative_path": "เขตเลือกตั้งที่ 6\\อำเภอภูเขียว\\บัญชีรายชื่อ\\ผักปัง-บัญชีรายชื่อ-หน่วยที่ 1-21.pdf"
+  },
+  {
+    "file": "นาเสียว-001-แบ่งเขต.PDF",
+    "size_bytes": 4481356,
+    "pages": 24,
+    "has_text": false,
+    "has_images": true,
+    "text_sample": "(no text found)",
+    "image_count": 3,
+    "page_dimensions": [
+      {
+        "page": 1,
+        "width": 593.3,
+        "height": 752.4
+      },
+      {
+        "page": 2,
+        "width": 593.3,
+        "height": 750.2
+      },
+      {
+        "page": 3,
+        "width": 593.3,
+        "height": 756.7
+      }
+    ],
+    "relative_path": "เขตเลือกตั้งที่ 1\\อำเภอเมืองชัยภูมิ\\นาเสียว-001-แบ่งเขต.PDF"
+  },
+  {
+    "file": "นาเสียว-001-บัญชีรายชื่อ.PDF",
+    "size_bytes": 8719394,
+    "pages": 47,
+    "has_text": false,
+    "has_images": true,
+    "text_sample": "(no text found)",
+    "image_count": 3,
+    "page_dimensions": [
+      {
+        "page": 1,
+        "width": 593.3,
+        "height": 749.5
+      },
+      {
+        "page": 2,
+        "width": 593.3,
+        "height": 745.2
+      },
+      {
+        "page": 3,
+        "width": 593.3,
+        "height": 745.2
+      }
+    ],
+    "relative_path": "เขตเลือกตั้งที่ 1\\อำเภอเมืองชัยภูมิ\\นาเสียว-001-บัญชีรายชื่อ.PDF"
+  }
+]

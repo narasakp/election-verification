@@ -1,0 +1,17 @@
+{
+  "total_provinces": 1,
+  "completed": 1,
+  "total_pdfs": 0,
+  "total_downloaded": 0,
+  "total_skipped": 0,
+  "total_failed": 0,
+  "provinces": [
+    {
+      "slug": "chaiyaphum",
+      "status": "ok",
+      "page_size": 14709,
+      "pdf_count": 0,
+      "pdfs": []
+    }
+  ]
+}

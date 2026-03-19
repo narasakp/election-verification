@@ -1,0 +1,2442 @@
+{
+  "province": "chaiyaphum",
+  "total_front_pages": 5442,
+  "with_ballot_data": 3575,
+  "no_ballot_data": 1866,
+  "ballot_eq_errors": 17,
+  "turnout_errors": 30,
+  "tv_cand_mismatches": 0,
+  "tv_over_valid": 300,
+  "flagged_count": 347,
+  "flagged": [
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 1/อำเภอเมืองชัยภูมิ/แบ่งเขต/ต.บ้านค่าย-แบ่งเขต-หน่วยที่ 1-12.pdf",
+      "page": 3,
+      "issue": "ballot_equation",
+      "detail": "br=480 != vb+ib+nv+rb=610 (diff=-130)",
+      "severity": "high"
+    },
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 4/อำเภอหนองบัวแดง/บัญชีรายชื่อ/ต.ท่าใหญ่-บัญชีรายชื่อ-หน่วยที่ 1-15.pdf",
+      "page": 5,
+      "issue": "ballot_equation",
+      "detail": "br=540 != vb+ib+nv+rb=1240 (diff=-700)",
+      "severity": "high"
+    },
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 1/อำเภอเมืองชัยภูมิ/บัญชีรายชื่อ/ต.หนองนาแซง-บัญชีรายชื่อ-หน่วยที่ 1-14.pdf",
+      "page": 29,
+      "issue": "ballot_equation",
+      "detail": "br=240 != vb+ib+nv+rb=340 (diff=-100)",
+      "severity": "high"
+    },
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 4/อำเภอภักดีชุมพล/แบ่งเขต/ต.เจาทอง-แบ่งเขต-หน่วยที่ 1-14.pdf",
+      "page": 11,
+      "issue": "ballot_equation",
+      "detail": "br=500 != vb+ib+nv+rb=763 (diff=-263)",
+      "severity": "high"
+    },
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 3/อำเภอเทพสถิต/บัญชีรายชื่อ/ทต.วะตะแบก-บัญชีรายชื่อ-หน่วยที่ 1-14.pdf",
+      "page": 9,
+      "issue": "ballot_equation",
+      "detail": "br=380 != vb+ib+nv+rb=579 (diff=-199)",
+      "severity": "high"
+    },
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 7/อำเภอเมืองชัยภูมิ (เฉพาะ ต.ซับสีทอง และ ต.ท่าหินโงม)/ต.ซับสีทอง-แบ่งเขต-หน่วยที่ 1-13.pdf",
+      "page": 11,
+      "issue": "ballot_equation",
+      "detail": "br=520 != vb+ib+nv+rb=680 (diff=-160)",
+      "severity": "high"
+    },
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 6/อำเภอบ้านแท่น/แบ่งเขต/ต.สามสวน-แบ่งเขต-หน่วยที่ 1-18.pdf",
+      "page": 17,
+      "issue": "ballot_equation",
+      "detail": "br=320 != vb+ib+nv+rb=520 (diff=-200)",
+      "severity": "high"
+    },
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 5/อำเภอคอนสาร/บัญชีรายชื่อ/ต.ทุ่งนาเลา-บัญชีรายชื่อ.pdf",
+      "page": 5,
+      "issue": "ballot_equation",
+      "detail": "br=420 != vb+ib+nv+rb=625 (diff=-205)",
+      "severity": "high"
+    },
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 5/อำเภอคอนสาร/แบ่งเขต/ห้วยยาง-แบ่งเขต-หน่วยที่ 1-23.pdf",
+      "page": 23,
+      "issue": "ballot_equation",
+      "detail": "br=180 != vb+ib+nv+rb=532 (diff=-352)",
+      "severity": "high"
+    },
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 7/อำเภอแก้งคร้อ/ต.หนองไผ่-บัญชีรายชื่อ-หน่วยที่ 1-11.pdf",
+      "page": 33,
+      "issue": "ballot_equation",
+      "detail": "br=460 != vb+ib+nv+rb=743 (diff=-283)",
+      "severity": "high"
+    },
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 5/อำเภอเกษตรสมบูรณ์/แบ่งเขต/ทต.เกษตร-แบ่งเขต-หน่วยที่ 1-5.pdf",
+      "page": 9,
+      "issue": "ballot_equation",
+      "detail": "br=420 != vb+ib+nv+rb=423 (diff=-3)",
+      "severity": "medium"
+    },
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 7/อำเภอคอนสวรรค์/ต.ห้วยไร่-บัญชีรายชื่อ-หน่วยที่ 1-14.pdf",
+      "page": 109,
+      "issue": "ballot_equation",
+      "detail": "br=300 != vb+ib+nv+rb=314 (diff=-14)",
+      "severity": "high"
+    },
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 5/อำเภอเกษตรสมบูรณ์/แบ่งเขต/ต.บ้านเดื่อ-แบ่งเขต-หน่วยที่ 1-22.pdf",
+      "page": 33,
+      "issue": "ballot_equation",
+      "detail": "br=440 != vb+ib+nv+rb=740 (diff=-300)",
+      "severity": "high"
+    },
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 5/อำเภอเกษตรสมบูรณ์/บัญชีรายชื่อ/ต.บ้านเป้า-บัญชีรายชื่อ.pdf",
+      "page": 13,
+      "issue": "ballot_equation",
+      "detail": "br=240 != vb+ib+nv+rb=440 (diff=-200)",
+      "severity": "high"
+    },
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 4/อำเภอเมืองชัยภูมิ (เฉพาะ ต.ห้วยต้อน)/บัญชีรายชื่อ/ต.ห้วยต้อน-บัญชีรายชื่อ-หน่วยที่ 1-13.pdf",
+      "page": 13,
+      "issue": "ballot_equation",
+      "detail": "br=480 != vb+ib+nv+rb=500 (diff=-20)",
+      "severity": "high"
+    },
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 6/อำเภอภูเขียว/แบ่งเขต/บ้านดอน-แบ่งเขต-หน่วยที่ 1-11.pdf",
+      "page": 21,
+      "issue": "ballot_equation",
+      "detail": "br=460 != vb+ib+nv+rb=737 (diff=-277)",
+      "severity": "high"
+    },
+    {
+      "file": "จังหวัดชัยภูมิ/เขตเลือกตั้งที่ 6/อำเภอภูเขียว/บัญชีรายชื่อ/ผักปัง-บัญชีรายชื่อ-หน่วยที่ 1-21.pdf",
+      "page": 5,
+      "issue": "ballot_equation",
+      "detail": "br=440 != vb+ib+nv+rb=726 (diff=-286)",
+      "severity": "high"
+    },
+    {
+      "file": " 1/01-แบบ ส.ส. 5/17-บัญชีรายชื่อ-นอกเขต/นอกราช.pdf p1",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=780 > registered=760",
+      "severity": "high"
+    },
+    {
+      "file": "้งที่ 1/01-แบบ ส.ส. 5/17-แบ่งเขต-นอกเขต/นอกราช.pdf p1",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=780 > registered=750",
+      "severity": "high"
+    },
+    {
+      "file": "ชีรายชื่อ/ต.นาเสียว-บัญชีรายชื่อ-หน่วยที่ 1-12.pdf p1",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=332 > registered=104",
+      "severity": "high"
+    },
+    {
+      "file": "เลือกตั้งที่ 4/04-แบบ ส.ส. 5/17-แบ่งเขต-นอกเขต.pdf p3",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=615 > registered=610",
+      "severity": "high"
+    },
+    {
+      "file": "ีรายชื่อ/ทต.บ้านแท่น-บัญชีรายชื่อ-หน่วยที่ 1-7.pdf p1",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=281 > registered=280",
+      "severity": "high"
+    },
+    {
+      "file": "ภูเขียว/แบ่งเขต/โคกสะอาด-แบ่งเขต-หน่วยที่ 1-16.pdf p3",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=275 > registered=267",
+      "severity": "high"
+    },
+    {
+      "file": "หินโงม)/ต.ท่าหินโงม-บัญชีรายชื่อ-หน่วยที่ 1-12.pdf p1",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=425 > registered=420",
+      "severity": "high"
+    },
+    {
+      "file": "ญชีรายชื่อ/ต.โพนทอง-บัญชีรายชื่อ-หน่วยที่ 1-16.pdf p57",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=403 > registered=353",
+      "severity": "high"
+    },
+    {
+      "file": "ี่ 2/อำเภอจัตุรัส/ต.ละหาน-แบ่งเขต/บัญชีรายชื่อ.pdf p97",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=278 > registered=249",
+      "severity": "high"
+    },
+    {
+      "file": "/แบ่งเขต/ทม.เมืองชัยภูมิ-แบ่งเขต-หน่วยที่ 1-48.pdf p67",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=703 > registered=465",
+      "severity": "high"
+    },
+    {
+      "file": "ชีรายชื่อ/ต.กุดตุ้ม-บัญชีรายชื่อ-หน่วยที่ 1-18.pdf p9",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=964 > registered=664",
+      "severity": "high"
+    },
+    {
+      "file": "ื่อ/ทม.เมืองชัยภูมิ-บัญชีรายชื่อ-หน่วยที่ 1-48.pdf p17",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=540 > registered=466",
+      "severity": "high"
+    },
+    {
+      "file": "ยภูมิ/แบ่งเขต/ต.บุ่งคล้า-แบ่งเขต-หน่วยที่ 1-13.pdf p5",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=410 > registered=187",
+      "severity": "high"
+    },
+    {
+      "file": "ดีชุมพล/แบ่งเขต/ต.เจาทอง-แบ่งเขต-หน่วยที่ 1-14.pdf p21",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=234 > registered=223",
+      "severity": "high"
+    },
+    {
+      "file": "ตั้งที่ 2/อำเภอซับใหญ่/ท่ากูบ-001-บัญชีรายชื่อ.PDF p9",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=278 > registered=267",
+      "severity": "high"
+    },
+    {
+      "file": "วแดง/แบ่งเขต/ต.กุดชุมแสง-แบ่งเขต-หน่วยที่ 1-21.pdf p17",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=265 > registered=241",
+      "severity": "high"
+    },
+    {
+      "file": "ภอคอนสาร/แบ่งเขต/ห้วยยาง-แบ่งเขต-หน่วยที่ 1-23.pdf p45",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=276 > registered=229",
+      "severity": "high"
+    },
+    {
+      "file": "สมบูรณ์/แบ่งเขต/ต.โนนทอง-แบ่งเขต-หน่วยที่ 1-13.pdf p19",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=213 > registered=205",
+      "severity": "high"
+    },
+    {
+      "file": "7/อำเภอแก้งคร้อ/ต.โคกกุง-แบ่งเขต-หน่วยที่ 1-16.pdf p23",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=270 > registered=205",
+      "severity": "high"
+    },
+    {
+      "file": "อแก้งคร้อ/ต.หนองไผ่-บัญชีรายชื่อ-หน่วยที่ 1-11.pdf p33",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=315 > registered=296",
+      "severity": "high"
+    },
+    {
+      "file": "/อำเภอคอนสวรรค์/ต.ยางหวาย-แบ่งเขต-หน่วยที่ 1-9.pdf p9",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=103 > registered=101",
+      "severity": "high"
+    },
+    {
+      "file": "ูรณ์/แบ่งเขต/ต.บ้านเดื่อ-แบ่งเขต-หน่วยที่ 1-22.pdf p33",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=497 > registered=442",
+      "severity": "high"
+    },
+    {
+      "file": "ัญชีรายชื่อ/ต.สระพัง-บัญชีรายชื่อ-หน่วยที่ 1-9.pdf p5",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=163 > registered=72",
+      "severity": "high"
+    },
+    {
+      "file": "คอนสวรรค์ โคกมั่งงอย-บัญชีรายชื่อ-หน่วยที่ 1-7.pdf p13",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=466 > registered=448",
+      "severity": "high"
+    },
+    {
+      "file": "ูรณ์/แบ่งเขต/ทต.บ้านเป้า-แบ่งเขต-หน่วยที่ 1-13.pdf p17",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=246 > registered=104",
+      "severity": "high"
+    },
+    {
+      "file": "อคอนสวรรค์/ต.ยางหวาย-บัญชีรายชื่อ-หน่วยที่ 1-9.pdf p17",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=103 > registered=101",
+      "severity": "high"
+    },
+    {
+      "file": "รสมบูรณ์/บัญชีรายชื่อ/ต.สระโพนทอง-บัญชีรายชื่อ.pdf p13",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=263 > registered=249",
+      "severity": "high"
+    },
+    {
+      "file": "กษตรสมบูรณ์/บัญชีรายชื่อ/ต.โนนทอง-บัญชีรายชื่อ.pdf p33",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=750 > registered=676",
+      "severity": "high"
+    },
+    {
+      "file": "กษตรสมบูรณ์/บัญชีรายชื่อ/ต.โนนทอง-บัญชีรายชื่อ.pdf p41",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=123 > registered=102",
+      "severity": "high"
+    },
+    {
+      "file": "ัญชีรายชื่อ/ธาตุทอง-บัญชีรายชื่อ-หน่วยที่ 1-20.pdf p41",
+      "page": null,
+      "issue": "turnout_over_registered",
+      "detail": "turnout=346 > registered=40",
+      "severity": "high"
+    },
+    {
+      "file": "ัยภูมิ/แบ่งเขต/ต.นาเสียว-แบ่งเขต-หน่วยที่ 1-12.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=388 > valid=382",
+      "severity": "medium"
+    },
+    {
+      "file": "ัยภูมิ/แบ่งเขต/ต.รอบเมือง-แบ่งเขต-หน่วยที่ 1-5.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=452 > valid=345",
+      "severity": "medium"
+    },
+    {
+      "file": "ัยภูมิ/แบ่งเขต/ต.รอบเมือง-แบ่งเขต-หน่วยที่ 1-5.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=423 > valid=417",
+      "severity": "medium"
+    },
+    {
+      "file": "ชัยภูมิ/แบ่งเขต/ต.โพนทอง-แบ่งเขต-หน่วยที่ 1-16.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=526 > valid=506",
+      "severity": "medium"
+    },
+    {
+      "file": "ตั้งที่ 2/02-แบบ ส.ส. 5/17-บัญชีรายชื่อ-นอกเขต.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=1015 > valid=674",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอจัตุรัส/ต.หนองบัวใหญ่-แบ่งเขต/บัญชีรายชื่อ.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=498 > valid=406",
+      "severity": "medium"
+    },
+    {
+      "file": "ลือกตั้งที่ 2/อำเภอบ้านเขว้า/ต.ภูแลนคา-แบ่งเขต.PDF p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=762 > valid=433",
+      "severity": "medium"
+    },
+    {
+      "file": "ัยภูมิ/เขตเลือกตั้งที่ 3/ส.ส. 5 ทับ 17-แบ่งเขต.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=732 > valid=690",
+      "severity": "medium"
+    },
+    {
+      "file": "ที่ 3/อำเภอบเหน็จณรงค์/โคกเริงรมย์-001-แบ่งเขต.PDF p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=341 > valid=173",
+      "severity": "medium"
+    },
+    {
+      "file": "อำเภอหนองบัวระเหว/หนองบัวระเหว-001-แบ่งเขต0001.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=241 > valid=234",
+      "severity": "medium"
+    },
+    {
+      "file": "ี่ 3/อำเภอหนองบัวระเหว/ห้วยแย้-001-แบ่งเขต0001.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=197 > valid=167",
+      "severity": "medium"
+    },
+    {
+      "file": "ทพสถิต/แบ่งเขต/ต.บ้านไร่-แบ่งเขต-หน่วยที่ 1-20.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=355 > valid=285",
+      "severity": "medium"
+    },
+    {
+      "file": "ดีชุมพล/แบ่งเขต/ต.วังทอง-แบ่งเขต-หน่วยที่ 1-13.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=344 > valid=291",
+      "severity": "medium"
+    },
+    {
+      "file": "บัวแดง/แบ่งเขต/ต.คูเมือง-แบ่งเขต-หน่วยที่ 1-18.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=333 > valid=321",
+      "severity": "medium"
+    },
+    {
+      "file": "บัวแดง/แบ่งเขต/ต.ท่าใหญ่-แบ่งเขต-หน่วยที่ 1-15.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=240 > valid=220",
+      "severity": "medium"
+    },
+    {
+      "file": "บัวแดง/แบ่งเขต/ต.วังชมภู-แบ่งเขต-หน่วยที่ 1-12.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=676 > valid=334",
+      "severity": "medium"
+    },
+    {
+      "file": "บัวแดง/แบ่งเขต/ต.วังชมภู-แบ่งเขต-หน่วยที่ 1-12.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=380 > valid=376",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอคอนสาร/แบ่งเขต/คอนสาร-แบ่งเขต-หน่วยที่ 1-6.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=387 > valid=357",
+      "severity": "medium"
+    },
+    {
+      "file": "ภอคอนสาร/แบ่งเขต/ทุ่งพระ-แบ่งเขต-หน่วยที่ 1-10.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=218 > valid=217",
+      "severity": "medium"
+    },
+    {
+      "file": "ภอคอนสาร/แบ่งเขต/ห้วยยาง-แบ่งเขต-หน่วยที่ 1-23.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=651 > valid=454",
+      "severity": "medium"
+    },
+    {
+      "file": "สมบูรณ์/แบ่งเขต/ต.โนนกอก-แบ่งเขต-หน่วยที่ 1-14.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=598 > valid=315",
+      "severity": "medium"
+    },
+    {
+      "file": "สมบูรณ์/แบ่งเขต/ต.โนนทอง-แบ่งเขต-หน่วยที่ 1-13.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=270 > valid=244",
+      "severity": "medium"
+    },
+    {
+      "file": "สมบูรณ์/แบ่งเขต/ต.โนนทอง-แบ่งเขต-หน่วยที่ 1-13.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=270 > valid=260",
+      "severity": "medium"
+    },
+    {
+      "file": "นแท่น/แบ่งเขต/ต.บ้านแท่น-แบ่งเขต-หน่วยที่ 1-16.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=269 > valid=243",
+      "severity": "medium"
+    },
+    {
+      "file": "อภูเขียว/แบ่งเขต/ธาตุทอง-แบ่งเขต-หน่วยที่ 1-20.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=396 > valid=336",
+      "severity": "medium"
+    },
+    {
+      "file": "ภูเขียว/แบ่งเขต/บ้านแก้ง-แบ่งเขต-หน่วยที่ 1-22.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=402 > valid=362",
+      "severity": "medium"
+    },
+    {
+      "file": "เขียว/แบ่งเขต/หนองคอนไทย-แบ่งเขต-หน่วยที่ 1-18.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=448 > valid=358",
+      "severity": "medium"
+    },
+    {
+      "file": "ภูเขียว/แบ่งเขต/โคกสะอาด-แบ่งเขต-หน่วยที่ 1-16.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=310 > valid=299",
+      "severity": "medium"
+    },
+    {
+      "file": "ภูเขียว/แบ่งเขต/โคกสะอาด-แบ่งเขต-หน่วยที่ 1-16.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=260 > valid=258",
+      "severity": "medium"
+    },
+    {
+      "file": "เภอคอนสวรรค์/ต.คอนสวรรค์-แบ่งเขต-หน่วยที่ 1-10.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=359 > valid=330",
+      "severity": "medium"
+    },
+    {
+      "file": "เภอคอนสวรรค์/ต.ช่องสามหมอ-แบ่งเขต-หน่วยที่ 1-8.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=661 > valid=649",
+      "severity": "medium"
+    },
+    {
+      "file": "เภอคอนสวรรค์/ต.ช่องสามหมอ-แบ่งเขต-หน่วยที่ 1-8.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=698 > valid=692",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอคอนสวรรค์/ต.ศรีสำราญ-แบ่งเขต-หน่วยที่ 1-10.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=288 > valid=286",
+      "severity": "medium"
+    },
+    {
+      "file": "์/ทต.คอนสวรรค์ โคกมั่งงอย-แบ่งเขต-หน่วยที่ 1-7.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=312 > valid=307",
+      "severity": "medium"
+    },
+    {
+      "file": " ต.ท่าหินโงม)/ต.ซับสีทอง-แบ่งเขต-หน่วยที่ 1-13.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=470 > valid=430",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอแก้งคร้อ/ต.หนองสังข์-แบ่งเขต-หน่วยที่ 1-16.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=272 > valid=246",
+      "severity": "medium"
+    },
+    {
+      "file": "อำเภอแก้งคร้อ/ต.เก่าย่าดี-แบ่งเขต-หน่วยที่ 1-9.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=259 > valid=253",
+      "severity": "medium"
+    },
+    {
+      "file": "7/อำเภอแก้งคร้อ/ต.โคกกุง-แบ่งเขต-หน่วยที่ 1-16.pdf p3",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=383 > valid=379",
+      "severity": "medium"
+    },
+    {
+      "file": "ภอแก้งคร้อ/ทต.นาหนองทุ่ม-แบ่งเขต-หน่วยที่ 1-18.pdf p1",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=336 > valid=335",
+      "severity": "medium"
+    },
+    {
+      "file": "/อำเภอบเหน็จณรงค์/โคกเริงรมย์-001-บัญชีรายชื่อ.PDF p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=685 > valid=152",
+      "severity": "medium"
+    },
+    {
+      "file": "/อำเภอบเหน็จณรงค์/โคกเริงรมย์-001-บัญชีรายชื่อ.PDF p41",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=697 > valid=692",
+      "severity": "medium"
+    },
+    {
+      "file": "ภอภูเขียว/แบ่งเขต/ผักปัง-แบ่งเขต-หน่วยที่ 1-21.pdf p4",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=282 > valid=258",
+      "severity": "medium"
+    },
+    {
+      "file": "ภอภูเขียว/แบ่งเขต/ผักปัง-แบ่งเขต-หน่วยที่ 1-21.pdf p18",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=348 > valid=346",
+      "severity": "medium"
+    },
+    {
+      "file": "ภอภูเขียว/แบ่งเขต/ผักปัง-แบ่งเขต-หน่วยที่ 1-21.pdf p28",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=119 > valid=117",
+      "severity": "medium"
+    },
+    {
+      "file": "ี่ 3/อำเภอบเหน็จณรงค์/บ้านชวน-001-บัญชีรายชื่อ.PDF p21",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=709 > valid=692",
+      "severity": "medium"
+    },
+    {
+      "file": "ี่ 3/อำเภอบเหน็จณรงค์/บ้านชวน-001-บัญชีรายชื่อ.PDF p53",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=218 > valid=182",
+      "severity": "medium"
+    },
+    {
+      "file": "ี่ 3/อำเภอบเหน็จณรงค์/บ้านชวน-001-บัญชีรายชื่อ.PDF p57",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=693 > valid=692",
+      "severity": "medium"
+    },
+    {
+      "file": "ดีชุมพล/แบ่งเขต/ต.วังทอง-แบ่งเขต-หน่วยที่ 1-13.pdf p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=247 > valid=239",
+      "severity": "medium"
+    },
+    {
+      "file": "้งที่ 1/01-แบบ ส.ส. 5/17-แบ่งเขต-นอกเขต/นอกราช.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=717 > valid=715",
+      "severity": "medium"
+    },
+    {
+      "file": "ัยภูมิ/แบ่งเขต/ต.หนองไผ่-แบ่งเขต-หน่วยที่ 1-14.pdf p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=286 > valid=266",
+      "severity": "medium"
+    },
+    {
+      "file": "ัยภูมิ/แบ่งเขต/ต.หนองไผ่-แบ่งเขต-หน่วยที่ 1-14.pdf p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=165 > valid=142",
+      "severity": "medium"
+    },
+    {
+      "file": "ัยภูมิ/แบ่งเขต/ต.หนองไผ่-แบ่งเขต-หน่วยที่ 1-14.pdf p25",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=207 > valid=164",
+      "severity": "medium"
+    },
+    {
+      "file": "ัยภูมิ/แบ่งเขต/ต.หนองไผ่-แบ่งเขต-หน่วยที่ 1-14.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=242 > valid=190",
+      "severity": "medium"
+    },
+    {
+      "file": "ชัยภูมิ/แบ่งเขต/ต.ห้วยบง-แบ่งเขต-หน่วยที่ 1-14.pdf p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=443 > valid=442",
+      "severity": "medium"
+    },
+    {
+      "file": "ชัยภูมิ/แบ่งเขต/ต.ห้วยบง-แบ่งเขต-หน่วยที่ 1-14.pdf p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=315 > valid=205",
+      "severity": "medium"
+    },
+    {
+      "file": "ทพสถิต/แบ่งเขต/ต.บ้านไร่-แบ่งเขต-หน่วยที่ 1-20.pdf p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=265 > valid=212",
+      "severity": "medium"
+    },
+    {
+      "file": "ทพสถิต/แบ่งเขต/ต.บ้านไร่-แบ่งเขต-หน่วยที่ 1-20.pdf p23",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=459 > valid=409",
+      "severity": "medium"
+    },
+    {
+      "file": "ัยภูมิ/แบ่งเขต/ต.กุดตุ้ม-แบ่งเขต-หน่วยที่ 1-18.pdf p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=277 > valid=271",
+      "severity": "medium"
+    },
+    {
+      "file": "ัยภูมิ/แบ่งเขต/ต.กุดตุ้ม-แบ่งเขต-หน่วยที่ 1-18.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=364 > valid=324",
+      "severity": "medium"
+    },
+    {
+      "file": "ลือกตั้งที่ 2/อำเภอเนินสง่า/ตาเนิน-001-แบ่งเขต.PDF p29",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=212 > valid=203",
+      "severity": "medium"
+    },
+    {
+      "file": "เลือกตั้งที่ 2/อำเภอเนินสง่า/กะฮาด-001-แบ่งเขต.PDF p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=375 > valid=345",
+      "severity": "medium"
+    },
+    {
+      "file": "องข่า)/แบ่งเขต/ต.หนองข่า-แบ่งเขต-หน่วยที่ 1-13.pdf p15",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=486 > valid=479",
+      "severity": "medium"
+    },
+    {
+      "file": "องข่า)/แบ่งเขต/ต.หนองข่า-แบ่งเขต-หน่วยที่ 1-13.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=693 > valid=692",
+      "severity": "medium"
+    },
+    {
+      "file": "องข่า)/แบ่งเขต/ต.หนองข่า-แบ่งเขต-หน่วยที่ 1-13.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=462 > valid=422",
+      "severity": "medium"
+    },
+    {
+      "file": "ญชีรายชื่อ/ต.โพนทอง-บัญชีรายชื่อ-หน่วยที่ 1-16.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=445 > valid=289",
+      "severity": "medium"
+    },
+    {
+      "file": "ัญชีรายชื่อ/ต.โคกสูง-บัญชีรายชื่อ-หน่วยที่ 1-6.pdf p21",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=1121 > valid=187",
+      "severity": "medium"
+    },
+    {
+      "file": "อำเภอจัตุรัส/ต.หนองบัวบาน-แบ่งเขต/บัญชีรายชื่อ.pdf p61",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=424 > valid=417",
+      "severity": "medium"
+    },
+    {
+      "file": "งชัยภูมิ/แบ่งเขต/ต.โคกสูง-แบ่งเขต-หน่วยที่ 1-6.pdf p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=193 > valid=192",
+      "severity": "medium"
+    },
+    {
+      "file": "ุมพล/แบ่งเขต/ต.บ้านเจียง-แบ่งเขต-หน่วยที่ 1-11.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=155 > valid=149",
+      "severity": "medium"
+    },
+    {
+      "file": "เลือกตั้งที่ 4/04-แบบ ส.ส. 5/17-แบ่งเขต-นอกเขต.pdf p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=586 > valid=556",
+      "severity": "medium"
+    },
+    {
+      "file": "เลือกตั้งที่ 4/04-แบบ ส.ส. 5/17-แบ่งเขต-นอกเขต.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=543 > valid=538",
+      "severity": "medium"
+    },
+    {
+      "file": "ี่ 2/อำเภอจัตุรัส/ต.ละหาน-แบ่งเขต/บัญชีรายชื่อ.pdf p15",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=212 > valid=192",
+      "severity": "medium"
+    },
+    {
+      "file": "ี่ 2/อำเภอจัตุรัส/ต.ละหาน-แบ่งเขต/บัญชีรายชื่อ.pdf p37",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=602 > valid=352",
+      "severity": "medium"
+    },
+    {
+      "file": "ี่ 2/อำเภอจัตุรัส/ต.ละหาน-แบ่งเขต/บัญชีรายชื่อ.pdf p61",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=292 > valid=283",
+      "severity": "medium"
+    },
+    {
+      "file": "ี่ 2/อำเภอจัตุรัส/ต.ละหาน-แบ่งเขต/บัญชีรายชื่อ.pdf p85",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=423 > valid=378",
+      "severity": "medium"
+    },
+    {
+      "file": "งชัยภูมิ/แบ่งเขต/ต.นาฝาย-แบ่งเขต-หน่วยที่ 1-20.pdf p29",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=287 > valid=286",
+      "severity": "medium"
+    },
+    {
+      "file": "่ 2/อำเภอบ้านเขว้า/ต.ชีบน-แบ่งเขต/บัญชีรายชื่อ.pdf p21",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=314 > valid=253",
+      "severity": "medium"
+    },
+    {
+      "file": "่ 2/อำเภอบ้านเขว้า/ต.ชีบน-แบ่งเขต/บัญชีรายชื่อ.pdf p23",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=298 > valid=239",
+      "severity": "medium"
+    },
+    {
+      "file": "่ 2/อำเภอบ้านเขว้า/ต.ชีบน-แบ่งเขต/บัญชีรายชื่อ.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=614 > valid=607",
+      "severity": "medium"
+    },
+    {
+      "file": "/แบ่งเขต/ทม.เมืองชัยภูมิ-แบ่งเขต-หน่วยที่ 1-48.pdf p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=565 > valid=474",
+      "severity": "medium"
+    },
+    {
+      "file": "/แบ่งเขต/ทม.เมืองชัยภูมิ-แบ่งเขต-หน่วยที่ 1-48.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=506 > valid=499",
+      "severity": "medium"
+    },
+    {
+      "file": "/แบ่งเขต/ทม.เมืองชัยภูมิ-แบ่งเขต-หน่วยที่ 1-48.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=500 > valid=442",
+      "severity": "medium"
+    },
+    {
+      "file": "/แบ่งเขต/ทม.เมืองชัยภูมิ-แบ่งเขต-หน่วยที่ 1-48.pdf p21",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=218 > valid=212",
+      "severity": "medium"
+    },
+    {
+      "file": "/แบ่งเขต/ทม.เมืองชัยภูมิ-แบ่งเขต-หน่วยที่ 1-48.pdf p39",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=381 > valid=377",
+      "severity": "medium"
+    },
+    {
+      "file": "/แบ่งเขต/ทม.เมืองชัยภูมิ-แบ่งเขต-หน่วยที่ 1-48.pdf p45",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=311 > valid=231",
+      "severity": "medium"
+    },
+    {
+      "file": "/แบ่งเขต/ทม.เมืองชัยภูมิ-แบ่งเขต-หน่วยที่ 1-48.pdf p79",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=411 > valid=409",
+      "severity": "medium"
+    },
+    {
+      "file": "/แบ่งเขต/ทม.เมืองชัยภูมิ-แบ่งเขต-หน่วยที่ 1-48.pdf p87",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=344 > valid=341",
+      "severity": "medium"
+    },
+    {
+      "file": "/แบ่งเขต/ทม.เมืองชัยภูมิ-แบ่งเขต-หน่วยที่ 1-48.pdf p89",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=381 > valid=379",
+      "severity": "medium"
+    },
+    {
+      "file": " 2/อำเภอจัตุรัส/ต.บ้านกอก-แบ่งเขต/บัญชีรายชื่อ.pdf p31",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=286 > valid=282",
+      "severity": "medium"
+    },
+    {
+      "file": " 2/อำเภอจัตุรัส/ต.บ้านกอก-แบ่งเขต/บัญชีรายชื่อ.pdf p43",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=196 > valid=167",
+      "severity": "medium"
+    },
+    {
+      "file": "ชีรายชื่อ/ต.กุดตุ้ม-บัญชีรายชื่อ-หน่วยที่ 1-18.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=267 > valid=245",
+      "severity": "medium"
+    },
+    {
+      "file": "ตั้งที่ 2/อำเภอบ้านเขว้า/ต.โนนแดง-บัญชีรายชื่อ.PDF p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=346 > valid=234",
+      "severity": "medium"
+    },
+    {
+      "file": "ือกตั้งที่ 2/อำเภอบ้านเขว้า/ต.ลุ่มลำชี แบ่งเขต.PDF p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=202 > valid=197",
+      "severity": "medium"
+    },
+    {
+      "file": "ัยภูมิ/แบ่งเขต/ทต.ลาดใหญ่-แบ่งเขต-หน่วยที่ 1-7.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=419 > valid=408",
+      "severity": "medium"
+    },
+    {
+      "file": "ัยภูมิ/แบ่งเขต/ทต.ลาดใหญ่-แบ่งเขต-หน่วยที่ 1-7.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=330 > valid=310",
+      "severity": "medium"
+    },
+    {
+      "file": "ตั้งที่ 3/อำเภอบเหน็จณรงค์/บ้านชวน-001-แบ่งเขต.PDF p25",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=750 > valid=692",
+      "severity": "medium"
+    },
+    {
+      "file": "ชัยภูมิ/แบ่งเขต/ต.ลาดใหญ่-แบ่งเขต-หน่วยที่ 1-7.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=255 > valid=254",
+      "severity": "medium"
+    },
+    {
+      "file": "ชัยภูมิ/แบ่งเขต/ต.ลาดใหญ่-แบ่งเขต-หน่วยที่ 1-7.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=127 > valid=107",
+      "severity": "medium"
+    },
+    {
+      "file": "ัยภูมิ/แบ่งเขต/ต.รอบเมือง-แบ่งเขต-หน่วยที่ 1-5.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=237 > valid=219",
+      "severity": "medium"
+    },
+    {
+      "file": "ัยภูมิ/แบ่งเขต/ต.รอบเมือง-แบ่งเขต-หน่วยที่ 1-5.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=519 > valid=517",
+      "severity": "medium"
+    },
+    {
+      "file": "สถิต/แบ่งเขต/ต.นายางกลัก-แบ่งเขต-หน่วยที่ 1-25.pdf p33",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=211 > valid=209",
+      "severity": "medium"
+    },
+    {
+      "file": "สถิต/แบ่งเขต/ต.นายางกลัก-แบ่งเขต-หน่วยที่ 1-25.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=229 > valid=132",
+      "severity": "medium"
+    },
+    {
+      "file": "สถิต/แบ่งเขต/ต.นายางกลัก-แบ่งเขต-หน่วยที่ 1-25.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=249 > valid=242",
+      "severity": "medium"
+    },
+    {
+      "file": "วแดง/แบ่งเขต/ทต.หลวงศิริ-แบ่งเขต-หน่วยที่ 1-14.pdf p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=337 > valid=332",
+      "severity": "medium"
+    },
+    {
+      "file": "ภอคอนสาร/แบ่งเขต/ทุ่งพระ-แบ่งเขต-หน่วยที่ 1-10.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=291 > valid=243",
+      "severity": "medium"
+    },
+    {
+      "file": "ลือกตั้งที่ 2/อำเภอเนินสง่า/รังงาม-001-แบ่งเขต.PDF p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=358 > valid=342",
+      "severity": "medium"
+    },
+    {
+      "file": "ลือกตั้งที่ 2/อำเภอเนินสง่า/รังงาม-001-แบ่งเขต.PDF p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=214 > valid=208",
+      "severity": "medium"
+    },
+    {
+      "file": "ยภูมิ/แบ่งเขต/ต.โนนสำราญ-แบ่งเขต-หน่วยที่ 1-11.pdf p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=447 > valid=239",
+      "severity": "medium"
+    },
+    {
+      "file": "ยภูมิ/แบ่งเขต/ต.โนนสำราญ-แบ่งเขต-หน่วยที่ 1-11.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=252 > valid=231",
+      "severity": "medium"
+    },
+    {
+      "file": "ยภูมิ/แบ่งเขต/ต.บ้านค่าย-แบ่งเขต-หน่วยที่ 1-12.pdf p23",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=208 > valid=204",
+      "severity": "medium"
+    },
+    {
+      "file": "ยภูมิ/แบ่งเขต/ต.บ้านค่าย-แบ่งเขต-หน่วยที่ 1-12.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=243 > valid=212",
+      "severity": "medium"
+    },
+    {
+      "file": "ื่อ/ทม.เมืองชัยภูมิ-บัญชีรายชื่อ-หน่วยที่ 1-48.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=8443 > valid=461",
+      "severity": "medium"
+    },
+    {
+      "file": "ยภูมิ/แบ่งเขต/ต.บุ่งคล้า-แบ่งเขต-หน่วยที่ 1-13.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=339 > valid=327",
+      "severity": "medium"
+    },
+    {
+      "file": "ยภูมิ/แบ่งเขต/ต.บุ่งคล้า-แบ่งเขต-หน่วยที่ 1-13.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=195 > valid=191",
+      "severity": "medium"
+    },
+    {
+      "file": "งบัวแดง/แบ่งเขต/ต.นางแดด-แบ่งเขต-หน่วยที่ 1-23.pdf p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=242 > valid=202",
+      "severity": "medium"
+    },
+    {
+      "file": "งบัวแดง/แบ่งเขต/ต.นางแดด-แบ่งเขต-หน่วยที่ 1-23.pdf p23",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=271 > valid=266",
+      "severity": "medium"
+    },
+    {
+      "file": "งบัวแดง/แบ่งเขต/ต.นางแดด-แบ่งเขต-หน่วยที่ 1-23.pdf p41",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=294 > valid=254",
+      "severity": "medium"
+    },
+    {
+      "file": "ดีชุมพล/แบ่งเขต/ต.เจาทอง-แบ่งเขต-หน่วยที่ 1-14.pdf p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=486 > valid=282",
+      "severity": "medium"
+    },
+    {
+      "file": "ดีชุมพล/แบ่งเขต/ต.เจาทอง-แบ่งเขต-หน่วยที่ 1-14.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=296 > valid=294",
+      "severity": "medium"
+    },
+    {
+      "file": "ดีชุมพล/แบ่งเขต/ต.เจาทอง-แบ่งเขต-หน่วยที่ 1-14.pdf p25",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=462 > valid=261",
+      "severity": "medium"
+    },
+    {
+      "file": "ดีชุมพล/แบ่งเขต/ต.เจาทอง-แบ่งเขต-หน่วยที่ 1-14.pdf p27",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=438 > valid=320",
+      "severity": "medium"
+    },
+    {
+      "file": "บัวแดง/แบ่งเขต/ต.วังชมภู-แบ่งเขต-หน่วยที่ 1-12.pdf p15",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=390 > valid=388",
+      "severity": "medium"
+    },
+    {
+      "file": "บัวแดง/แบ่งเขต/ต.วังชมภู-แบ่งเขต-หน่วยที่ 1-12.pdf p23",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=448 > valid=388",
+      "severity": "medium"
+    },
+    {
+      "file": "บัวแดง/แบ่งเขต/ต.วังชมภู-แบ่งเขต-หน่วยที่ 1-12.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=246 > valid=240",
+      "severity": "medium"
+    },
+    {
+      "file": "บัวแดง/แบ่งเขต/ต.วังชมภู-แบ่งเขต-หน่วยที่ 1-12.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=298 > valid=292",
+      "severity": "medium"
+    },
+    {
+      "file": "บัวแดง/แบ่งเขต/ต.วังชมภู-แบ่งเขต-หน่วยที่ 1-12.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=383 > valid=333",
+      "severity": "medium"
+    },
+    {
+      "file": "รายชื่อ/ต.ถ้ำวัวแดง-บัญชีรายชื่อ-หน่วยที่ 1-15.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=486 > valid=457",
+      "severity": "medium"
+    },
+    {
+      "file": "่ 3/อำเภอหนองบัวระเหว/โคกสะอาด-001-แบ่งเขต0001.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=443 > valid=263",
+      "severity": "medium"
+    },
+    {
+      "file": "่ 3/อำเภอหนองบัวระเหว/โคกสะอาด-001-แบ่งเขต0001.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=308 > valid=248",
+      "severity": "medium"
+    },
+    {
+      "file": "ต้อน)/แบ่งเขต/ต.ห้วยต้อน-แบ่งเขต-หน่วยที่ 1-13.pdf p25",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=362 > valid=357",
+      "severity": "medium"
+    },
+    {
+      "file": "่ 3/อำเภอบเหน็จณรงค์/โคกเพชรพัฒนา -001-แบ่งเขต.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=232 > valid=226",
+      "severity": "medium"
+    },
+    {
+      "file": "เลือกตั้งที่ 2/อำเภอบ้านเขว้า/ต.โนนแดง-แบ่งเขต.PDF p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=235 > valid=234",
+      "severity": "medium"
+    },
+    {
+      "file": "ี่ 3/อำเภอหนองบัวระเหว/ห้วยแย้-001-แบ่งเขต0001.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=236 > valid=234",
+      "severity": "medium"
+    },
+    {
+      "file": "ี่ 3/อำเภอหนองบัวระเหว/ห้วยแย้-001-แบ่งเขต0001.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=248 > valid=242",
+      "severity": "medium"
+    },
+    {
+      "file": "บัวแดง/แบ่งเขต/ต.ท่าใหญ่-แบ่งเขต-หน่วยที่ 1-15.pdf p29",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=427 > valid=397",
+      "severity": "medium"
+    },
+    {
+      "file": "เทพสถิต/แบ่งเขต/ต.โป่งนก-แบ่งเขต-หน่วยที่ 1-21.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=322 > valid=282",
+      "severity": "medium"
+    },
+    {
+      "file": "เทพสถิต/แบ่งเขต/ต.โป่งนก-แบ่งเขต-หน่วยที่ 1-21.pdf p21",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=178 > valid=176",
+      "severity": "medium"
+    },
+    {
+      "file": "เทพสถิต/แบ่งเขต/ต.โป่งนก-แบ่งเขต-หน่วยที่ 1-21.pdf p39",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=263 > valid=257",
+      "severity": "medium"
+    },
+    {
+      "file": "่ 3/อำเภอหนองบัวระเหว/วังตะเฆ่-001-แบ่งเขต0001.pdf p23",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=357 > valid=307",
+      "severity": "medium"
+    },
+    {
+      "file": "รายชื่อ/ต.นายางกลัก-บัญชีรายชื่อ-หน่วยที่ 1-25.pdf p39",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=88 > valid=87",
+      "severity": "medium"
+    },
+    {
+      "file": "ภูมิ/แบ่งเขต/ต.หนองนาแซง-แบ่งเขต-หน่วยที่ 1-14.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=271 > valid=241",
+      "severity": "medium"
+    },
+    {
+      "file": "ภูมิ/แบ่งเขต/ต.หนองนาแซง-แบ่งเขต-หน่วยที่ 1-14.pdf p21",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=268 > valid=241",
+      "severity": "medium"
+    },
+    {
+      "file": "ภูมิ/แบ่งเขต/ต.หนองนาแซง-แบ่งเขต-หน่วยที่ 1-14.pdf p25",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=382 > valid=380",
+      "severity": "medium"
+    },
+    {
+      "file": "ภูมิ/แบ่งเขต/ต.หนองนาแซง-แบ่งเขต-หน่วยที่ 1-14.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=271 > valid=269",
+      "severity": "medium"
+    },
+    {
+      "file": "ตั้งที่ 2/อำเภอซับใหญ่/ท่ากูบ-001-บัญชีรายชื่อ.PDF p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=285 > valid=262",
+      "severity": "medium"
+    },
+    {
+      "file": "ตั้งที่ 2/อำเภอซับใหญ่/ท่ากูบ-001-บัญชีรายชื่อ.PDF p25",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=533 > valid=483",
+      "severity": "medium"
+    },
+    {
+      "file": "ตั้งที่ 2/อำเภอซับใหญ่/ท่ากูบ-001-บัญชีรายชื่อ.PDF p27",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=663 > valid=661",
+      "severity": "medium"
+    },
+    {
+      "file": "ตั้งที่ 2/อำเภอซับใหญ่/ท่ากูบ-001-บัญชีรายชื่อ.PDF p37",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=788 > valid=737",
+      "severity": "medium"
+    },
+    {
+      "file": "ตั้งที่ 2/อำเภอซับใหญ่/ท่ากูบ-001-บัญชีรายชื่อ.PDF p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=657 > valid=653",
+      "severity": "medium"
+    },
+    {
+      "file": "ีรายชื่อ/ทต.วะตะแบก-บัญชีรายชื่อ-หน่วยที่ 1-14.pdf p25",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=235 > valid=204",
+      "severity": "medium"
+    },
+    {
+      "file": "ต.ท่าหินโงม)/ต.ท่าหินโงม-แบ่งเขต-หน่วยที่ 1-12.pdf p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=237 > valid=231",
+      "severity": "medium"
+    },
+    {
+      "file": "ัยภูมิ/แบ่งเขต/ต.นาเสียว-แบ่งเขต-หน่วยที่ 1-12.pdf p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=530 > valid=377",
+      "severity": "medium"
+    },
+    {
+      "file": " 2/อำเภอจัตุรัส/ต.ส้มป่อย-แบ่งเขต/บัญชีรายชื่อ.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=137 > valid=136",
+      "severity": "medium"
+    },
+    {
+      "file": "รายชื่อ/ต.บ้านเจียง-บัญชีรายชื่อ-หน่วยที่ 1-11.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=390 > valid=356",
+      "severity": "medium"
+    },
+    {
+      "file": "ือกตั้งที่ 2/อำเภอเนินสง่า/หนองฉิม-001-แบ่งเขต.PDF p27",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=279 > valid=269",
+      "severity": "medium"
+    },
+    {
+      "file": "ือกตั้งที่ 2/อำเภอเนินสง่า/หนองฉิม-001-แบ่งเขต.PDF p29",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=222 > valid=221",
+      "severity": "medium"
+    },
+    {
+      "file": "ัยภูมิ/เขตเลือกตั้งที่ 3/ส.ส. 5 ทับ 17-แบ่งเขต.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=667 > valid=657",
+      "severity": "medium"
+    },
+    {
+      "file": "งชัยภูมิ/แบ่งเขต/ต.ชีลอง-แบ่งเขต-หน่วยที่ 1-19.pdf p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=381 > valid=371",
+      "severity": "medium"
+    },
+    {
+      "file": "งชัยภูมิ/แบ่งเขต/ต.ชีลอง-แบ่งเขต-หน่วยที่ 1-19.pdf p21",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=266 > valid=216",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอจัตุรัส/ต.หนองบัวใหญ่-แบ่งเขต/บัญชีรายชื่อ.pdf p31",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=433 > valid=399",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอจัตุรัส/ต.หนองบัวใหญ่-แบ่งเขต/บัญชีรายชื่อ.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=295 > valid=271",
+      "severity": "medium"
+    },
+    {
+      "file": "พสถิต/แบ่งเขต/ทต.วะตะแบก-แบ่งเขต-หน่วยที่ 1-14.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=228 > valid=222",
+      "severity": "medium"
+    },
+    {
+      "file": "พสถิต/แบ่งเขต/ทต.วะตะแบก-แบ่งเขต-หน่วยที่ 1-14.pdf p23",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=179 > valid=178",
+      "severity": "medium"
+    },
+    {
+      "file": "พสถิต/แบ่งเขต/ทต.วะตะแบก-แบ่งเขต-หน่วยที่ 1-14.pdf p31",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=256 > valid=184",
+      "severity": "medium"
+    },
+    {
+      "file": "พสถิต/แบ่งเขต/ทต.วะตะแบก-แบ่งเขต-หน่วยที่ 1-14.pdf p33",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=319 > valid=315",
+      "severity": "medium"
+    },
+    {
+      "file": "พสถิต/แบ่งเขต/ทต.วะตะแบก-แบ่งเขต-หน่วยที่ 1-14.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=212 > valid=189",
+      "severity": "medium"
+    },
+    {
+      "file": "ยภูมิ/แบ่งเขต/ทต.บ้านค่าย-แบ่งเขต-หน่วยที่ 1-8.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=346 > valid=314",
+      "severity": "medium"
+    },
+    {
+      "file": "วแดง/แบ่งเขต/ต.กุดชุมแสง-แบ่งเขต-หน่วยที่ 1-21.pdf p21",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=275 > valid=270",
+      "severity": "medium"
+    },
+    {
+      "file": "วแดง/แบ่งเขต/ต.กุดชุมแสง-แบ่งเขต-หน่วยที่ 1-21.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=262 > valid=256",
+      "severity": "medium"
+    },
+    {
+      "file": "ที่ 3/อำเภอบเหน็จณรงค์/โคกเริงรมย์-001-แบ่งเขต.PDF p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=146 > valid=140",
+      "severity": "medium"
+    },
+    {
+      "file": " 2/อำเภอจัตุรัส/ต.หนองโดน-แบ่งเขต/บัญชีรายชื่อ.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=278 > valid=219",
+      "severity": "medium"
+    },
+    {
+      "file": " 2/อำเภอจัตุรัส/ต.หนองโดน-แบ่งเขต/บัญชีรายชื่อ.pdf p25",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=440 > valid=427",
+      "severity": "medium"
+    },
+    {
+      "file": " 2/อำเภอจัตุรัส/ต.หนองโดน-แบ่งเขต/บัญชีรายชื่อ.pdf p43",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=752 > valid=708",
+      "severity": "medium"
+    },
+    {
+      "file": "มบูรณ์/แบ่งเขต/ต.กุดเลาะ-แบ่งเขต-หน่วยที่ 1-13.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=254 > valid=244",
+      "severity": "medium"
+    },
+    {
+      "file": "มบูรณ์/แบ่งเขต/ต.กุดเลาะ-แบ่งเขต-หน่วยที่ 1-13.pdf p15",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=316 > valid=306",
+      "severity": "medium"
+    },
+    {
+      "file": "มบูรณ์/แบ่งเขต/ต.กุดเลาะ-แบ่งเขต-หน่วยที่ 1-13.pdf p23",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=370 > valid=344",
+      "severity": "medium"
+    },
+    {
+      "file": " ต.ท่าหินโงม)/ต.ซับสีทอง-แบ่งเขต-หน่วยที่ 1-13.pdf p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=460 > valid=355",
+      "severity": "medium"
+    },
+    {
+      "file": " ต.ท่าหินโงม)/ต.ซับสีทอง-แบ่งเขต-หน่วยที่ 1-13.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=151 > valid=141",
+      "severity": "medium"
+    },
+    {
+      "file": "เภอคอนสวรรค์/ต.ช่องสามหมอ-แบ่งเขต-หน่วยที่ 1-8.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=126 > valid=120",
+      "severity": "medium"
+    },
+    {
+      "file": "7/อำเภอแก้งคร้อ/ต.หลุบคา-แบ่งเขต-หน่วยที่ 1-10.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=335 > valid=334",
+      "severity": "medium"
+    },
+    {
+      "file": "ว/บัญชีรายชื่อ/กุดยม-บัญชีรายชื่อ-หน่วยที่ 1-9.pdf p21",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=175 > valid=161",
+      "severity": "medium"
+    },
+    {
+      "file": "เภอแก้งคร้อ/ต.นาหนองทุ่ม-แบ่งเขต-หน่วยที่ 1-11.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=314 > valid=310",
+      "severity": "medium"
+    },
+    {
+      "file": "ูรณ์/บัญชีรายชื่อ/ทต.เกษตรสมบูรณ์-บัญชีรายชื่อ.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=642 > valid=268",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอแก้งคร้อ/ต.หนองสังข์-แบ่งเขต-หน่วยที่ 1-16.pdf p15",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=449 > valid=435",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอแก้งคร้อ/ต.หนองสังข์-แบ่งเขต-หน่วยที่ 1-16.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=143 > valid=142",
+      "severity": "medium"
+    },
+    {
+      "file": "อภูเขียว/แบ่งเขต/กวางโจน-แบ่งเขต-หน่วยที่ 1-19.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=219 > valid=215",
+      "severity": "medium"
+    },
+    {
+      "file": "ภอแก้งคร้อ/ต.โคกกุง-บัญชีรายชื่อ-หน่วยที่ 1-16.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=183 > valid=167",
+      "severity": "medium"
+    },
+    {
+      "file": "อำเภอคอนสวรรค์/ต.บ้านโสก-แบ่งเขต-หน่วยที่ 1-14.pdf p15",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=318 > valid=317",
+      "severity": "medium"
+    },
+    {
+      "file": "้านแท่น/แบ่งเขต/ต.สามสวน-แบ่งเขต-หน่วยที่ 1-18.pdf p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=381 > valid=301",
+      "severity": "medium"
+    },
+    {
+      "file": "้านแท่น/แบ่งเขต/ต.สามสวน-แบ่งเขต-หน่วยที่ 1-18.pdf p23",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=66 > valid=65",
+      "severity": "medium"
+    },
+    {
+      "file": "้านแท่น/แบ่งเขต/ต.สามสวน-แบ่งเขต-หน่วยที่ 1-18.pdf p27",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=318 > valid=312",
+      "severity": "medium"
+    },
+    {
+      "file": "้านแท่น/แบ่งเขต/ต.สามสวน-แบ่งเขต-หน่วยที่ 1-18.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=315 > valid=313",
+      "severity": "medium"
+    },
+    {
+      "file": "้านแท่น/แบ่งเขต/ต.สามสวน-แบ่งเขต-หน่วยที่ 1-18.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=368 > valid=362",
+      "severity": "medium"
+    },
+    {
+      "file": "ีรายชื่อ/หนองคอนไทย-บัญชีรายชื่อ-หน่วยที่ 1-18.pdf p29",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=358 > valid=252",
+      "severity": "medium"
+    },
+    {
+      "file": "อภูเขียว/แบ่งเขต/ธาตุทอง-แบ่งเขต-หน่วยที่ 1-20.pdf p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=218 > valid=214",
+      "severity": "medium"
+    },
+    {
+      "file": "อภูเขียว/แบ่งเขต/ธาตุทอง-แบ่งเขต-หน่วยที่ 1-20.pdf p21",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=318 > valid=308",
+      "severity": "medium"
+    },
+    {
+      "file": "อภูเขียว/แบ่งเขต/ธาตุทอง-แบ่งเขต-หน่วยที่ 1-20.pdf p25",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=376 > valid=370",
+      "severity": "medium"
+    },
+    {
+      "file": "อภูเขียว/แบ่งเขต/ธาตุทอง-แบ่งเขต-หน่วยที่ 1-20.pdf p31",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=318 > valid=237",
+      "severity": "medium"
+    },
+    {
+      "file": "อภูเขียว/แบ่งเขต/ธาตุทอง-แบ่งเขต-หน่วยที่ 1-20.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=217 > valid=215",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอภูเขียว/แบ่งเขต/โอโล-แบ่งเขต-หน่วยที่ 1-15.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=306 > valid=305",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอภูเขียว/แบ่งเขต/โอโล-แบ่งเขต-หน่วยที่ 1-15.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=250 > valid=200",
+      "severity": "medium"
+    },
+    {
+      "file": "องข่า)/แบ่งเขต/ต.หนองข่า-แบ่งเขต-หน่วยที่ 1-13.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=461 > valid=441",
+      "severity": "medium"
+    },
+    {
+      "file": "ภูเขียว/แบ่งเขต/บ้านแก้ง-แบ่งเขต-หน่วยที่ 1-22.pdf p27",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=381 > valid=377",
+      "severity": "medium"
+    },
+    {
+      "file": "ภูเขียว/แบ่งเขต/บ้านแก้ง-แบ่งเขต-หน่วยที่ 1-22.pdf p43",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=318 > valid=312",
+      "severity": "medium"
+    },
+    {
+      "file": "ภูเขียว/แบ่งเขต/บ้านแก้ง-แบ่งเขต-หน่วยที่ 1-22.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=516 > valid=336",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอแก้งคร้อ/ต.ช่องสามหมอ-แบ่งเขต-หน่วยที่ 1-9.pdf p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=201 > valid=200",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอแก้งคร้อ/ต.ช่องสามหมอ-แบ่งเขต-หน่วยที่ 1-9.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=353 > valid=343",
+      "severity": "medium"
+    },
+    {
+      "file": "ทต.ช่องสามหมอ ทต.หนองไผ่-แบ่งเขต-หน่วยที่ 1-15.pdf p15",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=267 > valid=261",
+      "severity": "medium"
+    },
+    {
+      "file": "ทต.ช่องสามหมอ ทต.หนองไผ่-แบ่งเขต-หน่วยที่ 1-15.pdf p27",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=237 > valid=224",
+      "severity": "medium"
+    },
+    {
+      "file": "เขียว/แบ่งเขต/หนองคอนไทย-แบ่งเขต-หน่วยที่ 1-18.pdf p15",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=489 > valid=259",
+      "severity": "medium"
+    },
+    {
+      "file": "มบูรณ์/แบ่งเขต/ต.บ้านเป้า-แบ่งเขต-หน่วยที่ 1-6.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=396 > valid=392",
+      "severity": "medium"
+    },
+    {
+      "file": "อภูเขียว/แบ่งเขต/บ้านดอน-แบ่งเขต-หน่วยที่ 1-11.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=356 > valid=306",
+      "severity": "medium"
+    },
+    {
+      "file": "อำเภอคอนสวรรค์/ต.โนนสะอาด-แบ่งเขต-หน่วยที่ 1-9.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=471 > valid=451",
+      "severity": "medium"
+    },
+    {
+      "file": "ีรายชื่อ/ต.บ้านเต่า-บัญชีรายชื่อ-หน่วยที่ 1-16.pdf p45",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=184 > valid=152",
+      "severity": "medium"
+    },
+    {
+      "file": "สมบูรณ์/แบ่งเขต/ต.โนนทอง-แบ่งเขต-หน่วยที่ 1-13.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=214 > valid=204",
+      "severity": "medium"
+    },
+    {
+      "file": "สมบูรณ์/แบ่งเขต/ต.โนนทอง-แบ่งเขต-หน่วยที่ 1-13.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=486 > valid=426",
+      "severity": "medium"
+    },
+    {
+      "file": "สมบูรณ์/แบ่งเขต/ต.โนนทอง-แบ่งเขต-หน่วยที่ 1-13.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=211 > valid=209",
+      "severity": "medium"
+    },
+    {
+      "file": "7/อำเภอแก้งคร้อ/ต.โคกกุง-แบ่งเขต-หน่วยที่ 1-16.pdf p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=293 > valid=288",
+      "severity": "medium"
+    },
+    {
+      "file": "7/อำเภอแก้งคร้อ/ต.โคกกุง-แบ่งเขต-หน่วยที่ 1-16.pdf p25",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=205 > valid=195",
+      "severity": "medium"
+    },
+    {
+      "file": "7/อำเภอแก้งคร้อ/ต.โคกกุง-แบ่งเขต-หน่วยที่ 1-16.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=456 > valid=437",
+      "severity": "medium"
+    },
+    {
+      "file": "เลือกตั้งที่ 2/02-แบบ ส.ส. 5/17-แบ่งเขต-นอกเขต.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=634 > valid=608",
+      "severity": "medium"
+    },
+    {
+      "file": "รณ์/แบ่งเขต/ต.หนองโพนงาม-แบ่งเขต-หน่วยที่ 1-20.pdf p29",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=239 > valid=212",
+      "severity": "medium"
+    },
+    {
+      "file": "รณ์/แบ่งเขต/ต.หนองโพนงาม-แบ่งเขต-หน่วยที่ 1-20.pdf p41",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=411 > valid=409",
+      "severity": "medium"
+    },
+    {
+      "file": "แก้งคร้อ/ต.บ้านแก้ง-บัญชีรายชื่อ-หน่วยที่ 1-15.pdf p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=470 > valid=381",
+      "severity": "medium"
+    },
+    {
+      "file": "นสวรรค์/ต.ช่องสามหมอ-บัญชีรายชื่อ-หน่วยที่ 1-8.pdf p109",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=270 > valid=265",
+      "severity": "medium"
+    },
+    {
+      "file": "ว/บัญชีรายชื่อ/โอโล-บัญชีรายชื่อ-หน่วยที่ 1-15.pdf p53",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=345 > valid=223",
+      "severity": "medium"
+    },
+    {
+      "file": "บัวแดง/แบ่งเขต/ต.หนองแวง-แบ่งเขต-หน่วยที่ 1-24.pdf p35",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=266 > valid=206",
+      "severity": "medium"
+    },
+    {
+      "file": "ี่ 2/อำเภอจัตุรัส/ต.ละหาน-แบ่งเขต/บัญชีรายชื่อ.pdf p25",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=428 > valid=388",
+      "severity": "medium"
+    },
+    {
+      "file": "ี่ 2/อำเภอจัตุรัส/ต.ละหาน-แบ่งเขต/บัญชีรายชื่อ.pdf p55",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=373 > valid=344",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอภูเขียว/แบ่งเขต/กุดยม-แบ่งเขต-หน่วยที่ 1-9.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=329 > valid=214",
+      "severity": "medium"
+    },
+    {
+      "file": "ภอคอนสวรรค์/ต.โคกมั่งงอย-แบ่งเขต-หน่วยที่ 1-11.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=453 > valid=408",
+      "severity": "medium"
+    },
+    {
+      "file": "ภูเขียว/แบ่งเขต/โคกสะอาด-แบ่งเขต-หน่วยที่ 1-16.pdf p29",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=234 > valid=214",
+      "severity": "medium"
+    },
+    {
+      "file": "นแท่น/แบ่งเขต/ต.บ้านแท่น-แบ่งเขต-หน่วยที่ 1-16.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=229 > valid=219",
+      "severity": "medium"
+    },
+    {
+      "file": "นแท่น/แบ่งเขต/ต.บ้านแท่น-แบ่งเขต-หน่วยที่ 1-16.pdf p23",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=320 > valid=229",
+      "severity": "medium"
+    },
+    {
+      "file": "นแท่น/แบ่งเขต/ต.บ้านแท่น-แบ่งเขต-หน่วยที่ 1-16.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=550 > valid=319",
+      "severity": "medium"
+    },
+    {
+      "file": "ูรณ์/แบ่งเขต/ต.บ้านเดื่อ-แบ่งเขต-หน่วยที่ 1-22.pdf p15",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=354 > valid=351",
+      "severity": "medium"
+    },
+    {
+      "file": "ูรณ์/แบ่งเขต/ต.บ้านเดื่อ-แบ่งเขต-หน่วยที่ 1-22.pdf p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=464 > valid=461",
+      "severity": "medium"
+    },
+    {
+      "file": "ูรณ์/แบ่งเขต/ต.บ้านเดื่อ-แบ่งเขต-หน่วยที่ 1-22.pdf p25",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=386 > valid=381",
+      "severity": "medium"
+    },
+    {
+      "file": "ูรณ์/แบ่งเขต/ต.บ้านเดื่อ-แบ่งเขต-หน่วยที่ 1-22.pdf p27",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=431 > valid=251",
+      "severity": "medium"
+    },
+    {
+      "file": "ูรณ์/แบ่งเขต/ต.บ้านเดื่อ-แบ่งเขต-หน่วยที่ 1-22.pdf p29",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=250 > valid=249",
+      "severity": "medium"
+    },
+    {
+      "file": "ูรณ์/แบ่งเขต/ต.บ้านเดื่อ-แบ่งเขต-หน่วยที่ 1-22.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=482 > valid=459",
+      "severity": "medium"
+    },
+    {
+      "file": "สมบูรณ์/แบ่งเขต/ต.โนนกอก-แบ่งเขต-หน่วยที่ 1-14.pdf p21",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=394 > valid=215",
+      "severity": "medium"
+    },
+    {
+      "file": "สมบูรณ์/แบ่งเขต/ต.โนนกอก-แบ่งเขต-หน่วยที่ 1-14.pdf p25",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=287 > valid=286",
+      "severity": "medium"
+    },
+    {
+      "file": "สมบูรณ์/แบ่งเขต/ต.โนนกอก-แบ่งเขต-หน่วยที่ 1-14.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=336 > valid=334",
+      "severity": "medium"
+    },
+    {
+      "file": "ษตรสมบูรณ์/บัญชีรายชื่อ/ต.บ้านหัน-บัญชีรายชื่อ.pdf p53",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=164 > valid=144",
+      "severity": "medium"
+    },
+    {
+      "file": "เภอคอนสาร/แบ่งเขต/โนนคูณ-แบ่งเขต-หน่วยที่ 1-12.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=439 > valid=433",
+      "severity": "medium"
+    },
+    {
+      "file": "เภอคอนสาร/แบ่งเขต/โนนคูณ-แบ่งเขต-หน่วยที่ 1-12.pdf p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=491 > valid=425",
+      "severity": "medium"
+    },
+    {
+      "file": "เภอคอนสาร/แบ่งเขต/โนนคูณ-แบ่งเขต-หน่วยที่ 1-12.pdf p21",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=487 > valid=440",
+      "severity": "medium"
+    },
+    {
+      "file": "ดง/แบ่งเขต/ทต.หนองบัวแดง-แบ่งเขต-หน่วยที่ 1-13.pdf p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=286 > valid=202",
+      "severity": "medium"
+    },
+    {
+      "file": "ดง/แบ่งเขต/ทต.หนองบัวแดง-แบ่งเขต-หน่วยที่ 1-13.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=343 > valid=275",
+      "severity": "medium"
+    },
+    {
+      "file": "ัญชีรายชื่อ/ต.สระพัง-บัญชีรายชื่อ-หน่วยที่ 1-9.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=145 > valid=133",
+      "severity": "medium"
+    },
+    {
+      "file": "ัญชีรายชื่อ/กวางโจน-บัญชีรายชื่อ-หน่วยที่ 1-19.pdf p29",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=408 > valid=388",
+      "severity": "medium"
+    },
+    {
+      "file": "นสวรรค์/ต.คอนสวรรค์-บัญชีรายชื่อ-หน่วยที่ 1-10.pdf p49",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=1235 > valid=650",
+      "severity": "medium"
+    },
+    {
+      "file": "นสวรรค์/ต.คอนสวรรค์-บัญชีรายชื่อ-หน่วยที่ 1-10.pdf p89",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=446 > valid=413",
+      "severity": "medium"
+    },
+    {
+      "file": "้านแท่น/แบ่งเขต/ต.หนองคู-แบ่งเขต-หน่วยที่ 1-12.pdf p21",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=331 > valid=324",
+      "severity": "medium"
+    },
+    {
+      "file": "้านแท่น/แบ่งเขต/ต.หนองคู-แบ่งเขต-หน่วยที่ 1-12.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=267 > valid=212",
+      "severity": "medium"
+    },
+    {
+      "file": "้านแท่น/แบ่งเขต/ต.หนองคู-แบ่งเขต-หน่วยที่ 1-12.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=253 > valid=223",
+      "severity": "medium"
+    },
+    {
+      "file": "้านแท่น/แบ่งเขต/ต.หนองคู-แบ่งเขต-หน่วยที่ 1-12.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=383 > valid=382",
+      "severity": "medium"
+    },
+    {
+      "file": "เภอคอนสวรรค์/ต.คอนสวรรค์-แบ่งเขต-หน่วยที่ 1-10.pdf p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=331 > valid=328",
+      "severity": "medium"
+    },
+    {
+      "file": "เภอคอนสวรรค์/ต.คอนสวรรค์-แบ่งเขต-หน่วยที่ 1-10.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=713 > valid=708",
+      "severity": "medium"
+    },
+    {
+      "file": "เภอคอนสวรรค์/ต.คอนสวรรค์-แบ่งเขต-หน่วยที่ 1-10.pdf p15",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=388 > valid=378",
+      "severity": "medium"
+    },
+    {
+      "file": "เภอคอนสวรรค์/ต.คอนสวรรค์-แบ่งเขต-หน่วยที่ 1-10.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=1036 > valid=325",
+      "severity": "medium"
+    },
+    {
+      "file": "เภอคอนสวรรค์/ต.คอนสวรรค์-แบ่งเขต-หน่วยที่ 1-10.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=448 > valid=442",
+      "severity": "medium"
+    },
+    {
+      "file": "ีรายชื่อ/ต.ห้วยต้อน-บัญชีรายชื่อ-หน่วยที่ 1-13.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=220 > valid=196",
+      "severity": "medium"
+    },
+    {
+      "file": "2/อำเภอจัตุรัส/ต.กุดน้ำใส-แบ่งเขต/บัญชีรายชื่อ.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=45 > valid=41",
+      "severity": "medium"
+    },
+    {
+      "file": "2/อำเภอจัตุรัส/ต.กุดน้ำใส-แบ่งเขต/บัญชีรายชื่อ.pdf p61",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=134 > valid=129",
+      "severity": "medium"
+    },
+    {
+      "file": "นแท่น/แบ่งเขต/ต.บ้านเต่า-แบ่งเขต-หน่วยที่ 1-16.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=238 > valid=218",
+      "severity": "medium"
+    },
+    {
+      "file": "นแท่น/แบ่งเขต/ต.บ้านเต่า-แบ่งเขต-หน่วยที่ 1-16.pdf p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=374 > valid=354",
+      "severity": "medium"
+    },
+    {
+      "file": "นแท่น/แบ่งเขต/ต.บ้านเต่า-แบ่งเขต-หน่วยที่ 1-16.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=334 > valid=331",
+      "severity": "medium"
+    },
+    {
+      "file": "บ้านแท่น/แบ่งเขต/ต.สระพัง-แบ่งเขต-หน่วยที่ 1-9.pdf p15",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=361 > valid=355",
+      "severity": "medium"
+    },
+    {
+      "file": "ษตรสมบูรณ์/บัญชีรายชื่อ/ต.บ้านยาง-บัญชีรายชื่อ.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=120 > valid=104",
+      "severity": "medium"
+    },
+    {
+      "file": "นแท่น/แบ่งเขต/ทต.บ้านแท่น-แบ่งเขต-หน่วยที่ 1-7.pdf p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=357 > valid=350",
+      "severity": "medium"
+    },
+    {
+      "file": "นแท่น/แบ่งเขต/ทต.บ้านแท่น-แบ่งเขต-หน่วยที่ 1-7.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=280 > valid=264",
+      "severity": "medium"
+    },
+    {
+      "file": "นแท่น/แบ่งเขต/ทต.บ้านแท่น-แบ่งเขต-หน่วยที่ 1-7.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=154 > valid=152",
+      "severity": "medium"
+    },
+    {
+      "file": "ญชีรายชื่อ/ต.โป่งนก-บัญชีรายชื่อ-หน่วยที่ 1-21.pdf p57",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=141 > valid=124",
+      "severity": "medium"
+    },
+    {
+      "file": "ภอแก้งคร้อ/ทต.นาหนองทุ่ม-แบ่งเขต-หน่วยที่ 1-18.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=280 > valid=230",
+      "severity": "medium"
+    },
+    {
+      "file": "ภอแก้งคร้อ/ทต.นาหนองทุ่ม-แบ่งเขต-หน่วยที่ 1-18.pdf p15",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=280 > valid=277",
+      "severity": "medium"
+    },
+    {
+      "file": "ภอแก้งคร้อ/ทต.นาหนองทุ่ม-แบ่งเขต-หน่วยที่ 1-18.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=200 > valid=193",
+      "severity": "medium"
+    },
+    {
+      "file": "ภอแก้งคร้อ/ทต.นาหนองทุ่ม-แบ่งเขต-หน่วยที่ 1-18.pdf p27",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=359 > valid=354",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอคอนสาร/แบ่งเขต/ดงกลาง-แบ่งเขต-หน่วยที่ 1-9.pdf p11",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=551 > valid=531",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอคอนสาร/แบ่งเขต/ดงกลาง-แบ่งเขต-หน่วยที่ 1-9.pdf p13",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=415 > valid=19",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอคอนสวรรค์/ต.ศรีสำราญ-แบ่งเขต-หน่วยที่ 1-10.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=261 > valid=255",
+      "severity": "medium"
+    },
+    {
+      "file": "ำเภอคอนสาร/แบ่งเขต/คอนสาร-แบ่งเขต-หน่วยที่ 1-6.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=510 > valid=460",
+      "severity": "medium"
+    },
+    {
+      "file": "อภูเขียว/แบ่งเขต/หนองตูม-แบ่งเขต-หน่วยที่ 1-17.pdf p19",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=598 > valid=588",
+      "severity": "medium"
+    },
+    {
+      "file": "อภูเขียว/แบ่งเขต/หนองตูม-แบ่งเขต-หน่วยที่ 1-17.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=691 > valid=639",
+      "severity": "medium"
+    },
+    {
+      "file": "งคร้อ/ทต.นาหนองทุ่ม-บัญชีรายชื่อ-หน่วยที่ 1-18.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=471 > valid=323",
+      "severity": "medium"
+    },
+    {
+      "file": "บัวแดง/แบ่งเขต/ต.หนองแวง-แบ่งเขต-หน่วยที่ 1-24.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=604 > valid=321",
+      "severity": "medium"
+    },
+    {
+      "file": "นแท่น/แบ่งเขต/ต.บ้านเต่า-แบ่งเขต-หน่วยที่ 1-16.pdf p21",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=315 > valid=309",
+      "severity": "medium"
+    },
+    {
+      "file": "รสมบูรณ์/บัญชีรายชื่อ/ต.บ้านเดื่อ-บัญชีรายชื่อ.pdf p21",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=223 > valid=202",
+      "severity": "medium"
+    },
+    {
+      "file": "ยชื่อ/ทต.หนองบัวแดง-บัญชีรายชื่อ-หน่วยที่ 1-13.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=317 > valid=255",
+      "severity": "medium"
+    },
+    {
+      "file": "อภูเขียว/แบ่งเขต/กวางโจน-แบ่งเขต-หน่วยที่ 1-19.pdf p29",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=342 > valid=288",
+      "severity": "medium"
+    },
+    {
+      "file": "ีรายชื่อ/หนองคอนไทย-บัญชีรายชื่อ-หน่วยที่ 1-18.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=160 > valid=139",
+      "severity": "medium"
+    },
+    {
+      "file": "อภูเขียว/แบ่งเขต/ธาตุทอง-แบ่งเขต-หน่วยที่ 1-20.pdf p35",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=520 > valid=319",
+      "severity": "medium"
+    },
+    {
+      "file": "ัญชีรายชื่อ/บ้านเพชร-บัญชีรายชื่อ-หน่วยที่ 1-5.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=299 > valid=263",
+      "severity": "medium"
+    },
+    {
+      "file": "เขียว/แบ่งเขต/หนองคอนไทย-แบ่งเขต-หน่วยที่ 1-18.pdf p17",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=418 > valid=258",
+      "severity": "medium"
+    },
+    {
+      "file": "เขียว/แบ่งเขต/หนองคอนไทย-แบ่งเขต-หน่วยที่ 1-18.pdf p5",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=196 > valid=137",
+      "severity": "medium"
+    },
+    {
+      "file": "เขียว/แบ่งเขต/หนองคอนไทย-แบ่งเขต-หน่วยที่ 1-18.pdf p9",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=301 > valid=300",
+      "severity": "medium"
+    },
+    {
+      "file": "อ/ทต.บ้านเพชรภูเขียว-บัญชีรายชื่อ-หน่วยที่ 1-9.pdf p29",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=484 > valid=241",
+      "severity": "medium"
+    },
+    {
+      "file": "บัวแดง/แบ่งเขต/ต.หนองแวง-แบ่งเขต-หน่วยที่ 1-24.pdf p27",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=222 > valid=219",
+      "severity": "medium"
+    },
+    {
+      "file": "อภูเขียว/แบ่งเขต/บ้านเพชร-แบ่งเขต-หน่วยที่ 1-5.pdf p7",
+      "page": null,
+      "issue": "total_votes_over_valid",
+      "detail": "total_votes=374 > valid=373",
+      "severity": "medium"
+    }
+  ]
+}

@@ -31,6 +31,7 @@
 - [Phase 19: Anomaly Cross-Reference + Data Integrity](#phase-19-anomaly-cross-reference--data-integrity) — 17 มี.ค.
 - [Phase 20: ECT Backup Dashboard Integration](#phase-20-ect-backup-dashboard-integration) — 17 มี.ค.
 - [Phase 21: UI/UX Polish, Testing & Documentation](#phase-21-uiux-polish-testing--documentation) — 19 มี.ค.
+- [Phase 22: Data & Analytics Dashboards](#phase-22-data--analytics-dashboards) — 19 มี.ค.
 - [สรุป Timeline](#สรุป-timeline)
 - [สถาปัตยกรรมระบบสุดท้าย](#สถาปัตยกรรมระบบสุดท้าย)
 - [ข้อมูลอ้างอิงภายนอก](#ข้อมูลอ้างอิงภายนอก)
@@ -698,6 +699,63 @@
 
 ---
 
+## Phase 22: Data & Analytics Dashboards
+### 19 มีนาคม 2569 (วันที่ 36)
+
+**เป้าหมาย:** เพิ่ม dashboard วิเคราะห์ข้อมูล, heatmap จังหวัด, leaderboard ผู้ตรวจ, export เฉพาะ filtered, cross-reference OCR vs ECT
+
+**สิ่งที่ทำ:**
+
+### 22a. Analytics Dashboard (AnalyticsDashboard.jsx)
+- **Donut Chart** (pure SVG) แสดงสถานะ review: รอตรวจ/ยืนยัน/ตรวจซ้ำ/ใช้ไม่ได้
+- **Summary Cards** — จำนวนแต่ละสถานะ + เวลาเฉลี่ยต่อหน้า
+- **Validation Bar Chart** — กราฟแท่งแสดงจำนวน error/warning ต่อ rule (V1–V11)
+- **Review Timeline** — bar chart 7 วันล่าสุด จาก reviewLog
+- **Province Progress** — horizontal bar chart แสดง % ตรวจต่อจังหวัด
+- **Constituency Error Ranking** — เขตที่มี error มากที่สุด
+- Collapsible panel, แสดง % ตรวจแล้วในหัวข้อ
+
+### 22b. Province Review Heatmap (ProvinceHeatmap.jsx)
+- Grid-based heatmap จัดเรียงจังหวัดตามภูมิศาสตร์คร่าวๆ
+- สีตาม % ความคืบหน้า: เขียว (100%) → แดง (<25%)
+- Hover แสดง detail: ยืนยัน/ตรวจซ้ำ/ใช้ไม่ได้/รอตรวจ
+- รองรับจังหวัดที่ไม่อยู่ใน grid (แสดงแยกด้านล่าง)
+
+### 22c. Reviewer Leaderboard (ReviewerLeaderboard.jsx)
+- ตารางสถิติผู้ตรวจ: ✅ ยืนยัน, 🔄 ตรวจซ้ำ, 🚫 ใช้ไม่ได้, ✏️ แก้ไข
+- เรียงได้ตาม: จำนวน review, ความเร็วเฉลี่ย, จำนวนแก้ไข
+- เหรียญ 🥇🥈🥉 สำหรับ top 3
+- แสดงเวลาเฉลี่ยต่อหน้า (วินาที) + เวลาทำงานรวม
+- คำนวณจาก reviewLog timestamps
+
+### 22d. Filtered Export
+- เพิ่ม **"เฉพาะที่กรอง"** section ใน Export dropdown menu
+- `handleExportFilteredJSON` — export เฉพาะ filteredItems เป็น JSON พร้อม review status
+- `handleExportFilteredCSV` — export เฉพาะ filteredItems เป็น CSV (UTF-8 BOM)
+- แสดงจำนวนรายการที่กรองใน menu header
+
+### 22e. Cross-Reference Panel (CrossReferencePanel.jsx)
+- ตารางเปรียบเทียบ OCR vs ECT ต่อเขตเลือกตั้ง
+- แสดง: จังหวัด, เขต, จำนวนหน่วย, OCR Turnout, OCR Valid, Errors, ECT Flags, Review %
+- Filter ตาม severity: Error / Warning / OK
+- Sortable columns ทุกคอลัมน์
+- Pagination (20 แถวต่อหน้า)
+- Severity badge สีตามระดับ
+
+**ผลการ Build:**
+- `npm run build` ✅ — 312 KB JS bundle (gzip 88 KB)
+- `npm test` ✅ — 37/37 tests passed
+- ไม่มี dependency ใหม่ — ใช้ pure SVG charts ทั้งหมด
+
+**Files ที่สร้าง/แก้ไข:**
+- `review-app/src/components/AnalyticsDashboard.jsx` (new, ~250 lines)
+- `review-app/src/components/ProvinceHeatmap.jsx` (new, ~190 lines)
+- `review-app/src/components/ReviewerLeaderboard.jsx` (new, ~170 lines)
+- `review-app/src/components/CrossReferencePanel.jsx` (new, ~240 lines)
+- `review-app/src/App.jsx` (imports, filtered export handlers, component wiring)
+
+---
+
 ## สรุป Timeline
 
 ```
@@ -720,8 +778,9 @@
 10 มี.ค.       Generalize pipeline + Review UI improvements         16+
 13–15 มี.ค.    Production deploy, GitHub Pages, CI/CD               12+
 16–17 มี.ค.    PDF split 5,089 items + anomaly + backup dashboard   14+ (ข้ามคืน)
+19 มี.ค.       UI/UX polish + Data & Analytics dashboards            8+
 ─────────────  ─────────────────────────────────────────────────  ────────
-                                                        รวมประมาณ  256+ ชั่วโมง
+                                                        รวมประมาณ  264+ ชั่วโมง
 ```
 
 ---
@@ -810,4 +869,4 @@
 
 *บันทึกนี้สร้างจากข้อมูล git history, file timestamps, และ code analysis*  
 *สร้างเมื่อ: 10 มีนาคม 2569*  
-*อัปเดตล่าสุด: 19 มีนาคม 2569 — เพิ่ม Phase 21 (UI/UX, Tests, Docs)*
+*อัปเดตล่าสุด: 19 มีนาคม 2569 — เพิ่ม Phase 22 (Data & Analytics Dashboards)*

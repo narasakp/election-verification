@@ -1,0 +1,4 @@
+﻿source_file,page_number,form_type,vote_type,constituency,province,station_no,village_no,sub_district,district,registered_voters,turnout,ballots_received,valid_ballots,invalid_ballots,no_vote_ballots,remaining_ballots,total_votes,candidates_json
+07-แบบ ส.ส.5_17-แบ่งเขต-นอกเขต.pdf,1,สส.5/18,แบ่งเขต,2,,,,,,,,,,,,,,[]
+07-แบบ ส.ส.5_17-แบ่งเขต-นอกเขต.pdf,2,สส.5/18,แบ่งเขต,,,,,,,,,,,,,,,[]
+ต.หนองขาม-แบ่งเขต-หน่วยที่ 1-14.pdf,1,สส.5/18,แบ่งเขต,9,,,,จร์,้ติ,7,,,,,,,909,"[{""number"": 2, ""name"": ""นายกิติพร เศรษฐกภูมิภักดี     รวมไทยสร้างชาติ"", ""party"": null, ""votes"": null}, {""number"": 3, ""name"": ""นายขานนท์ ต่อสกุล              ภูมิใจไทย ลส อ"", ""party"": null, ""votes"": 2}, {""number"": 5, ""name"": ""นางสาวปัญชลีย์ วัฒนชัยศาสตร์"", ""party"": ""พลังประชารัฐ"", ""votes"": 0}, {""number"": 10, ""name"": ""นางสุชามนต์ เครือเครา        ไทยทัพ์ทวี"", ""party"": null, ""votes"": 7}]"

@@ -1,0 +1,1 @@
+gcloud functions deploy ocr-worker --gen2 --runtime python311 --region asia-southeast1 --source cloud/function --entry-point handle_request --trigger-http --allow-unauthenticated --memory 512MB --timeout 540s --set-env-vars GEMINI_API_KEY=AIzaSyC8_Xnyew_QALqUUoUoqIxv2loHMEP2c8I --update-env-vars GCS_BUCKET=election69-ocr-results-th --project election-ocr

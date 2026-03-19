@@ -4,6 +4,10 @@ import FilterBar from './components/FilterBar'
 import StatsBar from './components/StatsBar'
 import DataStatsPanel from './components/DataStatsPanel'
 import BackupDashboard from './components/BackupDashboard'
+import AnalyticsDashboard from './components/AnalyticsDashboard'
+import ProvinceHeatmap from './components/ProvinceHeatmap'
+import ReviewerLeaderboard from './components/ReviewerLeaderboard'
+import CrossReferencePanel from './components/CrossReferencePanel'
 import UploadPanel from './components/UploadPanel'
 import AdminPanel from './components/AdminPanel'
 import AuthGate from './components/AuthGate'
@@ -11,7 +15,7 @@ import useAuth from './hooks/useAuth'
 import { submitToGoogleForm, submitLoginEvent, submitLogoutEvent } from './utils/submitReview'
 import { getReviewLog, appendReviewLog, getAllSummaries, getUserReviewKey, checkRateLimit, recordReviewTiming, validateEditValue, getAllAnomalyScores, mergeReviewLogs, verifyLogIntegrity } from './utils/reviewLog'
 import { validateItem, getWorstSeverity } from './utils/validation'
-import { ChevronLeft, ChevronRight, Download, Upload, FolderUp, LogOut, ShieldCheck, ChevronDown } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Download, Upload, FolderUp, LogOut, ShieldCheck, ChevronDown, Filter } from 'lucide-react'
 
 const DATA_URL = './data/review_data.json'
 const ANOMALY_FLAGS_URL = './data/anomaly_flags.json'
@@ -430,6 +434,60 @@ function App() {
     a.click()
   }
 
+  const handleExportFilteredJSON = () => {
+    setShowExportMenu(false)
+    const summaries = getAllSummaries(reviewLog)
+    const merged = filteredItems.map(item => {
+      const rev = review[item.id]
+      const constKey = `${item.province || ''}__${item.constituency || ''}`
+      const shared = sharedEdits[constKey] || {}
+      const summary = summaries[item.id]
+      const base = !rev
+        ? { ...item, ...shared, _review_status: 'pending' }
+        : { ...item, ...shared, ...(rev.edits || {}), _review_status: rev.status, _review_note: rev.note }
+      if (summary) {
+        base._consensus_status = summary.majorityStatus || (summary.isTie ? 'disputed' : null)
+        base._reviewer_count = summary.reviewerCount
+      }
+      return base
+    })
+    const blob = new Blob([JSON.stringify(merged, null, 2)], { type: 'application/json' })
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = `ocr_filtered_${filteredItems.length}_${new Date().toISOString().slice(0, 10)}.json`
+    a.click()
+  }
+
+  const handleExportFilteredCSV = () => {
+    setShowExportMenu(false)
+    const headers = ['file','page','province','constituency','station_no','sub_district','district','vote_type',
+      'registered_voters','turnout','ballots_received','valid_ballots','invalid_ballots','no_vote_ballots','remaining_ballots','total_votes',
+      'candidates_count','candidate_votes_sum','review_status','review_note']
+    const rows = [headers.join(',')]
+    filteredItems.forEach(d => {
+      const rev = review[d.id] || {}
+      const constKey = `${d.province || ''}__${d.constituency || ''}`
+      const shared = sharedEdits[constKey] || {}
+      const edits = rev.edits || {}
+      const merged = { ...d, ...shared, ...edits }
+      const cands = d.candidates || []
+      const candSum = cands.reduce((s, c) => s + (Number(c.votes) || 0), 0)
+      rows.push([
+        csvEsc(merged.file), merged.page, csvEsc(merged.province), merged.constituency, merged.ocr_station_no,
+        csvEsc(merged.sub_district), csvEsc(merged.district), csvEsc(merged.vote_type),
+        merged.registered_voters, merged.turnout, merged.ballots_received, merged.valid_ballots,
+        merged.invalid_ballots, merged.no_vote_ballots, merged.remaining_ballots, merged.total_votes,
+        cands.length, candSum, rev.status || 'pending', csvEsc(rev.note || '')
+      ].join(','))
+    })
+    const bom = '\uFEFF'
+    const blob = new Blob([bom + rows.join('\n')], { type: 'text/csv;charset=utf-8' })
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = `election_filtered_${filteredItems.length}_${new Date().toISOString().slice(0, 10)}.csv`
+    a.click()
+  }
+
   const handleExportFullCSV = () => {
     setShowExportMenu(false)
     const constItems = allItems.filter(d => d.vote_type === 'แบ่งเขต')
@@ -608,8 +666,15 @@ function App() {
                   <button onClick={handleExportFullCSV} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition border-b border-gray-100">
                     📋 CSV แบ่งเขต + ผู้สมัคร
                   </button>
-                  <button onClick={handleExportAuditLog} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-700 transition">
+                  <button onClick={handleExportAuditLog} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-700 transition border-b border-gray-100">
                     🔒 Audit Log (ประวัติการตรวจ)
+                  </button>
+                  <div className="px-4 py-1.5 text-[10px] text-gray-400 uppercase bg-gray-50 font-semibold">เฉพาะที่กรอง ({filteredItems.length} รายการ)</div>
+                  <button onClick={handleExportFilteredJSON} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition border-b border-gray-100">
+                    <Filter size={12} className="inline mr-1" /> JSON (เฉพาะที่กรอง)
+                  </button>
+                  <button onClick={handleExportFilteredCSV} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition">
+                    <Filter size={12} className="inline mr-1" /> CSV (เฉพาะที่กรอง)
                   </button>
                 </div>
               )}
@@ -645,6 +710,18 @@ function App() {
 
       {/* ECT Backup Dashboard */}
       <BackupDashboard />
+
+      {/* Analytics Dashboard */}
+      <AnalyticsDashboard allItems={allItems} review={review} reviewLog={reviewLog} anomalyFlags={anomalyFlags} />
+
+      {/* Province Review Heatmap */}
+      <ProvinceHeatmap allItems={allItems} review={review} />
+
+      {/* Reviewer Leaderboard */}
+      <ReviewerLeaderboard reviewLog={reviewLog} allItems={allItems} review={review} />
+
+      {/* Cross-Reference Panel */}
+      <CrossReferencePanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} anomalyMeta={anomalyMeta} />
 
       {/* Navigation */}
       <div className="max-w-[1400px] mx-auto px-4 py-2 flex items-center justify-between">

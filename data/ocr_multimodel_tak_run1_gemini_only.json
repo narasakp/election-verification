@@ -1,0 +1,2156 @@
+[
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 1,
+    "province": "ตาก",
+    "constituency": 1,
+    "district": null,
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "บัญชีรายชื่อ",
+    "form_type": "สส.5/18",
+    "drive_file_id": "15dj1nju0kyhw0lmjIDu4f2tFQ4d3Ul5N",
+    "drive_view_url": "https://drive.google.com/file/d/15dj1nju0kyhw0lmjIDu4f2tFQ4d3Ul5N/view",
+    "registered_voters": null,
+    "turnout": 720,
+    "ballots_received": 720,
+    "valid_ballots": 692,
+    "invalid_ballots": 5,
+    "no_vote_ballots": 23,
+    "remaining_ballots": 0,
+    "total_votes": 42,
+    "station_no": 1,
+    "candidates": [
+      {
+        "number": 1,
+        "name": null,
+        "party": "ไทยทรัพย์ทวี",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 2,
+        "name": null,
+        "party": "เพื่อชาติไทย",
+        "votes": 3,
+        "models_agree": true
+      },
+      {
+        "number": 3,
+        "name": null,
+        "party": "ใหม่",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 4,
+        "name": null,
+        "party": "มิติใหม่",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 5,
+        "name": null,
+        "party": "รวมใจไทย",
+        "votes": 4,
+        "models_agree": true
+      },
+      {
+        "number": 6,
+        "name": null,
+        "party": "รวมไทยสร้างชาติ",
+        "votes": 1,
+        "models_agree": false
+      },
+      {
+        "number": 7,
+        "name": null,
+        "party": "พลัง",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 8,
+        "name": null,
+        "party": "ประชาธิปไตยใหม่",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 9,
+        "name": null,
+        "party": "เพื่อไทย",
+        "votes": 30,
+        "models_agree": true
+      },
+      {
+        "number": 10,
+        "name": null,
+        "party": "ทางเลือกใหม่",
+        "votes": 2,
+        "models_agree": true
+      }
+    ],
+    "is_back_page": false,
+    "_confidence": {
+      "turnout": "high (gemini+gemini_sc1)",
+      "ballots_received": "high (gemini+gemini_sc1)",
+      "valid_ballots": "high (gemini+gemini_sc1)",
+      "invalid_ballots": "high (gemini+gemini_sc1)",
+      "no_vote_ballots": "high (gemini+gemini_sc1)",
+      "remaining_ballots": "high (gemini+gemini_sc1)",
+      "total_votes": "disagree (gemini=42, gemini_sc1=45) → gemini",
+      "constituency": "high (gemini+gemini_sc1)",
+      "station_no": "disagree (gemini=1, gemini_sc1=111) → gemini"
+    },
+    "_models_used": [
+      "gemini",
+      "gemini_sc1"
+    ],
+    "_models_count": 2,
+    "total_pages": 4
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 2,
+    "province": null,
+    "constituency": null,
+    "district": null,
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "บัญชีรายชื่อ",
+    "form_type": "สส.5/18",
+    "drive_file_id": "15dj1nju0kyhw0lmjIDu4f2tFQ4d3Ul5N",
+    "drive_view_url": "https://drive.google.com/file/d/15dj1nju0kyhw0lmjIDu4f2tFQ4d3Ul5N/view",
+    "registered_voters": null,
+    "turnout": null,
+    "ballots_received": null,
+    "valid_ballots": null,
+    "invalid_ballots": null,
+    "no_vote_ballots": null,
+    "remaining_ballots": null,
+    "total_votes": 115,
+    "station_no": null,
+    "candidates": [
+      {
+        "number": 11,
+        "name": null,
+        "party": "เศรษฐกิจ",
+        "votes": 5,
+        "models_agree": true
+      },
+      {
+        "number": 12,
+        "name": null,
+        "party": "เสรีรวมไทย",
+        "votes": 0,
+        "models_agree": false
+      },
+      {
+        "number": 13,
+        "name": null,
+        "party": "รวมพลังประชาชน",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 14,
+        "name": null,
+        "party": "ท้องที่ไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 15,
+        "name": null,
+        "party": "อนาคตไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 16,
+        "name": null,
+        "party": "พลังเพื่อไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 17,
+        "name": null,
+        "party": "ไทยชนะ",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 18,
+        "name": null,
+        "party": "พลังสังคมใหม่",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 19,
+        "name": null,
+        "party": "สังคมประชาธิปไตยไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 20,
+        "name": null,
+        "party": "พีเพิล",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 21,
+        "name": null,
+        "party": "ไทรวมพลัง",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 22,
+        "name": null,
+        "party": "ก้าวอิสระ",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 23,
+        "name": null,
+        "party": "ปวงชนไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 24,
+        "name": null,
+        "party": "วิชั่นไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 25,
+        "name": null,
+        "party": "เพื่อชีวิตใหม่",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 26,
+        "name": null,
+        "party": "คลองไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 27,
+        "name": null,
+        "party": "ประชาธิปัตย์",
+        "votes": 32,
+        "models_agree": true
+      },
+      {
+        "number": 28,
+        "name": null,
+        "party": "ไทยก้าวหน้า",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 29,
+        "name": null,
+        "party": "ไทยภักดี",
+        "votes": 42,
+        "models_agree": true
+      },
+      {
+        "number": 30,
+        "name": null,
+        "party": "แรงงานสร้างชาติ",
+        "votes": 30,
+        "models_agree": false
+      },
+      {
+        "number": 31,
+        "name": null,
+        "party": "ประชากรไทย",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 32,
+        "name": null,
+        "party": "ครูไทยเพื่อประชาชน",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 33,
+        "name": null,
+        "party": "ประชาชาติ",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 34,
+        "name": null,
+        "party": "สร้างอนาคตไทย",
+        "votes": 0,
+        "models_agree": true
+      }
+    ],
+    "is_back_page": true,
+    "_confidence": {
+      "total_votes": "disagree (gemini=115, gemini_sc2=85) → gemini"
+    },
+    "_models_used": [
+      "gemini",
+      "gemini_sc1",
+      "gemini_sc2"
+    ],
+    "_models_count": 3,
+    "total_pages": 4
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 2,
+    "province": null,
+    "constituency": null,
+    "district": null,
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "แบ่งเขต",
+    "form_type": "สส.5/18",
+    "drive_file_id": "1Bb3fxH8Ibr3MfTWfauwqVpxa5PmBIdre",
+    "drive_view_url": "https://drive.google.com/file/d/1Bb3fxH8Ibr3MfTWfauwqVpxa5PmBIdre/view",
+    "registered_voters": null,
+    "turnout": null,
+    "ballots_received": null,
+    "valid_ballots": null,
+    "invalid_ballots": null,
+    "no_vote_ballots": null,
+    "remaining_ballots": null,
+    "total_votes": null,
+    "station_no": null,
+    "candidates": [],
+    "is_back_page": true,
+    "_confidence": {},
+    "_models_used": [
+      "gemini",
+      "gemini_sc1",
+      "gemini_sc2"
+    ],
+    "_models_count": 3,
+    "total_pages": 2
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 1,
+    "province": "ตาก",
+    "constituency": 1,
+    "district": null,
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "บัญชีรายชื่อ",
+    "form_type": "สส.5/18",
+    "drive_file_id": "1_2a7vFbVqRyn2pKy9JsraTew7jUQAAtL",
+    "drive_view_url": "https://drive.google.com/file/d/1_2a7vFbVqRyn2pKy9JsraTew7jUQAAtL/view",
+    "registered_voters": null,
+    "turnout": 720,
+    "ballots_received": 720,
+    "valid_ballots": 669,
+    "invalid_ballots": 11,
+    "no_vote_ballots": 40,
+    "remaining_ballots": 0,
+    "total_votes": 79,
+    "station_no": 10,
+    "candidates": [
+      {
+        "number": 1,
+        "name": null,
+        "party": "ไทยทรัพย์ทวี",
+        "votes": 5,
+        "models_agree": true
+      },
+      {
+        "number": 2,
+        "name": null,
+        "party": "เพื่อชาติไทย",
+        "votes": 7,
+        "models_agree": true
+      },
+      {
+        "number": 3,
+        "name": null,
+        "party": "ใหม่",
+        "votes": 3,
+        "models_agree": true
+      },
+      {
+        "number": 4,
+        "name": null,
+        "party": "มิติใหม่",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 5,
+        "name": null,
+        "party": "รวมใจไทย",
+        "votes": 4,
+        "models_agree": true
+      },
+      {
+        "number": 6,
+        "name": null,
+        "party": "รวมไทยสร้างชาติ",
+        "votes": 13,
+        "models_agree": true
+      },
+      {
+        "number": 7,
+        "name": null,
+        "party": "พลัง",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 8,
+        "name": null,
+        "party": "ประชาธิปไตยใหม่",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 9,
+        "name": null,
+        "party": "เพื่อไทย",
+        "votes": 41,
+        "models_agree": true
+      },
+      {
+        "number": 10,
+        "name": null,
+        "party": "ทางเลือกใหม่",
+        "votes": 1,
+        "models_agree": true
+      }
+    ],
+    "is_back_page": false,
+    "_confidence": {
+      "turnout": "high (gemini+gemini_sc1+gemini_sc2)",
+      "ballots_received": "high (gemini+gemini_sc1+gemini_sc2)",
+      "valid_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "invalid_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "no_vote_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "remaining_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "total_votes": "high (gemini+gemini_sc1+gemini_sc2)",
+      "constituency": "high (gemini+gemini_sc1+gemini_sc2)",
+      "station_no": "high (gemini+gemini_sc1+gemini_sc2)"
+    },
+    "_models_used": [
+      "gemini",
+      "gemini_sc1",
+      "gemini_sc2"
+    ],
+    "_models_count": 3,
+    "total_pages": 4
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 2,
+    "province": null,
+    "constituency": null,
+    "district": null,
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "บัญชีรายชื่อ",
+    "form_type": "สส.5/18",
+    "drive_file_id": "1_2a7vFbVqRyn2pKy9JsraTew7jUQAAtL",
+    "drive_view_url": "https://drive.google.com/file/d/1_2a7vFbVqRyn2pKy9JsraTew7jUQAAtL/view",
+    "registered_voters": null,
+    "turnout": null,
+    "ballots_received": null,
+    "valid_ballots": null,
+    "invalid_ballots": null,
+    "no_vote_ballots": null,
+    "remaining_ballots": null,
+    "total_votes": 161,
+    "station_no": null,
+    "candidates": [
+      {
+        "number": 11,
+        "name": null,
+        "party": "เศรษฐกิจ",
+        "votes": 21,
+        "models_agree": true
+      },
+      {
+        "number": 12,
+        "name": null,
+        "party": "เสรีรวมไทย",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 13,
+        "name": null,
+        "party": "รวมพลังประชาชน",
+        "votes": 3,
+        "models_agree": true
+      },
+      {
+        "number": 14,
+        "name": null,
+        "party": "ท้องที่ไทย",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 15,
+        "name": null,
+        "party": "อนาคตไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 16,
+        "name": null,
+        "party": "พลังเพื่อไทย",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 17,
+        "name": null,
+        "party": "ไทยชนะ",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 18,
+        "name": null,
+        "party": "พลังสังคมใหม่",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 19,
+        "name": null,
+        "party": "สังคมประชาธิปไตยไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 20,
+        "name": null,
+        "party": "ฟิวชั่น",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 21,
+        "name": null,
+        "party": "ไทรวมพลัง",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 22,
+        "name": null,
+        "party": "ก้าวอิสระ",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 23,
+        "name": null,
+        "party": "ปวงชนไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 24,
+        "name": null,
+        "party": "วิชชั่นใหม่",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 25,
+        "name": null,
+        "party": "เพื่อชีวิตไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 26,
+        "name": null,
+        "party": "คลองไทย",
+        "votes": 36,
+        "models_agree": true
+      },
+      {
+        "number": 27,
+        "name": null,
+        "party": "ประชาธิปัตย์",
+        "votes": 88,
+        "models_agree": true
+      },
+      {
+        "number": 28,
+        "name": null,
+        "party": "ไทยก้าวหน้า",
+        "votes": 3,
+        "models_agree": true
+      },
+      {
+        "number": 29,
+        "name": null,
+        "party": "ไทยภักดี",
+        "votes": 3,
+        "models_agree": true
+      },
+      {
+        "number": 30,
+        "name": null,
+        "party": "แรงงานสร้างชาติ",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 31,
+        "name": null,
+        "party": "ประชากรไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 32,
+        "name": null,
+        "party": "ครูไทยเพื่อประชาชน",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 33,
+        "name": null,
+        "party": "ประชาชาติ",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 34,
+        "name": null,
+        "party": "สร้างอนาคตไทย",
+        "votes": 0,
+        "models_agree": true
+      }
+    ],
+    "is_back_page": false,
+    "_confidence": {
+      "total_votes": "high (gemini_sc1+gemini_sc2)"
+    },
+    "_models_used": [
+      "gemini",
+      "gemini_sc1",
+      "gemini_sc2"
+    ],
+    "_models_count": 3,
+    "total_pages": 4
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 1,
+    "province": "ตาก",
+    "constituency": 1,
+    "district": "โกดัง ตาก พีทาคุ",
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "แบ่งเขต",
+    "form_type": "สส.5/18",
+    "drive_file_id": "17rUHGUbNuhgHtFRFaNa9lD-XkqHXTKRR",
+    "drive_view_url": "https://drive.google.com/file/d/17rUHGUbNuhgHtFRFaNa9lD-XkqHXTKRR/view",
+    "registered_voters": null,
+    "turnout": 720,
+    "ballots_received": 720,
+    "valid_ballots": 620,
+    "invalid_ballots": 21,
+    "no_vote_ballots": 79,
+    "remaining_ballots": 0,
+    "total_votes": 620,
+    "station_no": null,
+    "candidates": [
+      {
+        "number": 1,
+        "name": "นายธนชัย เกิ้งกิด",
+        "party": "ภูมิใจไทย",
+        "votes": 83,
+        "models_agree": true
+      },
+      {
+        "number": 2,
+        "name": "นางภิญโญ อุตมาวงศ์",
+        "party": "รวมไทยสร้างชาติ",
+        "votes": 12,
+        "models_agree": true
+      },
+      {
+        "number": 3,
+        "name": "พันจ่าอากาศเอกชัยวัฒน์ บุญมา",
+        "party": "เพื่อไทย",
+        "votes": 31,
+        "models_agree": true
+      },
+      {
+        "number": 4,
+        "name": "นายปุณณวิชญ์ อ่อนนุ่ม",
+        "party": "รวมใจไทย",
+        "votes": 12,
+        "models_agree": true
+      },
+      {
+        "number": 5,
+        "name": "นายณัฐวุฒิ บัวเพ็ชร",
+        "party": "ประชาธิปัตย์",
+        "votes": 394,
+        "models_agree": true
+      },
+      {
+        "number": 6,
+        "name": "นายอภิสิทธิ์ อ่อนน้อม",
+        "party": "เสรีรวมไทย",
+        "votes": 21,
+        "models_agree": true
+      },
+      {
+        "number": 7,
+        "name": "นายธีรศักดิ์ อ่อนน้อม",
+        "party": "พลังประชารัฐ",
+        "votes": 23,
+        "models_agree": true
+      },
+      {
+        "number": 8,
+        "name": "นายธนภัทร ชัยนาม",
+        "party": "พลังประชารัฐ",
+        "votes": 29,
+        "models_agree": true
+      },
+      {
+        "number": 9,
+        "name": "นายธนวัฒน์ ชูอินทร์",
+        "party": "พลังประชารัฐ",
+        "votes": 15,
+        "models_agree": true
+      }
+    ],
+    "is_back_page": false,
+    "_confidence": {
+      "turnout": "high (gemini+gemini_sc1+gemini_sc2)",
+      "ballots_received": "high (gemini+gemini_sc1+gemini_sc2)",
+      "valid_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "invalid_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "no_vote_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "remaining_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "total_votes": "high (gemini+gemini_sc1+gemini_sc2)",
+      "constituency": "high (gemini+gemini_sc1+gemini_sc2)"
+    },
+    "_models_used": [
+      "gemini",
+      "gemini_sc1",
+      "gemini_sc2"
+    ],
+    "_models_count": 3,
+    "total_pages": 2
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 2,
+    "province": null,
+    "constituency": null,
+    "district": null,
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "แบ่งเขต",
+    "form_type": "สส.5/18",
+    "drive_file_id": "17rUHGUbNuhgHtFRFaNa9lD-XkqHXTKRR",
+    "drive_view_url": "https://drive.google.com/file/d/17rUHGUbNuhgHtFRFaNa9lD-XkqHXTKRR/view",
+    "registered_voters": null,
+    "turnout": null,
+    "ballots_received": null,
+    "valid_ballots": null,
+    "invalid_ballots": null,
+    "no_vote_ballots": null,
+    "remaining_ballots": null,
+    "total_votes": null,
+    "station_no": null,
+    "candidates": [],
+    "is_back_page": true,
+    "_confidence": {},
+    "_models_used": [
+      "gemini",
+      "gemini_sc1",
+      "gemini_sc2"
+    ],
+    "_models_count": 3,
+    "total_pages": 2
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 1,
+    "province": "นนทบุรี",
+    "constituency": 1,
+    "district": "โรงเรียนเทพศิรินทร์ นนทบุรี",
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "บัญชีรายชื่อ",
+    "form_type": "สส.5/18",
+    "drive_file_id": "1IxU8c7ZJTAp7OF7b4AJuE_McIQWjjLse",
+    "drive_view_url": "https://drive.google.com/file/d/1IxU8c7ZJTAp7OF7b4AJuE_McIQWjjLse/view",
+    "station_no": 11,
+    "registered_voters": null,
+    "turnout": 633,
+    "ballots_received": 633,
+    "valid_ballots": 599,
+    "invalid_ballots": 4,
+    "no_vote_ballots": 30,
+    "remaining_ballots": 0,
+    "candidates": [
+      {
+        "number": 1,
+        "name": null,
+        "party": "ไทยทรัพย์ทวี",
+        "votes": 0
+      },
+      {
+        "number": 2,
+        "name": null,
+        "party": "เพื่อชาติไทย",
+        "votes": 4
+      },
+      {
+        "number": 3,
+        "name": null,
+        "party": "ใหม่",
+        "votes": 2
+      },
+      {
+        "number": 4,
+        "name": null,
+        "party": "มิติใหม่",
+        "votes": 1
+      },
+      {
+        "number": 5,
+        "name": null,
+        "party": "รวมใจไทย",
+        "votes": 0
+      },
+      {
+        "number": 6,
+        "name": null,
+        "party": "รวมไทยสร้างชาติ",
+        "votes": 7
+      },
+      {
+        "number": 7,
+        "name": null,
+        "party": "พลวัต",
+        "votes": 0
+      },
+      {
+        "number": 8,
+        "name": null,
+        "party": "ประชาธิปไตยใหม่",
+        "votes": 3
+      },
+      {
+        "number": 9,
+        "name": null,
+        "party": "เพื่อไทย",
+        "votes": 59
+      },
+      {
+        "number": 10,
+        "name": null,
+        "party": "ทางเลือกใหม่",
+        "votes": 0
+      }
+    ],
+    "total_votes": 76,
+    "is_back_page": false,
+    "_confidence": {
+      "turnout": "single_model",
+      "ballots_received": "single_model",
+      "valid_ballots": "single_model",
+      "invalid_ballots": "single_model",
+      "no_vote_ballots": "single_model",
+      "remaining_ballots": "single_model",
+      "total_votes": "single_model",
+      "constituency": "single_model",
+      "station_no": "single_model"
+    },
+    "_models_used": [
+      "gemini"
+    ],
+    "_models_count": 1,
+    "total_pages": 4
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 2,
+    "province": null,
+    "constituency": null,
+    "district": null,
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "บัญชีรายชื่อ",
+    "form_type": "สส.5/18",
+    "drive_file_id": "1IxU8c7ZJTAp7OF7b4AJuE_McIQWjjLse",
+    "drive_view_url": "https://drive.google.com/file/d/1IxU8c7ZJTAp7OF7b4AJuE_McIQWjjLse/view",
+    "registered_voters": null,
+    "turnout": null,
+    "ballots_received": null,
+    "valid_ballots": null,
+    "invalid_ballots": null,
+    "no_vote_ballots": null,
+    "remaining_ballots": null,
+    "total_votes": 26,
+    "station_no": null,
+    "candidates": [
+      {
+        "number": 11,
+        "name": null,
+        "party": "เศรษฐกิจ",
+        "votes": 11,
+        "models_agree": true
+      },
+      {
+        "number": 12,
+        "name": null,
+        "party": "เสรีรวมไทย",
+        "votes": 4,
+        "models_agree": true
+      },
+      {
+        "number": 13,
+        "name": null,
+        "party": "รวมพลังประชาชน",
+        "votes": 3,
+        "models_agree": true
+      },
+      {
+        "number": 14,
+        "name": null,
+        "party": "ท้องที่ไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 15,
+        "name": null,
+        "party": "อนาคตไทย",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 16,
+        "name": null,
+        "party": "พลังเพื่อไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 17,
+        "name": null,
+        "party": "ไทยชนะ",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 18,
+        "name": null,
+        "party": "พลังสังคมใหม่",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 19,
+        "name": null,
+        "party": "สังคมประชาธิปไตยไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 20,
+        "name": null,
+        "party": "ฟิวชั่น",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 21,
+        "name": null,
+        "party": "ไทรวมพลัง",
+        "votes": 1,
+        "models_agree": false
+      },
+      {
+        "number": 22,
+        "name": null,
+        "party": "ก้าวอิสระ",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 23,
+        "name": null,
+        "party": "ปวงชนไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 24,
+        "name": null,
+        "party": "วิชชั่นไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 25,
+        "name": null,
+        "party": "เพื่อชีวิตใหม่",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 26,
+        "name": null,
+        "party": "คลองไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 27,
+        "name": null,
+        "party": "ประชาธิปัตย์",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 28,
+        "name": null,
+        "party": "ไทยก้าวหน้า",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 29,
+        "name": null,
+        "party": "ไทยภักดี",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 30,
+        "name": null,
+        "party": "แรงงานสร้างชาติ",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 31,
+        "name": null,
+        "party": "ประชากรไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 32,
+        "name": null,
+        "party": "ครูไทยเพื่อประชาชน",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 33,
+        "name": null,
+        "party": "ประชาชาติ",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 34,
+        "name": null,
+        "party": "สร้างอนาคตไทย",
+        "votes": 0,
+        "models_agree": true
+      }
+    ],
+    "is_back_page": false,
+    "_confidence": {
+      "total_votes": "disagree (gemini=26, gemini_sc1=25, gemini_sc2=46) → gemini"
+    },
+    "_models_used": [
+      "gemini",
+      "gemini_sc1",
+      "gemini_sc2"
+    ],
+    "_models_count": 3,
+    "total_pages": 4
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 1,
+    "province": "ตาก",
+    "constituency": 1,
+    "district": null,
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "แบ่งเขต",
+    "form_type": "สส.5/18",
+    "drive_file_id": "1O7XGYzURWapGc3IVBoQ_ptySFf3FMVa-",
+    "drive_view_url": "https://drive.google.com/file/d/1O7XGYzURWapGc3IVBoQ_ptySFf3FMVa-/view",
+    "station_no": 11,
+    "registered_voters": null,
+    "turnout": 634,
+    "ballots_received": 634,
+    "valid_ballots": 568,
+    "invalid_ballots": 11,
+    "no_vote_ballots": 55,
+    "remaining_ballots": 0,
+    "candidates": [
+      {
+        "number": 1,
+        "name": "นายชนกฤต รุ่งโรจน์",
+        "party": "ภูมิใจไทย",
+        "votes": 81
+      },
+      {
+        "number": 2,
+        "name": "นางศิริกุล อมรพงษ์",
+        "party": "รวมไทยสร้างชาติ",
+        "votes": 10
+      },
+      {
+        "number": 3,
+        "name": "พันตำรวจโทธนพงษ์ พลบุตร",
+        "party": "เพื่อไทย",
+        "votes": 44
+      },
+      {
+        "number": 4,
+        "name": "นายธนพล จอมทุม",
+        "party": "รวมใจไทย",
+        "votes": 5
+      },
+      {
+        "number": 5,
+        "name": "นายศิริบูรณ์ ปานเนียม",
+        "party": "ประชาธิปัตย์",
+        "votes": 383
+      },
+      {
+        "number": 6,
+        "name": "นายปองพล สวนศรี",
+        "party": "เสรีรวมไทย",
+        "votes": 11
+      },
+      {
+        "number": 7,
+        "name": "นายพิชิตชัย ช้อนน้อม",
+        "party": "กล้าธรรม",
+        "votes": 12
+      },
+      {
+        "number": 8,
+        "name": "นายวรวิช ชูไชย",
+        "party": "ประชารัฐไทย",
+        "votes": 17
+      },
+      {
+        "number": 9,
+        "name": "นายธนพล อิ่มอ้น",
+        "party": "พลังไทยรักชาติ",
+        "votes": 5
+      }
+    ],
+    "total_votes": 568,
+    "is_back_page": false,
+    "_confidence": {
+      "turnout": "single_model",
+      "ballots_received": "single_model",
+      "valid_ballots": "single_model",
+      "invalid_ballots": "single_model",
+      "no_vote_ballots": "single_model",
+      "remaining_ballots": "single_model",
+      "total_votes": "single_model",
+      "constituency": "single_model",
+      "station_no": "single_model"
+    },
+    "_models_used": [
+      "gemini_sc1"
+    ],
+    "_models_count": 1,
+    "total_pages": 2
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 2,
+    "province": null,
+    "constituency": null,
+    "district": null,
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "แบ่งเขต",
+    "form_type": "สส.5/18",
+    "drive_file_id": "1O7XGYzURWapGc3IVBoQ_ptySFf3FMVa-",
+    "drive_view_url": "https://drive.google.com/file/d/1O7XGYzURWapGc3IVBoQ_ptySFf3FMVa-/view",
+    "registered_voters": null,
+    "turnout": null,
+    "ballots_received": null,
+    "valid_ballots": null,
+    "invalid_ballots": null,
+    "no_vote_ballots": null,
+    "remaining_ballots": null,
+    "total_votes": null,
+    "station_no": null,
+    "candidates": [],
+    "is_back_page": true,
+    "_confidence": {},
+    "_models_used": [
+      "gemini",
+      "gemini_sc1",
+      "gemini_sc2"
+    ],
+    "_models_count": 3,
+    "total_pages": 2
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 1,
+    "province": "ปทุมธานี",
+    "constituency": 1,
+    "district": "ลาดพร้าว",
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "บัญชีรายชื่อ",
+    "form_type": "สส.5/18",
+    "drive_file_id": "1ikCnrJdWL1hpZQeYOAe3Yxjoq7Wdckl8",
+    "drive_view_url": "https://drive.google.com/file/d/1ikCnrJdWL1hpZQeYOAe3Yxjoq7Wdckl8/view",
+    "registered_voters": 720,
+    "turnout": 720,
+    "ballots_received": 720,
+    "valid_ballots": 669,
+    "invalid_ballots": 10,
+    "no_vote_ballots": 41,
+    "remaining_ballots": 0,
+    "total_votes": 72,
+    "station_no": 2,
+    "candidates": [
+      {
+        "number": 1,
+        "name": null,
+        "party": "ไทยทรัพย์ทวี",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 2,
+        "name": null,
+        "party": "เพื่อชาติไทย",
+        "votes": 4,
+        "models_agree": true
+      },
+      {
+        "number": 3,
+        "name": null,
+        "party": "ใหม่",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 4,
+        "name": null,
+        "party": "มิติใหม่",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 5,
+        "name": null,
+        "party": "รวมใจไทย",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 6,
+        "name": null,
+        "party": "รวมไทยสร้างชาติ",
+        "votes": 12,
+        "models_agree": true
+      },
+      {
+        "number": 7,
+        "name": null,
+        "party": "พลวัต",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 8,
+        "name": null,
+        "party": "ประชาธิปไตยใหม่",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 9,
+        "name": null,
+        "party": "เพื่อไทย",
+        "votes": 43,
+        "models_agree": true
+      },
+      {
+        "number": 10,
+        "name": null,
+        "party": "ทางเลือกใหม่",
+        "votes": 3,
+        "models_agree": true
+      }
+    ],
+    "is_back_page": false,
+    "_confidence": {
+      "registered_voters": "single (gemini)",
+      "turnout": "high (gemini+gemini_sc1+gemini_sc2)",
+      "ballots_received": "high (gemini+gemini_sc1+gemini_sc2)",
+      "valid_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "invalid_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "no_vote_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "remaining_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "total_votes": "high (gemini+gemini_sc1+gemini_sc2)",
+      "constituency": "high (gemini+gemini_sc1+gemini_sc2)",
+      "station_no": "high (gemini+gemini_sc1+gemini_sc2)"
+    },
+    "_models_used": [
+      "gemini",
+      "gemini_sc1",
+      "gemini_sc2"
+    ],
+    "_models_count": 3,
+    "total_pages": 4
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 2,
+    "province": null,
+    "constituency": null,
+    "district": null,
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "บัญชีรายชื่อ",
+    "form_type": "สส.5/18",
+    "drive_file_id": "1ikCnrJdWL1hpZQeYOAe3Yxjoq7Wdckl8",
+    "drive_view_url": "https://drive.google.com/file/d/1ikCnrJdWL1hpZQeYOAe3Yxjoq7Wdckl8/view",
+    "registered_voters": null,
+    "turnout": null,
+    "ballots_received": null,
+    "valid_ballots": null,
+    "invalid_ballots": null,
+    "no_vote_ballots": null,
+    "remaining_ballots": null,
+    "total_votes": 44,
+    "station_no": null,
+    "candidates": [
+      {
+        "number": 11,
+        "name": null,
+        "party": "เศรษฐกิจไทย",
+        "votes": 11,
+        "models_agree": true
+      },
+      {
+        "number": 12,
+        "name": null,
+        "party": "เสรีรวมไทย",
+        "votes": 4,
+        "models_agree": true
+      },
+      {
+        "number": 13,
+        "name": null,
+        "party": "รวมพลังประชาชาติไทย",
+        "votes": 4,
+        "models_agree": true
+      },
+      {
+        "number": 14,
+        "name": null,
+        "party": "ท้องที่ไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 15,
+        "name": null,
+        "party": "อนาคตไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 16,
+        "name": null,
+        "party": "พลังเพื่อไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 17,
+        "name": null,
+        "party": "ไทยชนะ",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 18,
+        "name": null,
+        "party": "พลังสังคมใหม่",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 19,
+        "name": null,
+        "party": "สังคมประชาธิปไตยไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 20,
+        "name": null,
+        "party": "ฟิวชั่น",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 21,
+        "name": null,
+        "party": "ไทรวมพลัง",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 22,
+        "name": null,
+        "party": "ก้าวอิสระ",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 23,
+        "name": null,
+        "party": "ปวงชนไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 24,
+        "name": null,
+        "party": "วิจัยบันไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 25,
+        "name": null,
+        "party": "เพื่อชีวิตใหม่",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 26,
+        "name": null,
+        "party": "คลองไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 27,
+        "name": null,
+        "party": "ประชาธิปไตย",
+        "votes": 21,
+        "models_agree": true
+      },
+      {
+        "number": 28,
+        "name": null,
+        "party": "ไทยก้าวหน้า",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 29,
+        "name": null,
+        "party": "ไทยภักดี",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 30,
+        "name": null,
+        "party": "แรงงานสร้างชาติ",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 31,
+        "name": null,
+        "party": "ประชากรไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 32,
+        "name": null,
+        "party": "ครูไทยเพื่อประชาชน",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 33,
+        "name": null,
+        "party": "ประชาชาติ",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 34,
+        "name": null,
+        "party": "สร้างอนาคตไทย",
+        "votes": 0,
+        "models_agree": true
+      }
+    ],
+    "is_back_page": false,
+    "_confidence": {
+      "total_votes": "high (gemini+gemini_sc1+gemini_sc2)"
+    },
+    "_models_used": [
+      "gemini",
+      "gemini_sc1",
+      "gemini_sc2"
+    ],
+    "_models_count": 3,
+    "total_pages": 4
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 1,
+    "province": "ชลบุรี",
+    "constituency": 1,
+    "district": "แม่สอด",
+    "sub_district": "ท่าศาลา",
+    "station_range": null,
+    "vote_type": "แบ่งเขต",
+    "form_type": "สส.5/18",
+    "drive_file_id": "1rBl9dkARvxZamBD3lZZq_Ru4XjrkfW-d",
+    "drive_view_url": "https://drive.google.com/file/d/1rBl9dkARvxZamBD3lZZq_Ru4XjrkfW-d/view",
+    "registered_voters": 720,
+    "turnout": 720,
+    "ballots_received": 720,
+    "valid_ballots": 624,
+    "invalid_ballots": 23,
+    "no_vote_ballots": 73,
+    "remaining_ballots": 0,
+    "total_votes": 624,
+    "station_no": 2,
+    "candidates": [
+      {
+        "number": 1,
+        "name": "นายเกียรติคุณ ต้นยาง",
+        "party": "ภูมิใจไทย",
+        "votes": 68,
+        "models_agree": true
+      },
+      {
+        "number": 2,
+        "name": "นางศิริกุล อนุพงศ์",
+        "party": "รวมไทยสร้างชาติ",
+        "votes": 19,
+        "models_agree": true
+      },
+      {
+        "number": 3,
+        "name": "นายธนวัฒน์ พลอยบุตร",
+        "party": "เพื่อไทย",
+        "votes": 42,
+        "models_agree": true
+      },
+      {
+        "number": 4,
+        "name": "นายธนากร อ่อนพรม",
+        "party": "รวมใจไทย",
+        "votes": 14,
+        "models_agree": true
+      },
+      {
+        "number": 5,
+        "name": "นายธนวัฒน์ ปานเทียน",
+        "party": "ปราชญ์",
+        "votes": 425,
+        "models_agree": true
+      },
+      {
+        "number": 6,
+        "name": "นายธนวัฒน์ อารีรัตน์",
+        "party": "พลังชาติ",
+        "votes": 16,
+        "models_agree": true
+      },
+      {
+        "number": 7,
+        "name": "นายธนศักดิ์ อิ่มเอิบ",
+        "party": "ก้าวไกล",
+        "votes": 17,
+        "models_agree": true
+      },
+      {
+        "number": 8,
+        "name": "นายวรินทร์ สุขใส",
+        "party": "ประชาธิปัตย์",
+        "votes": 16,
+        "models_agree": true
+      },
+      {
+        "number": 9,
+        "name": "นายธนพล อิ่มอั้น",
+        "party": "พลังไทยรักชาติ",
+        "votes": 7,
+        "models_agree": true
+      },
+      {
+        "number": 10,
+        "name": null,
+        "party": null,
+        "votes": null,
+        "models_agree": false
+      }
+    ],
+    "is_back_page": false,
+    "_confidence": {
+      "registered_voters": "single (gemini)",
+      "turnout": "high (gemini+gemini_sc1+gemini_sc2)",
+      "ballots_received": "high (gemini+gemini_sc1+gemini_sc2)",
+      "valid_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "invalid_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "no_vote_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "remaining_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "total_votes": "high (gemini+gemini_sc1+gemini_sc2)",
+      "constituency": "high (gemini+gemini_sc1+gemini_sc2)",
+      "station_no": "high (gemini+gemini_sc1)"
+    },
+    "_models_used": [
+      "gemini",
+      "gemini_sc1",
+      "gemini_sc2"
+    ],
+    "_models_count": 3,
+    "total_pages": 2
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 2,
+    "province": null,
+    "constituency": null,
+    "district": null,
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "แบ่งเขต",
+    "form_type": "สส.5/18",
+    "drive_file_id": "1rBl9dkARvxZamBD3lZZq_Ru4XjrkfW-d",
+    "drive_view_url": "https://drive.google.com/file/d/1rBl9dkARvxZamBD3lZZq_Ru4XjrkfW-d/view",
+    "registered_voters": null,
+    "turnout": null,
+    "ballots_received": null,
+    "valid_ballots": null,
+    "invalid_ballots": null,
+    "no_vote_ballots": null,
+    "remaining_ballots": null,
+    "total_votes": null,
+    "station_no": null,
+    "candidates": [],
+    "is_back_page": true,
+    "_confidence": {},
+    "_models_used": [
+      "gemini",
+      "gemini_sc1",
+      "gemini_sc2"
+    ],
+    "_models_count": 3,
+    "total_pages": 2
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 1,
+    "province": "มุกดาหาร",
+    "constituency": 1,
+    "district": "เมืองมหาสารคาม",
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "แบ่งเขต",
+    "form_type": "สส.5/18",
+    "drive_file_id": "197oBvK2rvoIJSXeAbAKdMvYT_J40Nula",
+    "drive_view_url": "https://drive.google.com/file/d/197oBvK2rvoIJSXeAbAKdMvYT_J40Nula/view",
+    "registered_voters": null,
+    "turnout": 720,
+    "ballots_received": 720,
+    "valid_ballots": 642,
+    "invalid_ballots": 14,
+    "no_vote_ballots": 64,
+    "remaining_ballots": 0,
+    "total_votes": 642,
+    "station_no": 3,
+    "candidates": [
+      {
+        "number": 1,
+        "name": "นายธนสิทธิ์ ทีโออุกฤษฎ์",
+        "party": "ภูมิใจไทย",
+        "votes": 86,
+        "models_agree": true
+      },
+      {
+        "number": 2,
+        "name": "นางศิริกุล อุนทรพงศ์",
+        "party": "รวมไทยสร้างชาติ",
+        "votes": 11,
+        "models_agree": true
+      },
+      {
+        "number": 3,
+        "name": "พันตำรวจโทเจษฎา พรหมจันทร์",
+        "party": "เพื่อไทย",
+        "votes": 35,
+        "models_agree": true
+      },
+      {
+        "number": 4,
+        "name": "นายธนพล จอมพรม",
+        "party": "รวมใจไทย",
+        "votes": 10,
+        "models_agree": true
+      },
+      {
+        "number": 5,
+        "name": "นายศรีภูมิ ปานเอี่ยม",
+        "party": "ประชาชน",
+        "votes": 447,
+        "models_agree": true
+      },
+      {
+        "number": 6,
+        "name": "นายปองภพ วงศ์ศรี",
+        "party": "เสรีรวมไทย",
+        "votes": 10,
+        "models_agree": true
+      },
+      {
+        "number": 7,
+        "name": "นายพิทักษ์ จอมน้อม",
+        "party": "กล้าธรรม",
+        "votes": 13,
+        "models_agree": true
+      },
+      {
+        "number": 8,
+        "name": "นายวรินทร์ มีชัยโย",
+        "party": "ประชาธิปไตย",
+        "votes": 19,
+        "models_agree": true
+      },
+      {
+        "number": 9,
+        "name": "นายธนพล อิ่มอนันต์",
+        "party": "พลังไทยรักชาติ",
+        "votes": 11,
+        "models_agree": true
+      },
+      {
+        "number": 10,
+        "name": null,
+        "party": null,
+        "votes": null,
+        "models_agree": false
+      }
+    ],
+    "is_back_page": false,
+    "_confidence": {
+      "turnout": "high (gemini+gemini_sc1+gemini_sc2)",
+      "ballots_received": "high (gemini_sc1+gemini_sc2)",
+      "valid_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "invalid_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "no_vote_ballots": "high (gemini+gemini_sc1+gemini_sc2)",
+      "remaining_ballots": "high (gemini_sc1+gemini_sc2)",
+      "total_votes": "high (gemini+gemini_sc1+gemini_sc2)",
+      "constituency": "high (gemini+gemini_sc1+gemini_sc2)",
+      "station_no": "high (gemini_sc1+gemini_sc2)"
+    },
+    "_models_used": [
+      "gemini",
+      "gemini_sc1",
+      "gemini_sc2"
+    ],
+    "_models_count": 3,
+    "total_pages": 2
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 2,
+    "province": null,
+    "constituency": null,
+    "district": null,
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "แบ่งเขต",
+    "form_type": "สส.5/18",
+    "drive_file_id": "197oBvK2rvoIJSXeAbAKdMvYT_J40Nula",
+    "drive_view_url": "https://drive.google.com/file/d/197oBvK2rvoIJSXeAbAKdMvYT_J40Nula/view",
+    "registered_voters": null,
+    "turnout": null,
+    "ballots_received": null,
+    "valid_ballots": null,
+    "invalid_ballots": null,
+    "no_vote_ballots": null,
+    "remaining_ballots": null,
+    "total_votes": null,
+    "station_no": null,
+    "candidates": [],
+    "is_back_page": true,
+    "_confidence": {},
+    "_models_used": [
+      "gemini",
+      "gemini_sc1",
+      "gemini_sc2"
+    ],
+    "_models_count": 3,
+    "total_pages": 2
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 1,
+    "province": "กาฬสินธุ์",
+    "constituency": 1,
+    "district": null,
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "บัญชีรายชื่อ",
+    "form_type": "สส.5/18",
+    "drive_file_id": "1cAD4_KMYtF8ecT_6RTr1vNouUpHXiXtx",
+    "drive_view_url": "https://drive.google.com/file/d/1cAD4_KMYtF8ecT_6RTr1vNouUpHXiXtx/view",
+    "registered_voters": null,
+    "turnout": 720,
+    "ballots_received": 720,
+    "valid_ballots": 683,
+    "invalid_ballots": 8,
+    "no_vote_ballots": 29,
+    "remaining_ballots": 0,
+    "total_votes": 58,
+    "station_no": 3,
+    "candidates": [
+      {
+        "number": 1,
+        "name": null,
+        "party": "ไทยภักดี",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 2,
+        "name": null,
+        "party": "เพื่อชาติไทย",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 3,
+        "name": null,
+        "party": "ใหม่",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 4,
+        "name": null,
+        "party": "มิติใหม่",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 5,
+        "name": null,
+        "party": "รวมใจไทย",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 6,
+        "name": null,
+        "party": "รวมไทยสร้างชาติ",
+        "votes": 8,
+        "models_agree": true
+      },
+      {
+        "number": 7,
+        "name": null,
+        "party": "พลัง",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 8,
+        "name": null,
+        "party": "ประชาธิปไตยใหม่",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 9,
+        "name": null,
+        "party": "เพื่อไทย",
+        "votes": 39,
+        "models_agree": true
+      },
+      {
+        "number": 10,
+        "name": null,
+        "party": "ทางเลือกใหม่",
+        "votes": 2,
+        "models_agree": true
+      }
+    ],
+    "is_back_page": false,
+    "_confidence": {
+      "turnout": "high (gemini+gemini_sc2)",
+      "ballots_received": "high (gemini+gemini_sc2)",
+      "valid_ballots": "high (gemini+gemini_sc2)",
+      "invalid_ballots": "high (gemini+gemini_sc2)",
+      "no_vote_ballots": "high (gemini+gemini_sc2)",
+      "remaining_ballots": "high (gemini+gemini_sc2)",
+      "total_votes": "high (gemini+gemini_sc2)",
+      "constituency": "high (gemini+gemini_sc2)",
+      "station_no": "high (gemini+gemini_sc2)"
+    },
+    "_models_used": [
+      "gemini",
+      "gemini_sc2"
+    ],
+    "_models_count": 2,
+    "total_pages": 4
+  },
+  {
+    "file": "จังหวัดตาก/เขตเลือกตั้งที่ 1",
+    "page": 2,
+    "province": null,
+    "constituency": null,
+    "district": null,
+    "sub_district": null,
+    "station_range": null,
+    "vote_type": "บัญชีรายชื่อ",
+    "form_type": "สส.5/18",
+    "drive_file_id": "1cAD4_KMYtF8ecT_6RTr1vNouUpHXiXtx",
+    "drive_view_url": "https://drive.google.com/file/d/1cAD4_KMYtF8ecT_6RTr1vNouUpHXiXtx/view",
+    "registered_voters": null,
+    "turnout": null,
+    "ballots_received": null,
+    "valid_ballots": null,
+    "invalid_ballots": null,
+    "no_vote_ballots": null,
+    "remaining_ballots": null,
+    "total_votes": 58,
+    "station_no": null,
+    "candidates": [
+      {
+        "number": 11,
+        "name": null,
+        "party": "เศรษฐกิจ",
+        "votes": 6,
+        "models_agree": true
+      },
+      {
+        "number": 12,
+        "name": null,
+        "party": "เสรีรวมไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 13,
+        "name": null,
+        "party": "รวมพลังประชาชน",
+        "votes": 3,
+        "models_agree": true
+      },
+      {
+        "number": 14,
+        "name": null,
+        "party": "ท้องที่ไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 15,
+        "name": null,
+        "party": "อนาคตไทย",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 16,
+        "name": null,
+        "party": "พลังเพื่อไทย",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 17,
+        "name": null,
+        "party": "ไทยชนะ",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 18,
+        "name": null,
+        "party": "พลังสังคมใหม่",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 19,
+        "name": null,
+        "party": "สังคมประชาธิปไตยไทย",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 20,
+        "name": null,
+        "party": "พิวชัน",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 21,
+        "name": null,
+        "party": "ไทรวมพลัง",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 22,
+        "name": null,
+        "party": "ก้าวอิสระ",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 23,
+        "name": null,
+        "party": "ปวงชนไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 24,
+        "name": null,
+        "party": "วิชชั่นใหม่",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 25,
+        "name": null,
+        "party": "เพื่อชีวิตใหม่",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 26,
+        "name": null,
+        "party": "คลองไทย",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 27,
+        "name": null,
+        "party": "ประชาธิปัตย์",
+        "votes": 33,
+        "models_agree": true
+      },
+      {
+        "number": 28,
+        "name": null,
+        "party": "ไทยก้าวหน้า",
+        "votes": 2,
+        "models_agree": true
+      },
+      {
+        "number": 29,
+        "name": null,
+        "party": "ไทยภักดี",
+        "votes": 8,
+        "models_agree": true
+      },
+      {
+        "number": 30,
+        "name": null,
+        "party": "แรงงานสร้างชาติ",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 31,
+        "name": null,
+        "party": "ประชากรไทย",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 32,
+        "name": null,
+        "party": "ครูไทยเพื่อประชาชน",
+        "votes": 1,
+        "models_agree": true
+      },
+      {
+        "number": 33,
+        "name": null,
+        "party": "ประชาชาติ",
+        "votes": 0,
+        "models_agree": true
+      },
+      {
+        "number": 34,
+        "name": null,
+        "party": "สร้างอนาคตไทย",
+        "votes": 0,
+        "models_agree": true
+      }
+    ],
+    "is_back_page": false,
+    "_confidence": {
+      "total_votes": "high (gemini+gemini_sc1+gemini_sc2)"
+    },
+    "_models_used": [
+      "gemini",
+      "gemini_sc1",
+      "gemini_sc2"
+    ],
+    "_models_count": 3,
+    "total_pages": 4
+  }
+]
