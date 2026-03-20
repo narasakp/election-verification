@@ -1,129 +1,178 @@
-import React, { useState, useMemo } from 'react'
-import { GitCompareArrows, ChevronDown, ChevronRight, AlertTriangle, CheckCircle2, XCircle, ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react'
+import React, { useState, useMemo, useEffect } from 'react'
+import { GitCompareArrows, ChevronDown, ChevronRight, ArrowUp, ArrowDown, ArrowUpDown, Database, ExternalLink } from 'lucide-react'
 import ErrorBoundary from './ErrorBoundary'
-import { validateItem, getWorstSeverity } from '../utils/validation'
+import { validateItem } from '../utils/validation'
+
+const CROSS_REF_URL = './data/cross_reference_sources.json'
+
+const SOURCE_COLORS = {
+  ocr: { bg: 'bg-indigo-50', text: 'text-indigo-700', bar: 'bg-indigo-500', border: 'border-indigo-200', label: 'ระบบ OCR ของเรา', icon: '🔬' },
+  ect: { bg: 'bg-blue-50', text: 'text-blue-700', bar: 'bg-blue-500', border: 'border-blue-200', label: 'กกต. (ECT)', icon: '🏛️' },
+  killernay: { bg: 'bg-emerald-50', text: 'text-emerald-700', bar: 'bg-emerald-500', border: 'border-emerald-200', label: 'Killernay', icon: '📊' },
+  luengnat: { bg: 'bg-purple-50', text: 'text-purple-700', bar: 'bg-purple-500', border: 'border-purple-200', label: 'Luengnat', icon: '📈' },
+}
 
 function SeverityBadge({ severity }) {
   const cls = {
     error: 'bg-red-100 text-red-700',
     warning: 'bg-amber-100 text-amber-700',
-    info: 'bg-blue-100 text-blue-700',
     ok: 'bg-emerald-100 text-emerald-700',
+    mismatch: 'bg-orange-100 text-orange-700',
   }[severity] || 'bg-gray-100 text-gray-500'
-  const label = { error: 'Error', warning: 'Warning', info: 'Info', ok: 'OK' }[severity] || severity
+  const label = { error: 'Error', warning: 'Warning', ok: 'OK', mismatch: 'Mismatch' }[severity] || severity
   return <span className={`text-[9px] px-1.5 py-0.5 rounded font-medium ${cls}`}>{label}</span>
+}
+
+function DiffBar({ val, refVal, maxVal, color }) {
+  if (!refVal || !maxVal) return <span className="text-gray-300 text-[10px]">—</span>
+  const pct = (val / maxVal) * 100
+  const refPct = (refVal / maxVal) * 100
+  const diff = val - refVal
+  const diffPct = refVal > 0 ? ((diff / refVal) * 100) : 0
+  const absDiffPct = Math.abs(diffPct)
+  const barColor = absDiffPct > 10 ? 'bg-red-400' : absDiffPct > 3 ? 'bg-amber-400' : color
+  return (
+    <div className="flex items-center gap-1" title={`${val.toLocaleString()} (diff: ${diff >= 0 ? '+' : ''}${diff.toLocaleString()}, ${diffPct.toFixed(1)}%)`}>
+      <div className="w-16 bg-gray-100 rounded-full h-1.5 overflow-hidden">
+        <div className={`h-full rounded-full ${barColor}`} style={{ width: `${Math.min(pct, 100)}%` }} />
+      </div>
+      <span className="font-mono text-[10px] w-14 text-right">{val.toLocaleString()}</span>
+      {diff !== 0 && (
+        <span className={`text-[9px] font-mono ${absDiffPct > 10 ? 'text-red-600 font-semibold' : absDiffPct > 3 ? 'text-amber-600' : 'text-gray-400'}`}>
+          {diff > 0 ? '+' : ''}{diffPct.toFixed(1)}%
+        </span>
+      )}
+    </div>
+  )
+}
+
+function SourceStatusBadge({ status }) {
+  const map = {
+    available: { cls: 'bg-emerald-100 text-emerald-700', label: 'พร้อม' },
+    live: { cls: 'bg-indigo-100 text-indigo-700', label: 'Live' },
+    pending: { cls: 'bg-gray-100 text-gray-400', label: 'รอข้อมูล' },
+  }
+  const s = map[status] || map.pending
+  return <span className={`text-[9px] px-1.5 py-0.5 rounded font-medium ${s.cls}`}>{s.label}</span>
 }
 
 function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta }) {
   const [expanded, setExpanded] = useState(false)
-  const [filterSeverity, setFilterSeverity] = useState('all') // all | error | warning | info
+  const [crossRefData, setCrossRefData] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [filterSeverity, setFilterSeverity] = useState('all')
   const [sortCol, setSortCol] = useState('severity')
   const [sortAsc, setSortAsc] = useState(false)
   const [page, setPage] = useState(0)
+  const [selectedRow, setSelectedRow] = useState(null)
+  const [viewMode, setViewMode] = useState('table') // table | cards
   const PAGE_SIZE = 20
 
-  // Build per-constituency comparison data
-  const comparisonData = useMemo(() => {
-    // Group items by province_constituency
+  // Load cross-reference JSON on expand
+  useEffect(() => {
+    if (expanded && !crossRefData && !loading) {
+      setLoading(true)
+      fetch(CROSS_REF_URL)
+        .then(r => r.ok ? r.json() : null)
+        .then(d => { setCrossRefData(d); setLoading(false) })
+        .catch(() => setLoading(false))
+    }
+  }, [expanded, crossRefData, loading])
+
+  // Build OCR aggregates per constituency
+  const ocrByConst = useMemo(() => {
     const groups = {}
     allItems.forEach(item => {
       const key = `${item.province || '?'}_${item.constituency || '?'}`
-      if (!groups[key]) {
-        groups[key] = {
-          key,
-          province: item.province || '?',
-          constituency: item.constituency || '?',
-          voteType: item.vote_type || '?',
-          items: [],
-          ocrTurnout: 0,
-          ocrValid: 0,
-          ocrInvalid: 0,
-          ocrTotal: 0,
-          stationCount: 0,
-        }
-      }
-      groups[key].items.push(item)
+      if (!groups[key]) groups[key] = { items: [], turnout: 0, valid: 0, invalid: 0, stations: new Set(), errors: 0, warnings: 0, reviewed: 0, total: 0 }
+      const g = groups[key]
+      g.items.push(item)
+      g.turnout += Number(item.turnout) || 0
+      g.valid += Number(item.valid_ballots) || 0
+      g.invalid += Number(item.invalid_ballots) || 0
+      g.total++
+      const stn = item.ocr_station_no || item.station_no
+      if (stn) g.stations.add(stn)
+      const warns = validateItem(item)
+      warns.forEach(w => { if (w.severity === 'error') g.errors++; else if (w.severity === 'warning') g.warnings++ })
+      const st = (review[item.id] || {}).status || 'pending'
+      if (st !== 'pending') g.reviewed++
     })
+    // Convert stations Set to count
+    Object.values(groups).forEach(g => { g.stationCount = g.stations.size; delete g.stations })
+    return groups
+  }, [allItems, review])
 
-    // Aggregate OCR data and compare with ECT anomaly flags
-    return Object.values(groups).map(g => {
-      let turnoutSum = 0, validSum = 0, invalidSum = 0, totalVotesSum = 0, stationSet = new Set()
-      let errorCount = 0, warningCount = 0
+  // Merge all sources
+  const comparisonData = useMemo(() => {
+    if (!crossRefData) return []
+    const constituencies = crossRefData.constituencies || []
+    return constituencies.map(c => {
+      const ocr = ocrByConst[c.key] || null
+      const ect = c.ect || null
+      const kn = c.killernay || null
+      const ln = c.luengnat || null
 
-      g.items.forEach(item => {
-        turnoutSum += Number(item.turnout) || 0
-        validSum += Number(item.valid_ballots) || 0
-        invalidSum += Number(item.invalid_ballots) || 0
-        totalVotesSum += Number(item.total_votes) || 0
-        const stn = item.ocr_station_no || item.station_no
-        if (stn) stationSet.add(stn)
-
-        const warns = validateItem(item)
-        warns.forEach(w => {
-          if (w.severity === 'error') errorCount++
-          else if (w.severity === 'warning') warningCount++
-        })
-      })
-
-      // ECT anomaly flags for this constituency
-      const ectFlags = anomalyFlags[g.key] || anomalyFlags[`${g.province}_${g.constituency}`] || null
-      const flagCount = ectFlags ? (Array.isArray(ectFlags) ? ectFlags.length : Object.keys(ectFlags).length) : 0
-
-      // Review status
-      let reviewed = 0, confirmed = 0, rejected = 0
-      g.items.forEach(item => {
-        const st = (review[item.id] || {}).status || 'pending'
-        if (st !== 'pending') reviewed++
-        if (st === 'confirmed') confirmed++
-        if (st === 'rejected') rejected++
-      })
-
-      // Determine overall severity
+      // Determine severity by cross-checking turnout/valid differences
       let severity = 'ok'
-      if (errorCount > 0 || rejected > 0) severity = 'error'
-      else if (warningCount > 0 || flagCount > 0) severity = 'warning'
-      else if (g.items.length === 0) severity = 'info'
+      const diffs = []
+      if (ocr && ect) {
+        const tDiff = ect.turnout > 0 ? Math.abs(ocr.turnout - ect.turnout) / ect.turnout * 100 : 0
+        const vDiff = ect.valid_votes > 0 ? Math.abs(ocr.valid - ect.valid_votes) / ect.valid_votes * 100 : 0
+        diffs.push(tDiff, vDiff)
+      }
+      if (ocr && kn) {
+        const tDiff = kn.turnout > 0 ? Math.abs(ocr.turnout - kn.turnout) / kn.turnout * 100 : 0
+        const vDiff = kn.valid_votes > 0 ? Math.abs(ocr.valid - kn.valid_votes) / kn.valid_votes * 100 : 0
+        diffs.push(tDiff, vDiff)
+      }
+      if (ect && kn) {
+        const tDiff = kn.turnout > 0 ? Math.abs(ect.turnout - kn.turnout) / kn.turnout * 100 : 0
+        diffs.push(tDiff)
+      }
+      const maxDiff = diffs.length > 0 ? Math.max(...diffs) : 0
+      if (ocr && ocr.errors > 0) severity = 'error'
+      else if (maxDiff > 10) severity = 'error'
+      else if (maxDiff > 3 || (ocr && ocr.warnings > 0)) severity = 'warning'
+      else if (maxDiff > 0.5) severity = 'mismatch'
+
+      // Count available sources
+      const sourceCount = (ocr ? 1 : 0) + (ect ? 1 : 0) + (kn ? 1 : 0) + (ln ? 1 : 0)
 
       return {
-        ...g,
-        ocrTurnout: turnoutSum,
-        ocrValid: validSum,
-        ocrInvalid: invalidSum,
-        ocrTotal: totalVotesSum,
-        stationCount: stationSet.size,
-        errorCount,
-        warningCount,
-        flagCount,
-        reviewed,
-        confirmed,
-        rejected,
-        reviewPct: g.items.length > 0 ? (reviewed / g.items.length * 100) : 0,
+        key: c.key,
+        province: c.province,
+        zone: c.zone,
+        ocr,
+        ect,
+        kn,
+        ln,
         severity,
+        maxDiff: Math.round(maxDiff * 10) / 10,
+        sourceCount,
+        reviewPct: ocr ? (ocr.total > 0 ? ocr.reviewed / ocr.total * 100 : 0) : 0,
       }
     })
-  }, [allItems, review, anomalyFlags])
+  }, [crossRefData, ocrByConst])
 
   // Filter
   const filtered = useMemo(() => {
-    let data = comparisonData
-    if (filterSeverity !== 'all') {
-      data = data.filter(d => d.severity === filterSeverity)
-    }
-    return data
+    if (filterSeverity === 'all') return comparisonData
+    return comparisonData.filter(d => d.severity === filterSeverity)
   }, [comparisonData, filterSeverity])
 
   // Sort
   const sorted = useMemo(() => {
     const arr = [...filtered]
-    const sevOrder = { error: 3, warning: 2, info: 1, ok: 0 }
+    const sevOrder = { error: 3, warning: 2, mismatch: 1, ok: 0 }
     arr.sort((a, b) => {
       let va, vb
       switch (sortCol) {
         case 'province': va = a.province; vb = b.province; return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va)
-        case 'constituency': va = Number(a.constituency) || 0; vb = Number(b.constituency) || 0; break
-        case 'stations': va = a.stationCount; vb = b.stationCount; break
-        case 'errors': va = a.errorCount; vb = b.errorCount; break
-        case 'flags': va = a.flagCount; vb = b.flagCount; break
+        case 'zone': va = Number(a.zone) || 0; vb = Number(b.zone) || 0; break
+        case 'diff': va = a.maxDiff; vb = b.maxDiff; break
+        case 'ocrTurnout': va = a.ocr?.turnout || 0; vb = b.ocr?.turnout || 0; break
+        case 'sources': va = a.sourceCount; vb = b.sourceCount; break
         case 'reviewPct': va = a.reviewPct; vb = b.reviewPct; break
         case 'severity': va = sevOrder[a.severity] || 0; vb = sevOrder[b.severity] || 0; break
         default: return 0
@@ -133,15 +182,14 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
     return arr
   }, [filtered, sortCol, sortAsc])
 
-  // Paginate
   const paged = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
   const totalPages = Math.ceil(sorted.length / PAGE_SIZE)
 
-  // Summary counts
   const summary = useMemo(() => ({
     total: comparisonData.length,
     errors: comparisonData.filter(d => d.severity === 'error').length,
     warnings: comparisonData.filter(d => d.severity === 'warning').length,
+    mismatches: comparisonData.filter(d => d.severity === 'mismatch').length,
     ok: comparisonData.filter(d => d.severity === 'ok').length,
   }), [comparisonData])
 
@@ -153,10 +201,7 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
   const SortTh = ({ col, align = 'left', children }) => {
     const active = sortCol === col
     return (
-      <th
-        className={`px-2 py-1.5 text-${align} cursor-pointer select-none hover:text-gray-700 transition`}
-        onClick={() => toggleSort(col)}
-      >
+      <th className={`px-2 py-1.5 text-${align} cursor-pointer select-none hover:text-gray-700 transition`} onClick={() => toggleSort(col)}>
         <span className="inline-flex items-center gap-0.5">
           {children}
           {active ? (sortAsc ? <ArrowUp size={9} /> : <ArrowDown size={9} />) : <ArrowUpDown size={8} className="opacity-30" />}
@@ -164,6 +209,9 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
       </th>
     )
   }
+
+  const fmtNum = (n) => n != null ? n.toLocaleString() : '—'
+  const sources = crossRefData?.sources || {}
 
   if (allItems.length === 0) return null
 
@@ -175,117 +223,293 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
       >
         {expanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
         <GitCompareArrows size={16} className="text-purple-500" />
-        🔬 Cross-Reference: OCR vs ECT
+        🔬 Cross-Reference: 4 แหล่งข้อมูล (OCR / กกต. / Killernay / Luengnat)
         <span className="text-xs font-normal text-gray-400 ml-2">
-          {summary.total} เขต · {summary.errors} errors · {summary.warnings} warnings
+          {summary.total > 0 ? `${summary.total} เขต · ${summary.errors} errors · ${summary.warnings} warnings` : 'คลิกเพื่อโหลด'}
         </span>
       </button>
 
       {expanded && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 space-y-4">
-          {/* Summary cards */}
-          <div className="flex items-center gap-3">
-            {[
-              { label: 'ทั้งหมด', count: summary.total, cls: 'bg-gray-50 text-gray-700', filter: 'all' },
-              { label: 'Error', count: summary.errors, cls: 'bg-red-50 text-red-700', filter: 'error' },
-              { label: 'Warning', count: summary.warnings, cls: 'bg-amber-50 text-amber-700', filter: 'warning' },
-              { label: 'OK', count: summary.ok, cls: 'bg-emerald-50 text-emerald-700', filter: 'ok' },
-            ].map(s => (
-              <button
-                key={s.filter}
-                onClick={() => { setFilterSeverity(s.filter); setPage(0) }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-                  filterSeverity === s.filter ? s.cls + ' ring-2 ring-offset-1 ring-indigo-300' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
-                }`}
-              >
-                {s.label} ({s.count})
-              </button>
-            ))}
-          </div>
+          {loading && <div className="text-center text-gray-400 py-8 animate-pulse">กำลังโหลดข้อมูล cross-reference...</div>}
 
-          {anomalyMeta && (
-            <div className="text-[10px] text-gray-400">
-              ข้อมูล ECT: {anomalyMeta.generated || '—'} · {anomalyMeta.total_flags || 0} flags ทั้งหมด
-            </div>
-          )}
-
-          {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="text-[10px] text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
-                  <SortTh col="severity" align="center">สถานะ</SortTh>
-                  <SortTh col="province" align="left">จังหวัด</SortTh>
-                  <SortTh col="constituency" align="center">เขต</SortTh>
-                  <SortTh col="stations" align="center">หน่วย</SortTh>
-                  <th className="px-2 py-1.5 text-right">OCR Turnout</th>
-                  <th className="px-2 py-1.5 text-right">OCR Valid</th>
-                  <SortTh col="errors" align="center">Errors</SortTh>
-                  <SortTh col="flags" align="center">ECT Flags</SortTh>
-                  <SortTh col="reviewPct" align="center">Review %</SortTh>
-                </tr>
-              </thead>
-              <tbody>
-                {paged.map((row, i) => (
-                  <tr key={row.key} className="border-b border-gray-50 hover:bg-gray-50 transition">
-                    <td className="px-2 py-2 text-center"><SeverityBadge severity={row.severity} /></td>
-                    <td className="px-2 py-2 font-medium text-gray-700">{row.province}</td>
-                    <td className="px-2 py-2 text-center">{row.constituency}</td>
-                    <td className="px-2 py-2 text-center text-gray-500">{row.stationCount}</td>
-                    <td className="px-2 py-2 text-right font-mono text-gray-600">{row.ocrTurnout.toLocaleString()}</td>
-                    <td className="px-2 py-2 text-right font-mono text-gray-600">{row.ocrValid.toLocaleString()}</td>
-                    <td className="px-2 py-2 text-center">
-                      {row.errorCount > 0 ? (
-                        <span className="bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-mono">{row.errorCount}</span>
-                      ) : (
-                        <span className="text-gray-300">0</span>
-                      )}
-                    </td>
-                    <td className="px-2 py-2 text-center">
-                      {row.flagCount > 0 ? (
-                        <span className="bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-mono">{row.flagCount}</span>
-                      ) : (
-                        <span className="text-gray-300">0</span>
-                      )}
-                    </td>
-                    <td className="px-2 py-2 text-center">
-                      <div className="flex items-center gap-1">
-                        <div className="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
-                          <div
-                            className={`h-full rounded-full transition-all ${row.reviewPct >= 100 ? 'bg-emerald-500' : row.reviewPct > 50 ? 'bg-indigo-400' : 'bg-amber-400'}`}
-                            style={{ width: `${row.reviewPct}%` }}
-                          />
-                        </div>
-                        <span className="text-[9px] text-gray-400 w-8 text-right">{row.reviewPct.toFixed(0)}%</span>
+          {!loading && crossRefData && (
+            <>
+              {/* Source status cards */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {Object.entries(SOURCE_COLORS).map(([key, sc]) => {
+                  const src = sources[key] || {}
+                  const count = key === 'ocr' ? Object.keys(ocrByConst).length : (src.records || 0)
+                  return (
+                    <div key={key} className={`rounded-lg border ${sc.border} ${sc.bg} p-3`}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium">{sc.icon} {sc.label}</span>
+                        <SourceStatusBadge status={key === 'ocr' ? 'live' : (src.status || 'pending')} />
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between text-xs text-gray-500">
-              <span>แสดง {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, sorted.length)} จาก {sorted.length}</span>
-              <div className="flex gap-1">
-                <button
-                  onClick={() => setPage(p => Math.max(0, p - 1))}
-                  disabled={page === 0}
-                  className="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-30"
-                >
-                  ← ก่อนหน้า
-                </button>
-                <button
-                  onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-                  disabled={page >= totalPages - 1}
-                  className="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-30"
-                >
-                  ถัดไป →
-                </button>
+                      <div className={`text-lg font-bold ${sc.text}`}>{count.toLocaleString()}</div>
+                      <div className="text-[10px] text-gray-500">เขตเลือกตั้ง</div>
+                    </div>
+                  )
+                })}
               </div>
-            </div>
+
+              {crossRefData.generated && (
+                <div className="text-[10px] text-gray-400">
+                  ข้อมูลอัปเดต: {new Date(crossRefData.generated).toLocaleString('th-TH')}
+                  {anomalyMeta && <> · ECT flags: {anomalyMeta.total_flags || 0}</>}
+                </div>
+              )}
+
+              {/* Filter + view mode */}
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                  {[
+                    { label: 'ทั้งหมด', count: summary.total, cls: 'bg-gray-50 text-gray-700', filter: 'all' },
+                    { label: 'Error', count: summary.errors, cls: 'bg-red-50 text-red-700', filter: 'error' },
+                    { label: 'Warning', count: summary.warnings, cls: 'bg-amber-50 text-amber-700', filter: 'warning' },
+                    { label: 'Mismatch', count: summary.mismatches, cls: 'bg-orange-50 text-orange-700', filter: 'mismatch' },
+                    { label: 'OK', count: summary.ok, cls: 'bg-emerald-50 text-emerald-700', filter: 'ok' },
+                  ].map(s => (
+                    <button
+                      key={s.filter}
+                      onClick={() => { setFilterSeverity(s.filter); setPage(0) }}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition ${
+                        filterSeverity === s.filter ? s.cls + ' ring-2 ring-offset-1 ring-indigo-300' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                      }`}
+                    >
+                      {s.label} ({s.count})
+                    </button>
+                  ))}
+                </div>
+                <div className="flex gap-1">
+                  {['table', 'cards'].map(m => (
+                    <button key={m} onClick={() => setViewMode(m)}
+                      className={`px-2 py-1 text-[10px] rounded ${viewMode === m ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}`}
+                    >{m === 'table' ? '📋 ตาราง' : '🃏 การ์ด'}</button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Table view */}
+              {viewMode === 'table' && (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="text-[10px] text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                        <SortTh col="severity" align="center">สถานะ</SortTh>
+                        <SortTh col="province">จังหวัด</SortTh>
+                        <SortTh col="zone" align="center">เขต</SortTh>
+                        <th className="px-2 py-1.5 text-center">🔬 OCR</th>
+                        <th className="px-2 py-1.5 text-center">🏛️ กกต.</th>
+                        <th className="px-2 py-1.5 text-center">📊 Killernay</th>
+                        <th className="px-2 py-1.5 text-center">📈 Luengnat</th>
+                        <SortTh col="diff" align="center">Max Diff</SortTh>
+                        <SortTh col="reviewPct" align="center">Review</SortTh>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {paged.map((row) => {
+                        const maxTurnout = Math.max(row.ocr?.turnout || 0, row.ect?.turnout || 0, row.kn?.turnout || 0, 1)
+                        return (
+                          <tr key={row.key}
+                            className={`border-b border-gray-50 hover:bg-gray-50 transition cursor-pointer ${selectedRow === row.key ? 'bg-indigo-50' : ''}`}
+                            onClick={() => setSelectedRow(selectedRow === row.key ? null : row.key)}
+                          >
+                            <td className="px-2 py-2 text-center"><SeverityBadge severity={row.severity} /></td>
+                            <td className="px-2 py-2 font-medium text-gray-700">{row.province}</td>
+                            <td className="px-2 py-2 text-center">{row.zone}</td>
+                            <td className="px-2 py-2">
+                              {row.ocr ? (
+                                <div className="text-right font-mono text-[10px]">
+                                  <span className="text-indigo-600">{fmtNum(row.ocr.turnout)}</span>
+                                  <span className="text-gray-400 ml-1">({row.ocr.stationCount}st)</span>
+                                </div>
+                              ) : <span className="text-gray-300 text-[10px]">—</span>}
+                            </td>
+                            <td className="px-2 py-2">
+                              {row.ect ? (
+                                <div className="text-right font-mono text-[10px]">
+                                  <span className="text-blue-600">{fmtNum(row.ect.turnout)}</span>
+                                  <span className="text-gray-400 ml-1">({row.ect.percent_count}%)</span>
+                                </div>
+                              ) : <span className="text-gray-300 text-[10px]">—</span>}
+                            </td>
+                            <td className="px-2 py-2">
+                              {row.kn ? (
+                                <div className="text-right font-mono text-[10px]">
+                                  <span className="text-emerald-600">{fmtNum(row.kn.turnout)}</span>
+                                </div>
+                              ) : <span className="text-gray-300 text-[10px]">—</span>}
+                            </td>
+                            <td className="px-2 py-2 text-center">
+                              {row.ln ? (
+                                <span className="text-purple-600 font-mono text-[10px]">{fmtNum(row.ln.turnout)}</span>
+                              ) : <span className="text-gray-300 text-[10px]">รอข้อมูล</span>}
+                            </td>
+                            <td className="px-2 py-2 text-center">
+                              {row.maxDiff > 0 ? (
+                                <span className={`font-mono text-[10px] px-1 py-0.5 rounded ${
+                                  row.maxDiff > 10 ? 'bg-red-100 text-red-700 font-semibold' :
+                                  row.maxDiff > 3 ? 'bg-amber-100 text-amber-700' : 'text-gray-500'
+                                }`}>{row.maxDiff}%</span>
+                              ) : <span className="text-emerald-500 text-[10px]">✓</span>}
+                            </td>
+                            <td className="px-2 py-2">
+                              <div className="flex items-center gap-1">
+                                <div className="w-12 bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                                  <div className={`h-full rounded-full ${row.reviewPct >= 100 ? 'bg-emerald-500' : row.reviewPct > 50 ? 'bg-indigo-400' : 'bg-amber-400'}`}
+                                    style={{ width: `${row.reviewPct}%` }} />
+                                </div>
+                                <span className="text-[9px] text-gray-400 w-6 text-right">{row.reviewPct.toFixed(0)}%</span>
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* Cards view */}
+              {viewMode === 'cards' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {paged.map(row => {
+                    const maxTurnout = Math.max(row.ocr?.turnout || 0, row.ect?.turnout || 0, row.kn?.turnout || 0, 1)
+                    const maxValid = Math.max(row.ocr?.valid || 0, row.ect?.valid_votes || 0, row.kn?.valid_votes || 0, 1)
+                    return (
+                      <div key={row.key} className={`rounded-lg border p-3 space-y-2 ${
+                        row.severity === 'error' ? 'border-red-200 bg-red-50/30' :
+                        row.severity === 'warning' ? 'border-amber-200 bg-amber-50/30' :
+                        'border-gray-100'
+                      }`}>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <SeverityBadge severity={row.severity} />
+                            <span className="font-semibold text-sm">{row.province}</span>
+                            <span className="text-xs text-gray-500">เขต {row.zone}</span>
+                          </div>
+                          {row.maxDiff > 0 && (
+                            <span className={`text-[10px] font-mono ${row.maxDiff > 10 ? 'text-red-600' : row.maxDiff > 3 ? 'text-amber-600' : 'text-gray-400'}`}>
+                              Δ {row.maxDiff}%
+                            </span>
+                          )}
+                        </div>
+                        {/* Turnout comparison bars */}
+                        <div className="space-y-1">
+                          <div className="text-[9px] text-gray-500 uppercase font-medium">ผู้มาใช้สิทธิ (Turnout)</div>
+                          {row.ocr && <DiffBar val={row.ocr.turnout} refVal={row.ect?.turnout || row.kn?.turnout} maxVal={maxTurnout} color="bg-indigo-400" />}
+                          {row.ect && <DiffBar val={row.ect.turnout} refVal={row.kn?.turnout || row.ocr?.turnout} maxVal={maxTurnout} color="bg-blue-400" />}
+                          {row.kn && <DiffBar val={row.kn.turnout} refVal={row.ect?.turnout || row.ocr?.turnout} maxVal={maxTurnout} color="bg-emerald-400" />}
+                        </div>
+                        {/* Valid votes */}
+                        <div className="space-y-1">
+                          <div className="text-[9px] text-gray-500 uppercase font-medium">คะแนนดี (Valid)</div>
+                          {row.ocr && <DiffBar val={row.ocr.valid} refVal={row.ect?.valid_votes || row.kn?.valid_votes} maxVal={maxValid} color="bg-indigo-400" />}
+                          {row.ect && <DiffBar val={row.ect.valid_votes} refVal={row.kn?.valid_votes || row.ocr?.valid} maxVal={maxValid} color="bg-blue-400" />}
+                          {row.kn && <DiffBar val={row.kn.valid_votes} refVal={row.ect?.valid_votes || row.ocr?.valid} maxVal={maxValid} color="bg-emerald-400" />}
+                        </div>
+                        {/* Source legend */}
+                        <div className="flex items-center gap-3 text-[9px] text-gray-400 pt-1 border-t border-gray-100">
+                          {row.ocr && <span>🔬 OCR ({row.ocr.stationCount} หน่วย)</span>}
+                          {row.ect && <span>🏛️ กกต. ({row.ect.percent_count}% นับ)</span>}
+                          {row.kn && <span>📊 Killernay</span>}
+                          {row.ln && <span>📈 Luengnat</span>}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
+              {/* Detail panel for selected row */}
+              {selectedRow && viewMode === 'table' && (() => {
+                const row = comparisonData.find(r => r.key === selectedRow)
+                if (!row) return null
+                const maxTurnout = Math.max(row.ocr?.turnout || 0, row.ect?.turnout || 0, row.kn?.turnout || 0, 1)
+                const maxValid = Math.max(row.ocr?.valid || 0, row.ect?.valid_votes || 0, row.kn?.valid_votes || 0, 1)
+                return (
+                  <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-sm font-semibold">{row.province} เขต {row.zone} — เปรียบเทียบ 4 แหล่ง</h4>
+                      <button onClick={() => setSelectedRow(null)} className="text-gray-400 hover:text-gray-600 text-xs">✕ ปิด</button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Turnout comparison */}
+                      <div className="space-y-1.5">
+                        <div className="text-[10px] text-gray-500 uppercase font-semibold">ผู้มาใช้สิทธิ (Turnout)</div>
+                        {[
+                          { key: 'ocr', icon: '🔬', label: 'OCR', val: row.ocr?.turnout, color: 'bg-indigo-500' },
+                          { key: 'ect', icon: '🏛️', label: 'กกต.', val: row.ect?.turnout, color: 'bg-blue-500' },
+                          { key: 'kn', icon: '📊', label: 'Killernay', val: row.kn?.turnout, color: 'bg-emerald-500' },
+                          { key: 'ln', icon: '📈', label: 'Luengnat', val: row.ln?.turnout, color: 'bg-purple-500' },
+                        ].map(s => (
+                          <div key={s.key} className="flex items-center gap-2">
+                            <span className="w-20 text-[10px] text-gray-600">{s.icon} {s.label}</span>
+                            {s.val != null ? (
+                              <>
+                                <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
+                                  <div className={`h-full rounded-full ${s.color}`} style={{ width: `${(s.val / maxTurnout) * 100}%` }} />
+                                </div>
+                                <span className="font-mono text-[10px] w-16 text-right">{s.val.toLocaleString()}</span>
+                              </>
+                            ) : <span className="text-[10px] text-gray-300 italic">ไม่มีข้อมูล</span>}
+                          </div>
+                        ))}
+                      </div>
+                      {/* Valid votes comparison */}
+                      <div className="space-y-1.5">
+                        <div className="text-[10px] text-gray-500 uppercase font-semibold">คะแนนดี (Valid Votes)</div>
+                        {[
+                          { key: 'ocr', icon: '🔬', label: 'OCR', val: row.ocr?.valid, color: 'bg-indigo-500' },
+                          { key: 'ect', icon: '🏛️', label: 'กกต.', val: row.ect?.valid_votes, color: 'bg-blue-500' },
+                          { key: 'kn', icon: '📊', label: 'Killernay', val: row.kn?.valid_votes, color: 'bg-emerald-500' },
+                          { key: 'ln', icon: '📈', label: 'Luengnat', val: row.ln?.valid_votes, color: 'bg-purple-500' },
+                        ].map(s => (
+                          <div key={s.key} className="flex items-center gap-2">
+                            <span className="w-20 text-[10px] text-gray-600">{s.icon} {s.label}</span>
+                            {s.val != null ? (
+                              <>
+                                <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
+                                  <div className={`h-full rounded-full ${s.color}`} style={{ width: `${(s.val / maxValid) * 100}%` }} />
+                                </div>
+                                <span className="font-mono text-[10px] w-16 text-right">{s.val.toLocaleString()}</span>
+                              </>
+                            ) : <span className="text-[10px] text-gray-300 italic">ไม่มีข้อมูล</span>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    {/* Winner info from Killernay */}
+                    {row.kn?.winner && (
+                      <div className="text-[10px] text-gray-600 bg-white rounded p-2 border border-gray-100">
+                        📊 <strong>Killernay ผู้ชนะ:</strong> {row.kn.winner} ({row.kn.winner_party}) — {row.kn.winner_votes?.toLocaleString()} คะแนน
+                        {row.kn.registered && <> · ผู้มีสิทธิ {row.kn.registered.toLocaleString()}</>}
+                      </div>
+                    )}
+                    {/* OCR errors */}
+                    {row.ocr && (row.ocr.errors > 0 || row.ocr.warnings > 0) && (
+                      <div className="text-[10px] text-gray-600 bg-white rounded p-2 border border-gray-100">
+                        🔬 <strong>OCR:</strong> {row.ocr.errors} errors, {row.ocr.warnings} warnings · {row.ocr.stationCount} หน่วย · ตรวจแล้ว {row.ocr.reviewed}/{row.ocr.total}
+                      </div>
+                    )}
+                  </div>
+                )
+              })()}
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>แสดง {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, sorted.length)} จาก {sorted.length}</span>
+                  <div className="flex gap-1">
+                    <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}
+                      className="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-30">← ก่อนหน้า</button>
+                    <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1}
+                      className="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-30">ถัดไป →</button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}

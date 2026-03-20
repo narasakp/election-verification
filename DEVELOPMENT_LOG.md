@@ -32,6 +32,7 @@
 - [Phase 20: ECT Backup Dashboard Integration](#phase-20-ect-backup-dashboard-integration) — 17 มี.ค.
 - [Phase 21: UI/UX Polish, Testing & Documentation](#phase-21-uiux-polish-testing--documentation) — 19 มี.ค.
 - [Phase 22: Data & Analytics Dashboards](#phase-22-data--analytics-dashboards) — 19 มี.ค.
+- [Phase 23: Cross-Reference 4 แหล่งข้อมูล](#phase-23-cross-reference-4-แหล่งข้อมูล) — 19 มี.ค.
 - [สรุป Timeline](#สรุป-timeline)
 - [สถาปัตยกรรมระบบสุดท้าย](#สถาปัตยกรรมระบบสุดท้าย)
 - [ข้อมูลอ้างอิงภายนอก](#ข้อมูลอ้างอิงภายนอก)
@@ -756,6 +757,44 @@
 
 ---
 
+## Phase 23: Cross-Reference 4 แหล่งข้อมูล
+**วันที่:** 19 มีนาคม 2569  
+**เป้าหมาย:** อัปเกรด Cross-Reference Panel ให้เปรียบเทียบข้อมูลจาก 4 แหล่งพร้อมกัน (OCR / กกต. / Killernay / Luengnat)
+
+**ปัญหาเดิม:**
+- CrossReferencePanel เดิมเปรียบเทียบเฉพาะ OCR vs ECT flags
+- ไม่มี visual comparison ระหว่าง Killernay และ Luengnat
+- ข้อมูลแต่ละแหล่งอยู่คนละ format (JSON, CSV, API)
+
+**สิ่งที่ทำ:**
+1. สร้าง `scripts/prepare_cross_reference.py` — merge ข้อมูลจาก 3 แหล่ง:
+   - ECT official (`ect_stats_cons.json` + `ect_provinces.json`) → 400 เขต
+   - Killernay (`killernay_summary_winners.csv`) → 387 เขต
+   - Luengnat → placeholder (ข้อมูลยังไม่พร้อม)
+2. Output: `review-app/public/data/cross_reference_sources.json` (403 KB, 401 records)
+3. เขียน CrossReferencePanel ใหม่ทั้งหมด:
+   - **Source status cards** — แสดงสถานะ 4 แหล่ง (Live/พร้อม/รอข้อมูล)
+   - **4-column turnout comparison** — OCR / กกต. / Killernay / Luengnat
+   - **Max Diff %** — คำนวณ cross-source difference สูงสุด
+   - **Severity classification** — Error (>10%), Warning (>3%), Mismatch (>0.5%), OK
+   - **Table + Cards view** — สลับมุมมองได้
+   - **Detail panel** — คลิกแถวเพื่อดู bar chart เปรียบเทียบ 4 แหล่ง
+   - **Killernay winner info** — แสดงผู้ชนะ, พรรค, คะแนน, ผู้มีสิทธิ
+   - **Lazy loading** — โหลด cross-ref JSON เมื่อ expand เท่านั้น
+
+**ผลลัพธ์:**
+- 401 เขตเลือกตั้งเปรียบเทียบได้
+- ECT: 400 เขต, Killernay: 387 เขต, OCR: live data
+- Visual diff bars สีตาม severity (แดง >10%, ส้ม >3%)
+- Build สำเร็จ, ขนาดไม่เพิ่มมาก (lazy load JSON)
+
+**Files ที่สร้าง/แก้ไข:**
+- `scripts/prepare_cross_reference.py` (new, ~200 lines)
+- `review-app/public/data/cross_reference_sources.json` (generated, 403 KB)
+- `review-app/src/components/CrossReferencePanel.jsx` (rewritten, ~520 lines)
+
+---
+
 ## สรุป Timeline
 
 ```
@@ -778,9 +817,9 @@
 10 มี.ค.       Generalize pipeline + Review UI improvements         16+
 13–15 มี.ค.    Production deploy, GitHub Pages, CI/CD               12+
 16–17 มี.ค.    PDF split 5,089 items + anomaly + backup dashboard   14+ (ข้ามคืน)
-19 มี.ค.       UI/UX polish + Data & Analytics dashboards            8+
+19 มี.ค.       UI/UX polish + Data & Analytics + 4-source CrossRef  10+
 ─────────────  ─────────────────────────────────────────────────  ────────
-                                                        รวมประมาณ  264+ ชั่วโมง
+                                                        รวมประมาณ  266+ ชั่วโมง
 ```
 
 ---
@@ -869,4 +908,4 @@
 
 *บันทึกนี้สร้างจากข้อมูล git history, file timestamps, และ code analysis*  
 *สร้างเมื่อ: 10 มีนาคม 2569*  
-*อัปเดตล่าสุด: 19 มีนาคม 2569 — เพิ่ม Phase 22 (Data & Analytics Dashboards)*
+*อัปเดตล่าสุด: 19 มีนาคม 2569 — เพิ่ม Phase 23 (Cross-Reference 4 แหล่งข้อมูล)*
