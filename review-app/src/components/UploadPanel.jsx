@@ -1,9 +1,10 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { Upload, FolderUp, FileArchive, X, CheckCircle, AlertCircle, Loader2, RefreshCw, Play, Link2, ExternalLink } from 'lucide-react'
+import ErrorBoundary from './ErrorBoundary'
 
 const ACCEPTED_TYPES = '.pdf,.zip,.rar,.7z,.tar,.tar.gz,.tgz'
 
-export default function UploadPanel({ onClose, onDataRefresh }) {
+function UploadPanelInner({ onClose, onDataRefresh }) {
   const [dragging, setDragging] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [uploadResult, setUploadResult] = useState(null)
@@ -194,14 +195,51 @@ export default function UploadPanel({ onClose, onDataRefresh }) {
     <div className="fixed inset-0 bg-black/50 z-[100] flex items-start justify-center pt-10 overflow-auto">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl mx-4 mb-10">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b">
-          <h2 className="text-lg font-bold text-gray-800">📤 อัปโหลดข้อมูลจังหวัด</h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
+        <div className="flex items-center justify-between px-6 py-4 border-b bg-gradient-to-r from-emerald-50 to-teal-50">
+          <div>
+            <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">📤 อัปโหลดข้อมูลจังหวัด</h2>
+            <p className="text-xs text-gray-500 mt-0.5">นำเข้าไฟล์ PDF แบบ สส.5/16 เพื่อให้ระบบ OCR อ่านและสร้างข้อมูล Review</p>
+          </div>
+          <button onClick={onClose} className="p-1.5 hover:bg-gray-200 rounded-full transition">
             <X size={20} />
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
+        {/* Guide */}
+        <div className="px-6 pt-4 pb-0">
+          <details className="group">
+            <summary className="flex items-center gap-2 text-xs font-semibold text-indigo-600 cursor-pointer hover:text-indigo-800 select-none">
+              <span className="w-5 h-5 bg-indigo-100 rounded flex items-center justify-center text-[10px]">❓</span>
+              วิธีใช้งาน — คลิกเพื่อดูคำอธิบาย
+            </summary>
+            <div className="mt-2 bg-indigo-50 border border-indigo-100 rounded-lg p-4 text-sm text-gray-700 space-y-3">
+              <div>
+                <p className="font-semibold text-indigo-800 mb-1">📌 หน้าที่:</p>
+                <p className="text-gray-600">อัปโหลดไฟล์ PDF แบบ สส.5/16 (ผลคะแนนเลือกตั้งรายหน่วย) เข้าสู่ระบบ เพื่อให้ OCR อ่านค่าอัตโนมัติ แล้วส่งเข้าหน้า Review ให้อาสาตรวจสอบ</p>
+              </div>
+              <div>
+                <p className="font-semibold text-indigo-800 mb-1">📋 ขั้นตอน:</p>
+                <ol className="list-decimal ml-5 space-y-1 text-gray-600">
+                  <li><strong>เลือกจังหวัด/เขต</strong> (ถ้าต้องการบังคับ) หรือปล่อยว่างให้ตรวจอัตโนมัติจากชื่อโฟลเดอร์</li>
+                  <li><strong>อัปโหลดไฟล์</strong> — ลากวาง, เลือกไฟล์ PDF, เลือกโฟลเดอร์, หรือวาง URL Google Drive</li>
+                  <li><strong>รอระบบประมวลผล</strong> — ระบบจะจัดเรียงไฟล์ตามจังหวัด/เขตอัตโนมัติ</li>
+                  <li><strong>กดปุ่ม OCR</strong> — ในตารางจังหวัด เพื่อเริ่มอ่านค่าจาก PDF</li>
+                  <li><strong>กด "สร้างข้อมูล Review"</strong> — เพื่อสร้างข้อมูลให้หน้า Review ใช้งาน</li>
+                </ol>
+              </div>
+              <div>
+                <p className="font-semibold text-indigo-800 mb-1">📁 รูปแบบไฟล์ที่รองรับ:</p>
+                <ul className="list-disc ml-5 space-y-0.5 text-gray-600">
+                  <li><strong>.pdf</strong> — ไฟล์ PDF เดี่ยว หรือหลายไฟล์พร้อมกัน</li>
+                  <li><strong>.zip / .rar / .7z / .tar.gz</strong> — ไฟล์บีบอัดที่มี PDF อยู่ข้างใน</li>
+                  <li><strong>Google Drive URL</strong> — วาง URL โฟลเดอร์ที่แชร์สาธารณะ</li>
+                </ul>
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <div className="p-6 pt-4 space-y-6">
           {/* Province/Constituency override */}
           <div className="flex gap-3">
             <div className="flex-1">
@@ -537,6 +575,14 @@ export default function UploadPanel({ onClose, onDataRefresh }) {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function UploadPanel(props) {
+  return (
+    <ErrorBoundary compact>
+      <UploadPanelInner {...props} />
+    </ErrorBoundary>
   )
 }
 

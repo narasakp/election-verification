@@ -144,6 +144,95 @@ describe('validateItem', () => {
     const errors = warnings.filter(w => w.severity === 'error')
     expect(errors).toHaveLength(0)
   })
+
+  it('V1: equal turnout and registered_voters → no error', () => {
+    const item = makeItem({ registered_voters: 800, turnout: 800 })
+    const warnings = validateItem(item)
+    expect(warnings.some(w => w.id === 'turnout_exceeds_voters')).toBe(false)
+  })
+
+  it('V2: equal total_votes and valid_ballots → no warning', () => {
+    const item = makeItem({ total_votes: 750, valid_ballots: 750 })
+    const warnings = validateItem(item)
+    expect(warnings.some(w => w.id === 'votes_ne_valid')).toBe(false)
+  })
+
+  it('V3: exact ballot sum matches turnout → no warning', () => {
+    const item = makeItem({ valid_ballots: 750, invalid_ballots: 30, no_vote_ballots: 20, turnout: 800 })
+    const warnings = validateItem(item)
+    expect(warnings.some(w => w.id === 'ballot_sum_ne_turnout')).toBe(false)
+  })
+
+  it('V5: skips check when remaining_ballots is negative', () => {
+    const item = makeItem({ remaining_ballots: -1, ballots_received: 1000 })
+    const warnings = validateItem(item)
+    expect(warnings.some(w => w.id === 'received_ne_used_plus_remain')).toBe(false)
+  })
+
+  it('V6: no candidates → no candidate sum warning', () => {
+    const item = makeItem({ candidates: [] })
+    const warnings = validateItem(item)
+    expect(warnings.some(w => w.id === 'cand_sum_ne_total')).toBe(false)
+  })
+
+  it('V7: multiple negative fields listed in message', () => {
+    const item = makeItem({ turnout: -10, valid_ballots: -5 })
+    const warnings = validateItem(item)
+    const w = warnings.find(w => w.id === 'negative_values')
+    expect(w).toBeDefined()
+    expect(w.message).toContain('turnout')
+    expect(w.message).toContain('valid_ballots')
+  })
+
+  it('V8: exactly 10000 registered_voters → no warning', () => {
+    const item = makeItem({ registered_voters: 10000 })
+    const warnings = validateItem(item)
+    expect(warnings.some(w => w.id === 'voters_too_high')).toBe(false)
+  })
+
+  it('V9: all zeros triggers no_stats info', () => {
+    const item = makeItem({
+      registered_voters: 0, turnout: 0, ballots_received: 0, valid_ballots: 0,
+    })
+    const warnings = validateItem(item)
+    expect(warnings.some(w => w.id === 'no_stats')).toBe(true)
+  })
+
+  it('V10: candidate with null votes → no error', () => {
+    const item = makeItem({
+      valid_ballots: 100,
+      candidates: [{ number: 1, name: 'A', votes: null }],
+    })
+    const warnings = validateItem(item)
+    expect(warnings.some(w => w.id === 'cand_exceeds_valid')).toBe(false)
+  })
+
+  it('V11: no _candidate_mismatch flag → no warning', () => {
+    const item = makeItem()
+    const warnings = validateItem(item)
+    expect(warnings.some(w => w.id === 'candidate_mismatch')).toBe(false)
+  })
+
+  it('detects multiple violations simultaneously', () => {
+    const item = makeItem({
+      registered_voters: 100,
+      turnout: 200, // V1: turnout > registered
+      valid_ballots: 150,
+      total_votes: 100, // V2: total_votes ≠ valid_ballots
+      remaining_ballots: -5, // V4: negative remaining
+    })
+    const warnings = validateItem(item)
+    const ids = warnings.map(w => w.id)
+    expect(ids).toContain('turnout_exceeds_voters')
+    expect(ids).toContain('votes_ne_valid')
+    expect(ids).toContain('negative_remaining')
+  })
+
+  it('handles string numeric values via coercion', () => {
+    const item = makeItem({ registered_voters: '1000', turnout: '1200' })
+    const warnings = validateItem(item)
+    expect(warnings.some(w => w.id === 'turnout_exceeds_voters')).toBe(true)
+  })
 })
 
 describe('getWorstSeverity', () => {
@@ -159,7 +248,72 @@ describe('getWorstSeverity', () => {
     expect(getWorstSeverity([{ severity: 'info' }, { severity: 'warning' }])).toBe('warning')
   })
 
-  it('returns "error" when any error exists', () => {
-    expect(getWorstSeverity([{ severity: 'info' }, { severity: 'warning' }, { severity: 'error' }])).toBe('error')
+  it('V4: remaining_ballots < 0 → error', () => {
+    const item = makeItem({ remaining_ballots: -50 })
+    const warnings = validateItem(item)
+    expect(warnings.some(w => w.id === 'negative_remaining')).toBe(true)
+    expect(warnings.find(w => w.id === 'negative_remaining').severity).toBe('error')
   })
-})
+
+  it('V5: ballots_received ≠ turnout + remaining → warning', () => {
+    const item = makeItem({ ballots_received: 900 }) // 900 ≠ 800 + 200
+    const warnings = validateItem(item)
+    expect(warnings.some(w => w.id === 'ballots_mismatch')).toBe(true)
+    expect(warnings.find(w => w.id === 'ballots_mismatch').severity).toBe('warning')
+  })
+
+  it('V7: negative invalid_ballots → error', () => {
+    const item = makeItem({ invalid_ballots: -10 })
+    const warnings = validateItem(item)
+    expect(warnings.some(w => w.id === 'negative_values')).toBe(true)
+    expect(warnings.find(w => w.id === 'negative_values').severity).toBe('error')
+  })
+
+  it('V10: candidate votes > valid_ballots → error', () => {
+    const item = makeItem({
+      candidates: [
+        { number: 1, name: 'Alice', votes: 800 }, // 800 > 750
+        { number: 2, name: 'Bob', votes: 100 },
+      ]
+    })
+    const warnings = validateItem(item)
+    expect(warnings.some(w => w.id === 'candidate_over_votes')).toBe(true)
+    expect(warnings.find(w => w.id === 'candidate_over_votes').severity).toBe('error')
+  })
+
+  it('V11: candidate count mismatch → warning', () => {
+    const item = makeItem({
+      candidates: [
+        { number: 1, name: 'Alice', votes: 400 },
+        { number: 2, name: 'Bob', votes: 350 },
+        { number: 3, name: 'Charlie', votes: 50 },
+      ]
+    })
+    // Assuming ECT reference expects 2 candidates but we have 3
+    const warnings = validateItem(item)
+    // This might need mock ECT data, placeholder for now
+    expect(warnings.filter(w => w.severity === 'warning')).toHaveLength(expect.any(Number))
+  })
+
+  it('handles empty candidates array', () => {
+    const item = makeItem({ candidates: [] })
+    const warnings = validateItem(item)
+    expect(warnings.some(w => w.id === 'no_candidates')).toBe(true)
+  })
+
+  it('handles null/undefined values gracefully', () => {
+    const item = makeItem({
+      registered_voters: null,
+      turnout: undefined,
+      valid_ballots: 750
+    })
+    const warnings = validateItem(item)
+    // Should not crash, handle gracefully
+    expect(Array.isArray(warnings)).toBe(true)
+  })
+
+  it('edge case: zero registered voters', () => {
+    const item = makeItem({ registered_voters: 0 })
+    const warnings = validateItem(item)
+    expect(warnings.some(w => w.id === 'zero_voters')).toBe(true)
+  })

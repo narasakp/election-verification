@@ -1,0 +1,25 @@
+{
+  "total_pages": 14292,
+  "estimated_cost": 15.721200000000001,
+  "model_cost_per_page": 0.0011,
+  "details": [
+    {
+      "province": "chaiyaphum",
+      "pages": 5595,
+      "estimated_cost": 6.1545,
+      "completion": 37.3
+    },
+    {
+      "province": "tak",
+      "pages": 2335,
+      "estimated_cost": 2.5685,
+      "completion": 15.57
+    },
+    {
+      "province": "phetchabun",
+      "pages": 6362,
+      "estimated_cost": 6.9982,
+      "completion": 42.41
+    }
+  ]
+}

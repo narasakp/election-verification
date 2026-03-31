@@ -12,6 +12,13 @@ const SOURCE_COLORS = {
   luengnat: { bg: 'bg-purple-50', text: 'text-purple-700', bar: 'bg-purple-500', border: 'border-purple-200', label: 'Luengnat', icon: '📈' },
 }
 
+const SEVERITY_CRITERIA = {
+  error: 'Max Diff > 10% ระหว่างแหล่งทางการ (กกต./Killernay/Luengnat)',
+  warning: 'Max Diff > 3% ระหว่างแหล่งทางการ',
+  mismatch: 'Max Diff > 0.5% ระหว่างแหล่งทางการ',
+  ok: 'แหล่งทางการตรงกัน (diff ≤ 0.5%)',
+}
+
 function SeverityBadge({ severity }) {
   const cls = {
     error: 'bg-red-100 text-red-700',
@@ -20,7 +27,7 @@ function SeverityBadge({ severity }) {
     mismatch: 'bg-orange-100 text-orange-700',
   }[severity] || 'bg-gray-100 text-gray-500'
   const label = { error: 'Error', warning: 'Warning', ok: 'OK', mismatch: 'Mismatch' }[severity] || severity
-  return <span className={`text-[9px] px-1.5 py-0.5 rounded font-medium ${cls}`}>{label}</span>
+  return <span className={`text-[9px] px-1.5 py-0.5 rounded font-medium cursor-help ${cls}`} title={SEVERITY_CRITERIA[severity] || ''}>{label}</span>
 }
 
 function DiffBar({ val, refVal, maxVal, color }) {
@@ -61,8 +68,9 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
   const [crossRefData, setCrossRefData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [filterSeverity, setFilterSeverity] = useState('all')
-  const [sortCol, setSortCol] = useState('severity')
-  const [sortAsc, setSortAsc] = useState(false)
+  const [filterProvince, setFilterProvince] = useState('all')
+  const [sortCol, setSortCol] = useState('default')
+  const [sortAsc, setSortAsc] = useState(true)
   const [page, setPage] = useState(0)
   const [selectedRow, setSelectedRow] = useState(null)
   const [viewMode, setViewMode] = useState('table') // table | cards
@@ -84,22 +92,25 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
     const groups = {}
     allItems.forEach(item => {
       const key = `${item.province || '?'}_${item.constituency || '?'}`
-      if (!groups[key]) groups[key] = { items: [], turnout: 0, valid: 0, invalid: 0, stations: new Set(), errors: 0, warnings: 0, reviewed: 0, total: 0 }
+      if (!groups[key]) groups[key] = { items: [], turnout: 0, valid: 0, invalid: 0, stations: new Set(), files: new Set(), errors: 0, warnings: 0, reviewed: 0, total: 0 }
       const g = groups[key]
       g.items.push(item)
       g.turnout += Number(item.turnout) || 0
       g.valid += Number(item.valid_ballots) || 0
       g.invalid += Number(item.invalid_ballots) || 0
       g.total++
+      // Unique station = sub_district + station_no (station_no alone repeats across sub-districts)
       const stn = item.ocr_station_no || item.station_no
-      if (stn) g.stations.add(stn)
+      const subDist = item.ocr_sub_district || item.sub_district || ''
+      if (stn) g.stations.add(`${subDist}_${stn}`)
+      if (item.file) g.files.add(item.file)
       const warns = validateItem(item)
       warns.forEach(w => { if (w.severity === 'error') g.errors++; else if (w.severity === 'warning') g.warnings++ })
       const st = (review[item.id] || {}).status || 'pending'
       if (st !== 'pending') g.reviewed++
     })
     // Convert stations Set to count
-    Object.values(groups).forEach(g => { g.stationCount = g.stations.size; delete g.stations })
+    Object.values(groups).forEach(g => { g.stationCount = g.stations.size; g.fileCount = g.files.size; delete g.stations; delete g.files })
     return groups
   }, [allItems, review])
 
@@ -113,28 +124,32 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
       const kn = c.killernay || null
       const ln = c.luengnat || null
 
-      // Determine severity by cross-checking turnout/valid differences
+      // Determine severity by comparing FULL-CONSTITUENCY sources only
+      // (ECT / Killernay / Luengnat). OCR is partial station data — not used for diff severity.
       let severity = 'ok'
-      const diffs = []
-      if (ocr && ect) {
-        const tDiff = ect.turnout > 0 ? Math.abs(ocr.turnout - ect.turnout) / ect.turnout * 100 : 0
-        const vDiff = ect.valid_votes > 0 ? Math.abs(ocr.valid - ect.valid_votes) / ect.valid_votes * 100 : 0
-        diffs.push(tDiff, vDiff)
-      }
-      if (ocr && kn) {
-        const tDiff = kn.turnout > 0 ? Math.abs(ocr.turnout - kn.turnout) / kn.turnout * 100 : 0
-        const vDiff = kn.valid_votes > 0 ? Math.abs(ocr.valid - kn.valid_votes) / kn.valid_votes * 100 : 0
-        diffs.push(tDiff, vDiff)
-      }
+      const officialDiffs = []
+      // ECT vs Killernay
       if (ect && kn) {
-        const tDiff = kn.turnout > 0 ? Math.abs(ect.turnout - kn.turnout) / kn.turnout * 100 : 0
-        diffs.push(tDiff)
+        const vDiff = kn.valid_votes > 0 ? Math.abs(ect.valid_votes - kn.valid_votes) / kn.valid_votes * 100 : 0
+        officialDiffs.push(vDiff)
       }
-      const maxDiff = diffs.length > 0 ? Math.max(...diffs) : 0
-      if (ocr && ocr.errors > 0) severity = 'error'
-      else if (maxDiff > 10) severity = 'error'
-      else if (maxDiff > 3 || (ocr && ocr.warnings > 0)) severity = 'warning'
+      // ECT vs Luengnat
+      if (ect && ln) {
+        const vDiff = ln.valid_votes > 0 ? Math.abs(ect.valid_votes - ln.valid_votes) / ln.valid_votes * 100 : 0
+        officialDiffs.push(vDiff)
+      }
+      // Killernay vs Luengnat
+      if (kn && ln) {
+        const vDiff = ln.valid_votes > 0 ? Math.abs(kn.valid_votes - ln.valid_votes) / ln.valid_votes * 100 : 0
+        officialDiffs.push(vDiff)
+      }
+      const maxDiff = officialDiffs.length > 0 ? Math.max(...officialDiffs) : 0
+      // Severity based ONLY on official source diffs
+      if (maxDiff > 10) severity = 'error'
+      else if (maxDiff > 3) severity = 'warning'
       else if (maxDiff > 0.5) severity = 'mismatch'
+      // OCR quality is tracked separately (not mixed into severity)
+      const ocrQuality = !ocr ? null : ocr.errors > 0 ? 'error' : ocr.warnings > 0 ? 'warning' : 'ok'
 
       // Count available sources
       const sourceCount = (ocr ? 1 : 0) + (ect ? 1 : 0) + (kn ? 1 : 0) + (ln ? 1 : 0)
@@ -148,18 +163,33 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
         kn,
         ln,
         severity,
+        ocrQuality,
         maxDiff: Math.round(maxDiff * 10) / 10,
         sourceCount,
         reviewPct: ocr ? (ocr.total > 0 ? ocr.reviewed / ocr.total * 100 : 0) : 0,
+        sortPriority: c.sort_priority != null ? c.sort_priority : 1000,
+        driveFolder: c.drive_folder || '',
       }
     })
   }, [crossRefData, ocrByConst])
 
+  // Available provinces (from cross-ref data)
+  const allProvinces = useMemo(() => {
+    if (!crossRefData) return []
+    const set = new Set()
+    ;(crossRefData.constituencies || []).forEach(c => { if (c.province) set.add(c.province) })
+    const ocrPrio = crossRefData.ocr_provinces || []
+    const rest = [...set].filter(p => !ocrPrio.includes(p)).sort()
+    return [...ocrPrio, ...rest]
+  }, [crossRefData])
+
   // Filter
   const filtered = useMemo(() => {
-    if (filterSeverity === 'all') return comparisonData
-    return comparisonData.filter(d => d.severity === filterSeverity)
-  }, [comparisonData, filterSeverity])
+    let data = comparisonData
+    if (filterSeverity !== 'all') data = data.filter(d => d.severity === filterSeverity)
+    if (filterProvince !== 'all') data = data.filter(d => d.province === filterProvince)
+    return data
+  }, [comparisonData, filterSeverity, filterProvince])
 
   // Sort
   const sorted = useMemo(() => {
@@ -168,6 +198,11 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
     arr.sort((a, b) => {
       let va, vb
       switch (sortCol) {
+        case 'default':
+          // sort_priority first (OCR provinces 0,1,2 → top), then province name, then zone
+          if (a.sortPriority !== b.sortPriority) return a.sortPriority - b.sortPriority
+          if (a.province !== b.province) return a.province.localeCompare(b.province)
+          return (Number(a.zone) || 0) - (Number(b.zone) || 0)
         case 'province': va = a.province; vb = b.province; return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va)
         case 'zone': va = Number(a.zone) || 0; vb = Number(b.zone) || 0; break
         case 'diff': va = a.maxDiff; vb = b.maxDiff; break
@@ -216,21 +251,23 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
   if (allItems.length === 0) return null
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 mt-3">
+    <div className="max-w-[1440px] mx-auto px-4">
       <button
         onClick={() => setExpanded(v => !v)}
-        className="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-indigo-700 transition mb-2"
+        className="w-full flex items-center gap-2.5 py-3 text-sm font-semibold text-gray-700 hover:text-indigo-700 transition group"
       >
-        {expanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-        <GitCompareArrows size={16} className="text-purple-500" />
-        🔬 Cross-Reference: 4 แหล่งข้อมูล (OCR / กกต. / Killernay / Luengnat)
-        <span className="text-xs font-normal text-gray-400 ml-2">
+        <span className="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center group-hover:bg-violet-100 transition">
+          <GitCompareArrows size={15} className="text-violet-500" />
+        </span>
+        Cross-Reference: 4 แหล่งข้อมูล
+        {expanded ? <ChevronDown size={14} className="text-gray-400" /> : <ChevronRight size={14} className="text-gray-400" />}
+        <span className="text-xs font-normal text-gray-400">
           {summary.total > 0 ? `${summary.total} เขต · ${summary.errors} errors · ${summary.warnings} warnings` : 'คลิกเพื่อโหลด'}
         </span>
       </button>
 
       {expanded && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 space-y-4">
+        <div className="p-5 space-y-4">
           {loading && <div className="text-center text-gray-400 py-8 animate-pulse">กำลังโหลดข้อมูล cross-reference...</div>}
 
           {!loading && crossRefData && (
@@ -262,17 +299,29 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
 
               {/* Filter + view mode */}
               <div className="flex items-center justify-between flex-wrap gap-2">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  {/* Province filter dropdown */}
+                  <select
+                    value={filterProvince}
+                    onChange={e => { setFilterProvince(e.target.value); setPage(0) }}
+                    className="px-2 py-1 rounded-lg text-[11px] font-medium bg-gray-50 text-gray-700 border border-gray-200 focus:ring-2 focus:ring-indigo-300 focus:outline-none"
+                  >
+                    <option value="all">ทุกจังหวัด ({allProvinces.length})</option>
+                    {allProvinces.map(p => (
+                      <option key={p} value={p}>{p}</option>
+                    ))}
+                  </select>
                   {[
-                    { label: 'ทั้งหมด', count: summary.total, cls: 'bg-gray-50 text-gray-700', filter: 'all' },
-                    { label: 'Error', count: summary.errors, cls: 'bg-red-50 text-red-700', filter: 'error' },
-                    { label: 'Warning', count: summary.warnings, cls: 'bg-amber-50 text-amber-700', filter: 'warning' },
-                    { label: 'Mismatch', count: summary.mismatches, cls: 'bg-orange-50 text-orange-700', filter: 'mismatch' },
-                    { label: 'OK', count: summary.ok, cls: 'bg-emerald-50 text-emerald-700', filter: 'ok' },
+                    { label: 'ทั้งหมด', count: summary.total, cls: 'bg-gray-50 text-gray-700', filter: 'all', tip: 'แสดงทุกเขต' },
+                    { label: 'Error', count: summary.errors, cls: 'bg-red-50 text-red-700', filter: 'error', tip: SEVERITY_CRITERIA.error },
+                    { label: 'Warning', count: summary.warnings, cls: 'bg-amber-50 text-amber-700', filter: 'warning', tip: SEVERITY_CRITERIA.warning },
+                    { label: 'Mismatch', count: summary.mismatches, cls: 'bg-orange-50 text-orange-700', filter: 'mismatch', tip: SEVERITY_CRITERIA.mismatch },
+                    { label: 'OK', count: summary.ok, cls: 'bg-emerald-50 text-emerald-700', filter: 'ok', tip: SEVERITY_CRITERIA.ok },
                   ].map(s => (
                     <button
                       key={s.filter}
                       onClick={() => { setFilterSeverity(s.filter); setPage(0) }}
+                      title={s.tip}
                       className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition ${
                         filterSeverity === s.filter ? s.cls + ' ring-2 ring-offset-1 ring-indigo-300' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
                       }`}
@@ -300,16 +349,16 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                         <SortTh col="province">จังหวัด</SortTh>
                         <SortTh col="zone" align="center">เขต</SortTh>
                         <th className="px-2 py-1.5 text-center">🔬 OCR</th>
-                        <th className="px-2 py-1.5 text-center">🏛️ กกต.</th>
-                        <th className="px-2 py-1.5 text-center">📊 Killernay</th>
-                        <th className="px-2 py-1.5 text-center">📈 Luengnat</th>
+                        <th className="px-2 py-1.5 text-center"><a href={crossRefData?.sources?.ect?.url} target="_blank" rel="noopener noreferrer" className="hover:underline">🏛️ กกต.</a></th>
+                        <th className="px-2 py-1.5 text-center"><a href={crossRefData?.sources?.killernay?.url} target="_blank" rel="noopener noreferrer" className="hover:underline">📊 KILLERNAY</a></th>
+                        <th className="px-2 py-1.5 text-center"><a href={crossRefData?.sources?.luengnat?.url} target="_blank" rel="noopener noreferrer" className="hover:underline">📈 LUENGNAT</a></th>
                         <SortTh col="diff" align="center">Max Diff</SortTh>
                         <SortTh col="reviewPct" align="center">Review</SortTh>
                       </tr>
                     </thead>
                     <tbody>
                       {paged.map((row) => {
-                        const maxTurnout = Math.max(row.ocr?.turnout || 0, row.ect?.turnout || 0, row.kn?.turnout || 0, 1)
+                        const maxTurnout = Math.max(row.ocr?.turnout || 0, row.ect?.turnout || 0, row.kn?.turnout || 0, row.ln?.turnout || 0, 1)
                         return (
                           <tr key={row.key}
                             className={`border-b border-gray-50 hover:bg-gray-50 transition cursor-pointer ${selectedRow === row.key ? 'bg-indigo-50' : ''}`}
@@ -320,9 +369,15 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                             <td className="px-2 py-2 text-center">{row.zone}</td>
                             <td className="px-2 py-2">
                               {row.ocr ? (
-                                <div className="text-right font-mono text-[10px]">
+                                <div className="text-right font-mono text-[10px] flex items-center justify-end gap-1">
+                                  {row.ocrQuality === 'error' && <span className="text-red-400" title={`OCR: ${row.ocr.errors} errors`}>⚠</span>}
+                                  {row.ocrQuality === 'warning' && <span className="text-amber-400" title={`OCR: ${row.ocr.warnings} warnings`}>⚠</span>}
                                   <span className="text-indigo-600">{fmtNum(row.ocr.turnout)}</span>
-                                  <span className="text-gray-400 ml-1">({row.ocr.stationCount}st)</span>
+                                  {row.driveFolder ? (
+                                    <a href={row.driveFolder} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-indigo-600 hover:underline" title={`${row.ocr.stationCount} หน่วย / ${row.ocr.fileCount} ไฟล์ · เปิดใน Drive`} onClick={e => e.stopPropagation()}>({row.ocr.fileCount} ไฟล์)</a>
+                                  ) : (
+                                    <span className="text-gray-400" title={`${row.ocr.stationCount} หน่วย / ${row.ocr.fileCount} ไฟล์`}>({row.ocr.fileCount} ไฟล์)</span>
+                                  )}
                                 </div>
                               ) : <span className="text-gray-300 text-[10px]">—</span>}
                             </td>
@@ -343,8 +398,11 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                             </td>
                             <td className="px-2 py-2 text-center">
                               {row.ln ? (
-                                <span className="text-purple-600 font-mono text-[10px]">{fmtNum(row.ln.turnout)}</span>
-                              ) : <span className="text-gray-300 text-[10px]">รอข้อมูล</span>}
+                                <div className="text-right font-mono text-[10px]">
+                                  <span className="text-purple-600">{fmtNum(row.ln.valid_votes)}</span>
+                                  {row.ln.ocr_exact && <span className="text-emerald-500 ml-0.5" title="OCR exact match">✓</span>}
+                                </div>
+                              ) : <span className="text-gray-300 text-[10px]">—</span>}
                             </td>
                             <td className="px-2 py-2 text-center">
                               {row.maxDiff > 0 ? (
@@ -375,8 +433,8 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
               {viewMode === 'cards' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {paged.map(row => {
-                    const maxTurnout = Math.max(row.ocr?.turnout || 0, row.ect?.turnout || 0, row.kn?.turnout || 0, 1)
-                    const maxValid = Math.max(row.ocr?.valid || 0, row.ect?.valid_votes || 0, row.kn?.valid_votes || 0, 1)
+                    const maxTurnout = Math.max(row.ocr?.turnout || 0, row.ect?.turnout || 0, row.kn?.turnout || 0, row.ln?.turnout || 0, 1)
+                    const maxValid = Math.max(row.ocr?.valid || 0, row.ect?.valid_votes || 0, row.kn?.valid_votes || 0, row.ln?.valid_votes || 0, 1)
                     return (
                       <div key={row.key} className={`rounded-lg border p-3 space-y-2 ${
                         row.severity === 'error' ? 'border-red-200 bg-red-50/30' :
@@ -399,19 +457,21 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                         <div className="space-y-1">
                           <div className="text-[9px] text-gray-500 uppercase font-medium">ผู้มาใช้สิทธิ (Turnout)</div>
                           {row.ocr && <DiffBar val={row.ocr.turnout} refVal={row.ect?.turnout || row.kn?.turnout} maxVal={maxTurnout} color="bg-indigo-400" />}
-                          {row.ect && <DiffBar val={row.ect.turnout} refVal={row.kn?.turnout || row.ocr?.turnout} maxVal={maxTurnout} color="bg-blue-400" />}
-                          {row.kn && <DiffBar val={row.kn.turnout} refVal={row.ect?.turnout || row.ocr?.turnout} maxVal={maxTurnout} color="bg-emerald-400" />}
+                          {row.ect && <DiffBar val={row.ect.turnout} refVal={row.kn?.turnout || row.ln?.turnout} maxVal={maxTurnout} color="bg-blue-400" />}
+                          {row.kn && <DiffBar val={row.kn.turnout} refVal={row.ect?.turnout || row.ln?.turnout} maxVal={maxTurnout} color="bg-emerald-400" />}
+                          {row.ln && <DiffBar val={row.ln.turnout} refVal={row.ect?.turnout || row.kn?.turnout} maxVal={maxTurnout} color="bg-purple-400" />}
                         </div>
                         {/* Valid votes */}
                         <div className="space-y-1">
                           <div className="text-[9px] text-gray-500 uppercase font-medium">คะแนนดี (Valid)</div>
                           {row.ocr && <DiffBar val={row.ocr.valid} refVal={row.ect?.valid_votes || row.kn?.valid_votes} maxVal={maxValid} color="bg-indigo-400" />}
-                          {row.ect && <DiffBar val={row.ect.valid_votes} refVal={row.kn?.valid_votes || row.ocr?.valid} maxVal={maxValid} color="bg-blue-400" />}
-                          {row.kn && <DiffBar val={row.kn.valid_votes} refVal={row.ect?.valid_votes || row.ocr?.valid} maxVal={maxValid} color="bg-emerald-400" />}
+                          {row.ect && <DiffBar val={row.ect.valid_votes} refVal={row.kn?.valid_votes || row.ln?.valid_votes} maxVal={maxValid} color="bg-blue-400" />}
+                          {row.kn && <DiffBar val={row.kn.valid_votes} refVal={row.ect?.valid_votes || row.ln?.valid_votes} maxVal={maxValid} color="bg-emerald-400" />}
+                          {row.ln && <DiffBar val={row.ln.valid_votes} refVal={row.ect?.valid_votes || row.kn?.valid_votes} maxVal={maxValid} color="bg-purple-400" />}
                         </div>
                         {/* Source legend */}
                         <div className="flex items-center gap-3 text-[9px] text-gray-400 pt-1 border-t border-gray-100">
-                          {row.ocr && <span>🔬 OCR ({row.ocr.stationCount} หน่วย)</span>}
+                          {row.ocr && <span>🔬 OCR ({row.ocr.stationCount} หน่วย · {row.ocr.fileCount} ไฟล์)</span>}
                           {row.ect && <span>🏛️ กกต. ({row.ect.percent_count}% นับ)</span>}
                           {row.kn && <span>📊 Killernay</span>}
                           {row.ln && <span>📈 Luengnat</span>}
@@ -426,8 +486,8 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
               {selectedRow && viewMode === 'table' && (() => {
                 const row = comparisonData.find(r => r.key === selectedRow)
                 if (!row) return null
-                const maxTurnout = Math.max(row.ocr?.turnout || 0, row.ect?.turnout || 0, row.kn?.turnout || 0, 1)
-                const maxValid = Math.max(row.ocr?.valid || 0, row.ect?.valid_votes || 0, row.kn?.valid_votes || 0, 1)
+                const maxTurnout = Math.max(row.ocr?.turnout || 0, row.ect?.turnout || 0, row.kn?.turnout || 0, row.ln?.turnout || 0, 1)
+                const maxValid = Math.max(row.ocr?.valid || 0, row.ect?.valid_votes || 0, row.kn?.valid_votes || 0, row.ln?.valid_votes || 0, 1)
                 return (
                   <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 space-y-3">
                     <div className="flex items-center justify-between">
@@ -487,10 +547,18 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                         {row.kn.registered && <> · ผู้มีสิทธิ {row.kn.registered.toLocaleString()}</>}
                       </div>
                     )}
+                    {/* Luengnat info */}
+                    {row.ln && (
+                      <div className="text-[10px] text-gray-600 bg-white rounded p-2 border border-gray-100">
+                        📈 <strong>Luengnat:</strong> คะแนนดี {row.ln.valid_votes?.toLocaleString()}
+                        {row.ln.ocr_exact ? <span className="text-emerald-600 ml-1">✓ OCR exact</span> : row.ln.ocr_delta != null && <span className="text-amber-600 ml-1">Δ {row.ln.ocr_delta?.toLocaleString()}</span>}
+                        {row.ln.drive_url && <a href={row.ln.drive_url} target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline ml-2 inline-flex items-center gap-0.5"><ExternalLink size={9} /> ดูเอกสาร</a>}
+                      </div>
+                    )}
                     {/* OCR errors */}
                     {row.ocr && (row.ocr.errors > 0 || row.ocr.warnings > 0) && (
                       <div className="text-[10px] text-gray-600 bg-white rounded p-2 border border-gray-100">
-                        🔬 <strong>OCR:</strong> {row.ocr.errors} errors, {row.ocr.warnings} warnings · {row.ocr.stationCount} หน่วย · ตรวจแล้ว {row.ocr.reviewed}/{row.ocr.total}
+                        🔬 <strong>OCR:</strong> {row.ocr.errors} errors, {row.ocr.warnings} warnings · {row.ocr.stationCount} หน่วย · {row.ocr.fileCount} ไฟล์ · ตรวจแล้ว {row.ocr.reviewed}/{row.ocr.total}
                       </div>
                     )}
                   </div>

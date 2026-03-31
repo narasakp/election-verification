@@ -4,6 +4,7 @@ import ErrorBoundary from './ErrorBoundary'
 import { Eye, EyeOff, RotateCw, ExternalLink, AlertTriangle, AlertCircle, Info, Loader2 } from 'lucide-react'
 import { validateItem, getWorstSeverity } from '../utils/validation'
 import { validateEditValue } from '../utils/reviewLog'
+import { getSeverityColor, getSeverityLabel, getScoreColor } from '../utils/anomalyScore'
 
 const LOCATION_META = [
   { key: 'province', label: 'จังหวัด', text: true, shared: true },
@@ -107,7 +108,7 @@ function EditInput({ field, value, isText, intOnly, edits, onEdit, shared, share
   )
 }
 
-function ReviewCardInner({ item, review, reviewSummary, isFirstPage, sharedEdits, anomalyFlags, onSetStatus, onSetNote, onEdit, onSharedEdit }) {
+function ReviewCardInner({ item, review, reviewSummary, isFirstPage, sharedEdits, anomalyFlags, anomalyScore, onSetStatus, onSetNote, onEdit, onSharedEdit }) {
   const [showOcrText, setShowOcrText] = useState(false)
   const [zoomed, setZoomed] = useState(false)
   const [rotation, setRotation] = useState(0)
@@ -263,6 +264,35 @@ function ReviewCardInner({ item, review, reviewSummary, isFirstPage, sharedEdits
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {/* Anomaly Score Panel */}
+      {anomalyScore && anomalyScore.score > 0 && (
+        <div className="px-4 py-2.5 border-b bg-gradient-to-r from-red-50 to-orange-50 border-red-200">
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${getScoreColor(anomalyScore.score)}`}>
+              🚨 {anomalyScore.score} คะแนน
+            </span>
+            <span className="text-xs font-semibold text-red-800 uppercase tracking-wider">ข้อมูลผิดปกติ</span>
+            <span className="text-[10px] text-gray-500">— เรียงจากรุนแรงมากไปน้อย</span>
+          </div>
+          <div className="space-y-1">
+            {anomalyScore.reasons.map((r, i) => {
+              const color = getSeverityColor(r.severity)
+              return (
+                <div key={i} className={`flex items-start gap-2 px-2.5 py-1.5 rounded-lg border ${color.bg} ${color.border}`}>
+                  <span className={`mt-0.5 flex-shrink-0 px-1.5 py-0 rounded text-[9px] font-bold text-white ${color.badge}`}>
+                    {getSeverityLabel(r.severity)}
+                  </span>
+                  <div className="min-w-0">
+                    <span className={`text-xs font-semibold ${color.text}`}>{r.label}</span>
+                    <span className="text-[11px] text-gray-600 ml-1.5">{r.detail}</span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
 
@@ -464,13 +494,37 @@ function ReviewCardInner({ item, review, reviewSummary, isFirstPage, sharedEdits
       {confirmAction && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center" onClick={() => setConfirmAction(null)}>
           <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className={`px-5 py-3 ${confirmAction === 'flagged' ? 'bg-amber-50 border-b border-amber-200' : 'bg-red-50 border-b border-red-200'}`}>
-              <h3 className={`text-base font-bold ${confirmAction === 'flagged' ? 'text-amber-800' : 'text-red-800'}`}>
-                {confirmAction === 'flagged' ? '🔄 ตรวจอีกรอบ' : '🚫 ใช้ไม่ได้'}
+            <div className={`px-5 py-3 border-b ${
+              confirmAction === 'confirmed' ? 'bg-green-50 border-green-200' :
+              confirmAction === 'flagged' ? 'bg-amber-50 border-amber-200' :
+              confirmAction === 'rejected' ? 'bg-red-50 border-red-200' :
+              'bg-gray-50 border-gray-200'
+            }`}>
+              <h3 className={`text-base font-bold ${
+                confirmAction === 'confirmed' ? 'text-green-800' :
+                confirmAction === 'flagged' ? 'text-amber-800' :
+                confirmAction === 'rejected' ? 'text-red-800' :
+                'text-gray-800'
+              }`}>
+                {confirmAction === 'confirmed' ? '✅ ยืนยัน' :
+                 confirmAction === 'flagged' ? '🔄 ตรวจอีกรอบ' :
+                 confirmAction === 'rejected' ? '🚫 ใช้ไม่ได้' :
+                 '↩ รีเซ็ต'}
               </h3>
             </div>
             <div className="px-5 py-4 text-sm text-gray-700 space-y-2">
-              {confirmAction === 'flagged' ? (
+              {confirmAction === 'confirmed' ? (
+                <>
+                  <p className="font-semibold">ใช้เมื่อ:</p>
+                  <ul className="list-disc ml-5 space-y-1 text-gray-600">
+                    <li>ตรวจสอบตัวเลขกับภาพต้นฉบับแล้ว ถูกต้อง</li>
+                    <li>แก้ไขค่าที่ผิดในช่อง "แก้ไข" เรียบร้อยแล้ว</li>
+                    <li>ผู้สมัครและพรรคตรงกับข้อมูล กกต.</li>
+                  </ul>
+                  <p className="text-xs text-green-600 mt-2">หมายเหตุ: หน้านี้จะถูกนับเป็นข้อมูลที่ผ่านการตรวจสอบแล้ว</p>
+                  <p className="text-xs text-gray-500">ถ้าไม่แน่ใจ → กด "ตรวจอีกรอบ" เพื่อส่งให้คนอื่นช่วยตรวจ</p>
+                </>
+              ) : confirmAction === 'flagged' ? (
                 <>
                   <p className="font-semibold">ใช้เมื่อ:</p>
                   <ul className="list-disc ml-5 space-y-1 text-gray-600">
@@ -480,7 +534,7 @@ function ReviewCardInner({ item, review, reviewSummary, isFirstPage, sharedEdits
                   </ul>
                   <p className="text-xs text-amber-600 mt-2">หมายเหตุ: หน้านี้จะถูกส่งให้อาสาคนอื่นตรวจซ้ำ</p>
                 </>
-              ) : (
+              ) : confirmAction === 'rejected' ? (
                 <>
                   <p className="font-semibold">ใช้เมื่อ:</p>
                   <ul className="list-disc ml-5 space-y-1 text-gray-600">
@@ -491,6 +545,16 @@ function ReviewCardInner({ item, review, reviewSummary, isFirstPage, sharedEdits
                   <p className="text-xs text-red-600 mt-2">หมายเหตุ: หน้านี้จะถูกตัดออกจากชุดข้อมูลสุดท้าย</p>
                   <p className="text-xs text-gray-500">ถ้าข้อมูลแค่ผิด → แก้ตัวเลขแล้วกด "ยืนยัน" แทน</p>
                 </>
+              ) : (
+                <>
+                  <p className="font-semibold">ใช้เมื่อ:</p>
+                  <ul className="list-disc ml-5 space-y-1 text-gray-600">
+                    <li>กดสถานะผิดพลาด ต้องการเปลี่ยนใหม่</li>
+                    <li>ต้องการยกเลิกการตรวจสอบที่ทำไปแล้ว</li>
+                    <li>ต้องการให้หน้านี้กลับเป็นสถานะ "รอตรวจ"</li>
+                  </ul>
+                  <p className="text-xs text-gray-500 mt-2">หมายเหตุ: สถานะจะกลับเป็น "รอตรวจ" แต่ค่าแก้ไขและหมายเหตุจะยังอยู่</p>
+                </>
               )}
             </div>
             <div className="px-5 py-3 bg-gray-50 border-t flex gap-2 justify-end">
@@ -500,10 +564,16 @@ function ReviewCardInner({ item, review, reviewSummary, isFirstPage, sharedEdits
               <button
                 onClick={() => { onSetStatus(confirmAction); setConfirmAction(null) }}
                 className={`px-4 py-1.5 text-sm font-medium rounded text-white transition ${
-                  confirmAction === 'flagged' ? 'bg-amber-500 hover:bg-amber-600' : 'bg-red-600 hover:bg-red-700'
+                  confirmAction === 'confirmed' ? 'bg-green-600 hover:bg-green-700' :
+                  confirmAction === 'flagged' ? 'bg-amber-500 hover:bg-amber-600' :
+                  confirmAction === 'rejected' ? 'bg-red-600 hover:bg-red-700' :
+                  'bg-gray-600 hover:bg-gray-700'
                 }`}
               >
-                {confirmAction === 'flagged' ? '🔄 ยืนยัน ตรวจอีกรอบ' : '🚫 ยืนยัน ใช้ไม่ได้'}
+                {confirmAction === 'confirmed' ? '✅ ยืนยัน ข้อมูลถูกต้อง' :
+                 confirmAction === 'flagged' ? '🔄 ยืนยัน ตรวจอีกรอบ' :
+                 confirmAction === 'rejected' ? '🚫 ยืนยัน ใช้ไม่ได้' :
+                 '↩ ยืนยัน รีเซ็ต'}
               </button>
             </div>
           </div>
@@ -520,7 +590,7 @@ function ReviewCardInner({ item, review, reviewSummary, isFirstPage, sharedEdits
           onChange={e => onSetNote(e.target.value)}
         />
         <div className="flex gap-2 justify-end">
-          <button onClick={() => onSetStatus('confirmed')} className="px-3 py-1.5 text-sm font-medium rounded bg-green-600 text-white hover:bg-green-700 transition">
+          <button onClick={() => setConfirmAction('confirmed')} className="px-3 py-1.5 text-sm font-medium rounded bg-green-600 text-white hover:bg-green-700 transition">
             ✅ ยืนยัน
           </button>
           <button onClick={() => setConfirmAction('flagged')} className="px-3 py-1.5 text-sm font-medium rounded bg-amber-500 text-white hover:bg-amber-600 transition">
@@ -529,7 +599,7 @@ function ReviewCardInner({ item, review, reviewSummary, isFirstPage, sharedEdits
           <button onClick={() => setConfirmAction('rejected')} className="px-3 py-1.5 text-sm font-medium rounded bg-red-600 text-white hover:bg-red-700 transition">
             🚫 ใช้ไม่ได้
           </button>
-          <button onClick={() => onSetStatus('pending')} className="px-3 py-1.5 text-sm font-medium rounded bg-gray-200 text-gray-700 hover:bg-gray-300 transition">
+          <button onClick={() => setConfirmAction('pending')} className="px-3 py-1.5 text-sm font-medium rounded bg-gray-200 text-gray-700 hover:bg-gray-300 transition">
             ↩ รีเซ็ต
           </button>
         </div>

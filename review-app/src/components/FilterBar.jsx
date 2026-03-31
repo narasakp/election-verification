@@ -7,6 +7,7 @@ const STATUS_FILTERS = [
   { key: 'confirmed', label: '✅ ยืนยันแล้ว' },
   { key: 'flagged', label: '🔄 ตรวจอีกรอบ' },
   { key: 'rejected', label: '🚫 ใช้ไม่ได้' },
+  { key: 'anomaly', label: '🚨 ข้อมูลผิดปกติ' },
   { key: 'has_errors', label: '🔴 มีข้อผิดพลาด' },
   { key: 'has_warnings', label: '🟡 มีคำเตือน' },
   { key: 'low', label: '🔶 Low Confidence' },
@@ -39,11 +40,11 @@ export default React.memo(function FilterBar({
   const totalCount = Object.values(voteTypeCounts).reduce((a, b) => a + b, 0)
 
   return (
-    <div className="bg-white border-b sticky top-[52px] z-40">
+    <nav className="bg-white/95 backdrop-blur-sm border-b border-gray-200 sticky top-[48px] z-40 shadow-sm" aria-label="ตัวกรองข้อมูล">
       {/* Vote type tabs — prominent row */}
-      <div className="max-w-[1400px] mx-auto px-4 pt-2.5 pb-1.5">
+      <div className="max-w-[1440px] mx-auto px-4 pt-2.5 pb-1.5">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider mr-1">ประเภท</span>
+          <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider mr-1" id="vote-type-label">ประเภท</span>
           {VOTE_TYPE_TABS.map(tab => {
             const count = tab.key === 'all' ? totalCount : (voteTypeCounts[tab.key] || 0)
             if (tab.key !== 'all' && count === 0) return null
@@ -52,6 +53,8 @@ export default React.memo(function FilterBar({
               <button
                 key={tab.key}
                 onClick={() => setFilterVoteType(tab.key)}
+                aria-pressed={isActive}
+                aria-label={`${tab.label} (${count.toLocaleString()} รายการ)`}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
                   isActive
                     ? 'bg-indigo-700 text-white shadow-md ring-2 ring-indigo-300'
@@ -76,11 +79,12 @@ export default React.memo(function FilterBar({
       </div>
 
       {/* Secondary filters row */}
-      <div className="max-w-[1400px] mx-auto px-4 pb-2 flex items-center gap-3 flex-wrap">
+      <div className="max-w-[1440px] mx-auto px-4 pb-2.5 flex items-center gap-3 flex-wrap">
         <select
           value={filterStatus}
           onChange={e => setFilterStatus(e.target.value)}
           className="px-3 py-1.5 border rounded text-sm bg-white"
+          aria-label="กรองตามสถานะ"
         >
           {STATUS_FILTERS.map(f => (
             <option key={f.key} value={f.key}>{f.label}</option>
@@ -91,6 +95,7 @@ export default React.memo(function FilterBar({
           value={filterProvince}
           onChange={e => setFilterProvince(e.target.value)}
           className="px-3 py-1.5 border rounded text-sm bg-white"
+          aria-label="กรองตามจังหวัด"
         >
           <option value="all">ทุกจังหวัด ({provinces.length})</option>
           {provinces.map(p => (
@@ -102,6 +107,7 @@ export default React.memo(function FilterBar({
           value={filterConstituency}
           onChange={e => setFilterConstituency(e.target.value)}
           className="px-3 py-1.5 border rounded text-sm bg-white"
+          aria-label="กรองตามเขตเลือกตั้ง"
         >
           <option value="all">ทุกเขต ({constituencies.length})</option>
           {constituencies.map(c => (
@@ -112,14 +118,15 @@ export default React.memo(function FilterBar({
         <div className="relative flex-1 min-w-[200px] max-w-[300px]">
           <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
-            type="text"
+            type="search"
             value={searchText}
             onChange={e => setSearchText(e.target.value)}
             placeholder="ค้นหาชื่อไฟล์/ตำบล..."
             className="w-full pl-8 pr-3 py-1.5 border rounded text-sm"
+            aria-label="ค้นหาชื่อไฟล์หรือตำบล"
           />
         </div>
       </div>
-    </div>
+    </nav>
   )
 })

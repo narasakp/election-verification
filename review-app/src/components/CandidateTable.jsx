@@ -5,7 +5,7 @@ function fv(val) {
   return String(val)
 }
 
-export default function CandidateTable({ candidates, allParties, edits, onEdit, isFirstPage, sharedEdits, onSharedEdit }) {
+export default React.memo(function CandidateTable({ candidates, allParties, edits, onEdit, isFirstPage, sharedEdits, onSharedEdit }) {
   if (!candidates || candidates.length === 0) return null
 
   return (
@@ -87,4 +87,4 @@ export default function CandidateTable({ candidates, allParties, edits, onEdit, 
       </table>
     </div>
   )
-}
+})

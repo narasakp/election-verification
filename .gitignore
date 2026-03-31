@@ -33,6 +33,9 @@ review-app/public/data/*.png
 credentials.json
 token.json
 token_full.json
+
+# Prevent API key leaks — deploy scripts that may embed keys
+cloud/_deploy.cmd
 token_dashboard.json
 token_*.json
 service_account*.json

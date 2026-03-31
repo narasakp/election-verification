@@ -1,0 +1,21 @@
+#!/bin/sh
+# Pre-commit hook: block commits containing API keys
+# Install: git config core.hooksPath .githooks
+
+echo "Checking for API key leaks..."
+
+# Patterns that look like Google API keys
+PATTERNS="AIzaSy[A-Za-z0-9_-]{33}"
+
+# Check staged files only
+if git diff --cached --diff-filter=ACMR -z --name-only | \
+   xargs -0 grep -lP "$PATTERNS" 2>/dev/null; then
+    echo ""
+    echo "ERROR: Staged files contain what looks like a Google API key!"
+    echo "Remove the key and use environment variables instead."
+    echo "If this is a false positive, use: git commit --no-verify"
+    exit 1
+fi
+
+echo "No API keys found. OK."
+exit 0

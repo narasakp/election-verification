@@ -11,10 +11,15 @@ export default function useAuth() {
   const handleCredential = useCallback((response) => {
     try {
       const payload = JSON.parse(atob(response.credential.split('.')[1]))
+      // Normalize picture URL: remove size restriction for better quality
+      let pic = payload.picture || ''
+      if (pic && pic.includes('=s')) {
+        pic = pic.replace(/=s\d+-c/, '=s200-c')
+      }
       const u = {
         email: payload.email,
         name: payload.name || payload.email.split('@')[0],
-        picture: payload.picture || '',
+        picture: pic,
         sub: payload.sub,
       }
       setUser(u)

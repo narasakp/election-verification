@@ -1,32 +1,102 @@
-# Election Verification System
+# Election Verification System — ระบบตรวจสอบผลเลือกตั้ง 2569
 
-Open-source system for verifying Thailand's 2026 general election results by OCR-ing official station-level tally sheets (Form สส.5/16, สส.5/18) and cross-referencing with ECT (Election Commission of Thailand) digital data.
+Open-source system for verifying Thailand's 2026 general election results by OCR-ing official **station-level** tally sheets (Form สส.5/16, สส.5/18) and cross-referencing with ECT digital data, Killernay, and Luengnat datasets.
 
-**Live Demo:** [narasakp.github.io/election-verification](https://narasakp.github.io/election-verification/)
+ระบบโอเพนซอร์สสำหรับตรวจสอบผลการเลือกตั้ง 2569 โดยแปลง PDF แบบ สส.5/18 (ระดับหน่วยเลือกตั้ง) ด้วย OCR แล้วเปรียบเทียบกับข้อมูลดิจิทัลจาก กกต., Killernay และ Luengnat
+
+**🌐 Live Demo:** [narasakp.github.io/election-verification](https://narasakp.github.io/election-verification/)  
+**📂 Google Drive Backup:** [149,936 PDFs — 77 จังหวัด](https://drive.google.com/drive/u/0/folders/14TWIziWEesoRiyii38yvVA5gVFC4joNm)
 
 ---
 
-## Overview
+## ⚠️ Disclaimer
+
+This dataset is produced through OCR processing with multi-model AI cross-validation. We do **not** alter, modify, or manipulate any election data. This is an independent volunteer civic effort to help digitize official election results published by the Election Commission of Thailand (กกต.). All processing costs are self-funded — this project has **no affiliation** with any business, political party, or organization.
+
+For official and authoritative results, please always refer to the original documents from กกต.
+
+## ⚠️ ข้อสงวนสิทธิ์
+
+ข้อมูลชุดนี้สร้างจาก OCR โดยผ่านการตรวจสอบความถูกต้องข้ามระบบ (cross-validation) ด้วย AI หลายตัว เราไม่มีส่วนเกี่ยวข้องในการแก้ไข ดัดแปลง หรือบิดเบือนข้อมูลผลการเลือกตั้งใดๆ ทั้งสิ้น
+
+โครงการนี้จัดทำขึ้นโดยสมัครใจเพื่อช่วย กกต. ในการ digitize ผลการเลือกตั้งอย่างเป็นทางการ ค่าใช้จ่ายทั้งหมดเป็นทุนส่วนตัว — โครงการนี้ **ไม่มีความเกี่ยวข้อง** กับธุรกิจ พรรคการเมือง หรือองค์กรใดๆ
+
+สำหรับผลการเลือกตั้งที่เป็นทางการ กรุณาอ้างอิงจากเอกสารต้นฉบับของ กกต. เสมอ
+
+---
+
+## 📊 Data Coverage / ความครอบคลุมของข้อมูล
+
+### ตัวเลขสำคัญ
 
 | Metric | Value |
 |--------|-------|
-| PDF documents scraped | 149,936 (77 provinces) |
-| Provinces with OCR | 3 (Chaiyaphum, Tak, Phetchabun) |
-| OCR records | 12,376 |
-| Review items | 6,111 |
-| React components | 5 |
-| Python scripts | 60+ |
-| Total dev hours | 256+ |
+| PDF ที่ดาวน์โหลดจาก กกต. | **149,936** ไฟล์ (77 จังหวัดครบ) |
+| สำรองข้อมูลบน Google Drive | **149,936** / 147,603 ที่คาดไว้ (101.6%) |
+| จังหวัดที่ผ่าน OCR | **3** จังหวัด (ชัยภูมิ, ตาก, เพชรบูรณ์) |
+| เขตเลือกตั้งที่มี OCR | **16** เขต |
+| รายการ OCR (records) | **12,376** records |
+| รายการรอตรวจสอบ (review items) | **6,111** items |
+| แหล่งข้อมูล Cross-Reference | **4** แหล่ง (OCR ของเรา, กกต., Killernay, Luengnat) |
+| เขตเลือกตั้งใน Cross-Reference | **401** เขต (ทั้งแบ่งเขต + บัญชีรายชื่อ) |
+| Python scripts | **60+** scripts |
+| ชั่วโมงพัฒนา | **256+** ชั่วโมง |
 
-### What this project does
+### จุดเด่นของโครงการนี้ — Station-Level OCR
 
-1. **Scrape** official election tally PDFs from all 77 ECT provincial websites
-2. **Back up** all PDFs to Google Drive (149,936 files)
-3. **OCR** handwritten Thai documents using multi-model AI (Gemini Flash, Cloud Vision, Claude)
-4. **Postprocess** with a 9-rule pipeline to fix OCR errors and normalize data
-5. **Cross-validate** against ECT digital results and Killernay ground truth
-6. **Detect anomalies** across 8 statistical dimensions (turnout, invalid ballots, etc.)
-7. **Citizen review** via React web app with Google Sign-In authentication
+| | โครงการนี้ | Killernay | Luengnat |
+|---|---|---|---|
+| **แบบฟอร์ม** | สส.5/18 (ระดับหน่วย) | สส.6/1 (ระดับเขต) | สส.6/1 (ระดับเขต) |
+| **ความละเอียด** | **สถานี/หน่วยเลือกตั้ง** | เขตเลือกตั้ง | เขตเลือกตั้ง |
+| **ครอบคลุม** | 3 จังหวัด (กำลังขยาย) | 397/400 เขต | 400 เขต |
+| **PDF ต้นทาง** | 149,936 ไฟล์ (77 จว.) | 776 ไฟล์ | — |
+| **ข้อมูลระดับหน่วย** | ✅ มี | ❌ ไม่มี | ❌ ไม่มี |
+| **Cross-validation** | 4 แหล่ง | Reporter DB | ECT + Killernay |
+
+> **ข้อมูลระดับหน่วยเลือกตั้ง (station-level)** ไม่มีในโครงการอื่น — เฉพาะโครงการนี้เท่านั้นที่ OCR จาก แบบ สส.5/18 ซึ่งมีรายละเอียดคะแนนแยกตามหน่วยเลือกตั้ง
+
+## ⚠️ PDF Source Quality Issues / ปัญหาคุณภาพไฟล์ต้นทาง
+
+PDF จาก กกต. ทั้งหมดเป็น **scanned images** (ไม่มี text layer) ต้อง OCR ทั้งหมด ทำให้เกิดข้อผิดพลาดได้หลายจุด:
+
+- **ลายมือเขียน** — แบบ สส.5/18 เป็นเอกสารเขียนมือ ไม่ใช่พิมพ์ OCR accuracy ต่ำกว่า printed text มาก
+- **คุณภาพสแกน** — บางไฟล์เบลอ หมุน หรือถ่ายเอียง
+- **หลายหน่วยต่อไฟล์** — PDF ไฟล์เดียวรวมข้อมูลหลายสถานี (10+ หน่วย) ทำให้ OCR สับสนเลขเขต
+- **ชื่อไฟล์ไม่ตรง** — บางจังหวัดตั้งชื่อไฟล์ไม่ตรงกับเนื้อหา
+
+> สรุป: Scanned PDF ≠ Digital data — หากต้องการข้อมูล 100% ต้องสร้าง PDF จากระบบดิจิทัลโดยตรง
+
+---
+
+## 🔗 Cross-Reference — เปรียบเทียบ 4 แหล่งข้อมูล
+
+ระบบนี้เปรียบเทียบข้อมูลจาก **4 แหล่ง** พร้อมกัน เพื่อตรวจหาความคลาดเคลื่อน:
+
+| แหล่งข้อมูล | รายละเอียด | จำนวน records |
+|---|---|---|
+| **🔬 ระบบ OCR ของเรา** | OCR จาก สส.5/18 — 3 จังหวัด (ชัยภูมิ, ตาก, เพชรบูรณ์) | 16 เขต |
+| **🏛 กกต. (ECT Official)** | ข้อมูลดิจิทัลจาก ectreport69.ect.go.th | 400 เขต |
+| **📊 Killernay** | OCR จาก สส.6/1 — cross-validated กับ Reporter DB | 397 เขต |
+| **📊 Luengnat** | Dashboard รวม ECT + Drive + Killernay | 400 เขต |
+
+### ผลการเปรียบเทียบ (Cross-Reference Panel)
+
+- **401 เขตเลือกตั้ง** (constituency + party-list)
+- แสดงคะแนนรวมเทียบกันจากทุกแหล่ง
+- ตรวจจับ **Error** (ข้อมูลไม่ตรงอย่างมีนัยสำคัญ) และ **Warning** (ส่วนต่างเล็กน้อย)
+- สามารถกรองตามจังหวัด, เขต, สถานะ
+
+---
+
+## What this project does / สิ่งที่โครงการนี้ทำ
+
+1. **📥 Scrape** — ดาวน์โหลด PDF แบบ สส.5/18 จากเว็บไซต์ กกต. ทั้ง 77 จังหวัด
+2. **☁️ Backup** — สำรองข้อมูลทั้งหมด 149,936 ไฟล์ไปยัง [Google Drive](https://drive.google.com/drive/u/0/folders/14TWIziWEesoRiyii38yvVA5gVFC4joNm)
+3. **🤖 OCR** — แปลงเอกสารลายมือด้วย AI หลายรุ่น (Gemini Flash, Cloud Vision, Claude)
+4. **🔧 Postprocess** — แก้ไข OCR errors ด้วย pipeline 9 กฎ
+5. **🔍 Cross-validate** — เปรียบเทียบกับ กกต., Killernay, Luengnat
+6. **📊 Detect anomalies** — ตรวจจับความผิดปกติ 8 มิติ
+7. **👥 Citizen review** — ตรวจสอบโดยประชาชนผ่าน React web app
 
 ---
 
@@ -72,36 +142,85 @@ python scripts/prepare_review_data.py
 
 ---
 
-## Architecture
+## 🛠️ Processing Pipeline
 
 ```
-ECT Provincial Websites (77 provinces)
-        |
-        | download_ss518.py
-        v
-Google Drive (149,936 PDFs, 77 provinces)
-        |
-        | split_and_upload.py → single-page PDFs
-        | build_drive_index.py
-        v
-OCR Pipeline
+เว็บไซต์ กกต. 77 จังหวัด
+        │
+        │  download_ss518.py (scrape 149,936 PDFs)
+        ▼
+Google Drive Backup (149,936 ไฟล์ / 77 จังหวัด)
+        │
+        │  split_and_upload.py → แยกเป็น PDF หน้าเดียว
+        │  build_drive_index.py
+        ▼
+OCR Pipeline (Multi-Model)
   ├── Gemini Flash (primary)
   ├── Gemini Flash-Lite (fallback)
   └── Cloud Vision + rule-based parser
-        |
-        | ocr_multimodel.py
-        v
-Postprocessing Pipeline (9 rules)
-  R0a/b → R0c/d → R3/R4 → R5/R6 → R7 → R8/R9 → cross-val
-        |
-        v
+        │
+        │  ocr_multimodel.py → 12,376 records
+        ▼
+Postprocessing Pipeline (9 กฎ)
+  R0a/b  →  Metadata จาก file path
+  R0c/d  →  Deduplication
+  R3/R4  →  Vote total validation
+  R5/R6  →  Ballot count consistency
+  R7     →  Candidate normalization (ECT reference)
+  R8/R9  →  Confidence scoring + flagging
+        │
+        ▼
+Cross-Validation (4 แหล่ง)
+  ├── เทียบกับ กกต. (ECT Official) — 400 เขต
+  ├── เทียบกับ Killernay — 397 เขต
+  └── เทียบกับ Luengnat — 400 เขต
+        │
+        ▼
 React Review App (GitHub Pages)
-  ├── ReviewCard — OCR data + PDF side-by-side
-  ├── DataStatsPanel — statistics & quality metrics
-  ├── BackupDashboard — Google Drive backup status
-  ├── CandidateTable — candidate vote comparison
-  └── Anomaly flags with incomplete-data awareness
+  ├── ReviewCard — OCR + PDF เคียงข้าง
+  ├── CrossReferencePanel — เปรียบเทียบ 4 แหล่ง
+  ├── DataStatsPanel — สถิติ + anomaly
+  ├── BackupDashboard — แผนที่คุณภาพข้อมูล
+  ├── ProvinceHeatmap — แผนที่ความคืบหน้า
+  └── CandidateTable — ตารางคะแนนผู้สมัคร
 ```
+
+---
+
+## 🔍 Quality Assurance / การตรวจสอบคุณภาพ
+
+### 1. Multi-Model Cross-Validation
+- OCR ด้วย **3 AI models** พร้อม fallback อัตโนมัติ
+- **Self-consistency checks** — OCR ซ้ำด้วย temperature ต่างกัน เปรียบเทียบผลลัพธ์
+
+### 2. Postprocessing Pipeline (9 กฎ)
+- **R0a/R0b**: ดึง metadata จาก file path (จังหวัด, เขต, ประเภท)
+- **R0c/R0d**: ลบข้อมูลซ้ำ (deduplication) จาก combined PDFs
+- **R3/R4**: ตรวจสอบและแก้ไขยอดรวมคะแนน
+- **R5/R6**: ตรวจสอบจำนวนบัตร (ได้รับ/ดี/เสีย/ไม่ลง) พร้อม safety checks
+- **R7**: ปรับชื่อผู้สมัครให้ตรงกับฐานข้อมูล กกต.
+- **R8/R9**: ให้คะแนนความเชื่อมั่น + ตั้ง flag
+- **Cross-validation**: เทียบกับ Killernay ground truth
+
+### 3. Anomaly Detection (8 มิติ)
+- อัตราการใช้สิทธิ (turnout) — z-score + IQR
+- อัตราบัตรเสีย (invalid ballot ratio)
+- อัตราบัตรไม่ประสงค์ลงคะแนน (blank ballot ratio)
+- อัตราคะแนนสูญเปล่า (wasted vote ratio)
+- ความครอบงำของผู้สมัคร (candidate dominance)
+- คะแนนรวม vs จำนวนบัตร (vote-ballot mismatch)
+- ผู้มีสิทธิเลือกตั้งผิดปกติ (registered voter anomalies)
+- ความครบถ้วนของข้อมูล (completeness-aware filtering)
+
+### 4. Cross-Reference (4 แหล่ง)
+- เปรียบเทียบข้อมูลระดับเขตจาก **4 แหล่งอิสระ** พร้อมกัน
+- ตรวจจับ Error / Warning อัตโนมัติ
+- แสดงค่า MAX DIFF เพื่อระบุความเชื่อถือได้
+
+### Known Limitations
+- OCR จากเอกสารลายมือมีความแม่นยำต่ำกว่า printed text
+- PDF หลายหน่วยต่อไฟล์ทำให้ constituency number อาจผิดพลาด (แก้ด้วย metadata override)
+- ครอบคลุมเพียง 3 จังหวัดสำหรับ station-level OCR (กำลังขยาย)
 
 ---
 
@@ -113,32 +232,37 @@ election-verification/
 │   ├── src/
 │   │   ├── App.jsx            # Main app with filters, pagination, review logic
 │   │   ├── components/
-│   │   │   ├── ReviewCard.jsx      # OCR data display + PDF viewer
-│   │   │   ├── DataStatsPanel.jsx  # Stats dashboard + anomaly summary
-│   │   │   ├── BackupDashboard.jsx # Google Drive backup status
-│   │   │   └── CandidateTable.jsx  # Candidate vote table
+│   │   │   ├── ReviewCard.jsx          # OCR data display + PDF viewer
+│   │   │   ├── CrossReferencePanel.jsx # Cross-reference 4 data sources
+│   │   │   ├── DataStatsPanel.jsx      # Stats dashboard + anomaly summary
+│   │   │   ├── BackupDashboard.jsx     # Google Drive backup + Thailand map
+│   │   │   ├── ProvinceHeatmap.jsx     # Province review progress map
+│   │   │   └── CandidateTable.jsx      # Candidate vote table
 │   │   ├── hooks/
 │   │   │   └── useAuth.js     # Google Sign-In authentication
 │   │   └── utils/
 │   │       ├── validation.js  # Data validation rules
 │   │       └── reviewLog.js   # Review state management
-│   └── public/data/           # Static JSON data files
-│       ├── review_data.json   # OCR results for review
-│       ├── anomaly_flags.json # Anomaly detection results
-│       └── backup_status.json # Drive backup status
+│   └── public/
+│       ├── data/              # Static JSON data files
+│       │   ├── review_data.json              # OCR results (6,111 items)
+│       │   ├── anomaly_flags.json            # Anomaly detection results
+│       │   ├── backup_status.json            # Drive backup status (77 จังหวัด)
+│       │   └── cross_reference_sources.json  # Cross-ref 4-source data (401 เขต)
+│       └── thailand-provinces.topojson       # Thailand map geometry
 │
-├── scripts/                   # Python processing scripts
-│   ├── download_ss518.py      # Scrape PDFs from ECT websites
-│   ├── ocr_multimodel.py      # Multi-model OCR pipeline
-│   ├── ocr_cloud_vision.py    # Cloud Vision OCR + parser
-│   ├── postprocess.py         # 9-rule postprocessing pipeline
-│   ├── prepare_review_data.py # Generate review JSON
-│   ├── analyze_anomalies.py   # 8-dimension anomaly detection
-│   ├── backup_to_drive.py     # Upload PDFs to Google Drive
-│   ├── split_and_upload.py    # Split multi-page PDFs
-│   ├── build_drive_index.py   # Index Drive files
-│   ├── dashboard.py           # Backup status dashboard (port 8899)
-│   └── ...                    # Various analysis & utility scripts
+├── scripts/                   # Python processing scripts (60+)
+│   ├── download_ss518.py          # Scrape PDFs from ECT websites
+│   ├── ocr_multimodel.py          # Multi-model OCR pipeline
+│   ├── ocr_cloud_vision.py        # Cloud Vision OCR + parser
+│   ├── postprocess.py             # 9-rule postprocessing pipeline
+│   ├── prepare_review_data.py     # Generate review JSON
+│   ├── prepare_cross_reference.py # Generate cross-reference data
+│   ├── analyze_anomalies.py       # 8-dimension anomaly detection
+│   ├── backup_to_drive.py         # Upload PDFs to Google Drive
+│   ├── split_and_upload.py        # Split multi-page PDFs
+│   ├── build_drive_index.py       # Index Drive files
+│   └── ...                        # Various analysis & utility scripts
 │
 ├── cloud/                     # Cloud Function for distributed OCR
 │   ├── function/main.py       # Cloud Function entry point
@@ -150,7 +274,7 @@ election-verification/
 │   └── deploy.yml             # CI/CD: auto-deploy to GitHub Pages
 │
 ├── .env.example               # API key template
-├── DEVELOPMENT_LOG.md         # Detailed development history (20 phases)
+├── DEVELOPMENT_LOG.md         # Detailed development history (20+ phases)
 ├── SECURITY.md                # API key security guide
 └── README.md                  # This file
 ```
@@ -161,7 +285,8 @@ election-verification/
 
 | Layer | Technology |
 |-------|-----------|
-| **Frontend** | React 18, Vite, TailwindCSS, Lucide icons |
+| **Frontend** | React 18, Vite, TailwindCSS, Lucide icons, d3-geo |
+| **Maps** | TopoJSON, d3-geo (SVG choropleth maps of Thailand) |
 | **Auth** | Google Identity Services (GIS), Google Forms |
 | **OCR** | Gemini Flash/Flash-Lite, Cloud Vision API, Claude |
 | **Backend** | Python 3.7+, Google Cloud Functions |
@@ -179,33 +304,17 @@ election-verification/
 - **Self-consistency checks** with temperature variation
 - **JSON repair** for malformed API responses
 - **Incremental save** — resume interrupted batches
-
-### 9-Rule Postprocessing Pipeline
-- **R0a/R0b**: Metadata extraction from file paths
-- **R0c/R0d**: Deduplication (interleaved combined PDFs)
-- **R3/R4**: Vote total validation and repair
-- **R5/R6**: Ballot count consistency (with safety checks)
-- **R7**: Candidate normalization via ECT reference
-- **R8/R9**: Confidence scoring and flagging
-- **Cross-validation**: Against Killernay ground truth data
-
-### Anomaly Detection (8 dimensions)
-- Turnout rate outliers (z-score + IQR)
-- Invalid ballot ratio
-- Blank ballot ratio
-- Wasted vote ratio
-- Candidate dominance
-- Total vote vs ballot mismatch
-- Registered voter anomalies
-- Counting completeness awareness (filters unreliable flags from incomplete data)
+- **Dynamic prompts** with metadata context for multi-station PDFs
 
 ### React Review App
 - Side-by-side PDF viewer + OCR data
+- **Cross-Reference Panel** — เปรียบเทียบ 4 แหล่งข้อมูลพร้อมกัน
+- **Thailand choropleth map** — แผนที่แสดงคุณภาพข้อมูลและความคืบหน้า
 - Editable fields with validation
-- Anomaly flags per item
-- Google Drive backup status dashboard
+- Anomaly flags per item (8 มิติ)
+- Google Drive backup status dashboard (77 จังหวัด)
 - Province/constituency/search filters
-- Keyboard shortcuts (J/K navigate)
+- Keyboard shortcuts (J/K navigate, 1/2/3 set status)
 - Google Sign-In for verified reviews
 - CSV/JSON export
 - Auto-deploy via GitHub Actions
@@ -227,7 +336,7 @@ See [SECURITY.md](SECURITY.md) for detailed API key management guidelines.
 
 ## Development
 
-See [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md) for the full 20-phase development history with commit hashes, problems, solutions, and results for each phase.
+See [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md) for the full 20+ phase development history with commit hashes, problems, solutions, and results for each phase.
 
 ### Running tests
 
@@ -250,21 +359,53 @@ Push to `main` branch triggers automatic deployment to GitHub Pages via GitHub A
 
 ---
 
-## Related Projects
+## 🔗 Related Projects / โครงการที่เกี่ยวข้อง
 
-| Project | Coverage | Form |
-|---------|----------|------|
-| **This project** | Station-level (สส.5/18) — 3 provinces | Handwritten tally sheets |
-| [Killernay](https://github.com/killernay/election-69-OCR-result) | Constituency-level (สส.6/1) — nationwide | Summary forms |
-| [Luengnat](https://luengnat.github.io/election-69-dashboard) | Constituency-level dashboard | ECT + Drive + Killernay |
+| Project | Description | Coverage | Form | Link |
+|---------|-----------|----------|------|------|
+| **This project** | Station-level OCR + cross-validation | 3 จว. (station) / 77 จว. (backup) | สส.5/18 | [Live Demo](https://narasakp.github.io/election-verification/) |
+| **Killernay** | Constituency-level OCR + Reporter DB match | 397/400 เขต | สส.6/1 | [GitHub](https://github.com/killernay/election-69-OCR-result) |
+| **Luengnat** | Constituency-level dashboard + verification | 400 เขต | ECT + Drive + Killernay | [Dashboard](https://luengnat.github.io/election-69-dashboard/) |
 
 ---
 
-## License
+## 📄 Data Source / แหล่งข้อมูลต้นฉบับ
+
+- **แบบ สส.5/18** — ใบสรุปผลคะแนนระดับหน่วย/สถานี จากสำนักงาน กกต. จังหวัด
+- **ECT Digital Data** — [ectreport69.ect.go.th](https://static-ectreport69.ect.go.th/data/records/stats_cons.json)
+- **เว็บไซต์ กกต.** — [www.ect.go.th](https://www.ect.go.th) (77 จังหวัด)
+- **Killernay OCR** — [github.com/killernay/election-69-OCR-result](https://github.com/killernay/election-69-OCR-result)
+- **Luengnat Dashboard** — [luengnat.github.io/election-69-dashboard](https://luengnat.github.io/election-69-dashboard/)
+
+---
+
+## 📌 Attribution / การอ้างอิง
+
+If you use this dataset or code, please credit:
+
+**Narasak Phuphayang** — or link back to this repository: [election-verification](https://github.com/narasakp/election-verification)
+
+หากนำข้อมูลหรือโค้ดไปใช้ กรุณาให้เครดิต **นายนรศักดิ์ ภูผายาง** หรืออ้างอิงกลับมาที่ repository นี้
+
+---
+
+## 🐛 Found an Error? / พบข้อผิดพลาด?
+
+If you find any inaccuracies in the data, please report via:
+
+- **GitHub Issues**: [Open an issue](https://github.com/narasakp/election-verification/issues)
+
+หากพบข้อผิดพลาดในข้อมูล สามารถแจ้งได้ที่ GitHub Issues — จะรีบตรวจสอบและแก้ไข
+
+---
+
+## 📜 License
 
 MIT License — free for educational and public interest use.
 
+This data is derived from publicly available official government documents published by กกต. The structured output (JSON/CSV) and source code are provided freely for public use.
+
 ---
 
-**Version:** 3.0  
-**Last updated:** 18 March 2026
+**Version:** 4.0  
+**Last updated:** 22 March 2026

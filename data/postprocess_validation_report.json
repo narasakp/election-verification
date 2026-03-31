@@ -1,0 +1,10 @@
+{
+  "provinces": [
+    "chaiyaphum",
+    "tak",
+    "phetchabun"
+  ],
+  "postprocess": "ran",
+  "validation": "ran",
+  "status": "ok"
+}

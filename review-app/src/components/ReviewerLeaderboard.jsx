@@ -85,21 +85,23 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
   if (!reviewLog || reviewLog.length === 0) return null
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 mt-3">
+    <div className="max-w-[1440px] mx-auto px-4">
       <button
         onClick={() => setExpanded(v => !v)}
-        className="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-indigo-700 transition mb-2"
+        className="w-full flex items-center gap-2.5 py-3 text-sm font-semibold text-gray-700 hover:text-indigo-700 transition group"
       >
-        {expanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-        <Users size={16} className="text-amber-500" />
-        🏆 Reviewer Leaderboard
-        <span className="text-xs font-normal text-gray-400 ml-2">
+        <span className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center group-hover:bg-amber-100 transition">
+          <Users size={15} className="text-amber-500" />
+        </span>
+        Reviewer Leaderboard
+        {expanded ? <ChevronDown size={14} className="text-gray-400" /> : <ChevronRight size={14} className="text-gray-400" />}
+        <span className="text-xs font-normal text-gray-400">
           {totalUniqueReviewers} คน · {totalActiveReviews} reviews
         </span>
       </button>
 
       {expanded && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <div className="p-5">
           {/* Sort buttons */}
           <div className="flex items-center gap-2 mb-4">
             <span className="text-xs text-gray-500">เรียงตาม:</span>

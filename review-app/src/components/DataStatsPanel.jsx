@@ -110,16 +110,18 @@ function DataStatsPanelInner({ allItems, review, anomalyFlags, anomalyMeta }) {
   if (allItems.length === 0) return null
 
   return (
-    <div className="bg-white border-b">
-      <div className="max-w-[1400px] mx-auto px-4">
+    <div>
+      <div className="max-w-[1440px] mx-auto px-4">
         <button
           onClick={() => setExpanded(v => !v)}
-          className="w-full flex items-center gap-2 py-2.5 text-sm font-semibold text-indigo-700 hover:text-indigo-900 transition"
+          className="w-full flex items-center gap-2.5 py-3 text-sm font-semibold text-indigo-700 hover:text-indigo-900 transition group"
         >
-          <BarChart3 size={16} />
+          <span className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center group-hover:bg-indigo-100 transition">
+            <BarChart3 size={15} className="text-indigo-500" />
+          </span>
           สถิติข้อมูล
-          {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-          <span className="text-xs font-normal text-gray-400 ml-2">{allItems.length.toLocaleString()} รายการ</span>
+          {expanded ? <ChevronDown size={14} className="text-gray-400" /> : <ChevronRight size={14} className="text-gray-400" />}
+          <span className="text-xs font-normal text-gray-400">{allItems.length.toLocaleString()} รายการ</span>
           {qualityIssues.length > 0 && !expanded && (
             <span className="ml-auto flex items-center gap-1 text-xs font-normal text-amber-600">
               <AlertTriangle size={12} />

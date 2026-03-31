@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 
-export default function AuthGate({ renderButton }) {
+export default React.memo(function AuthGate({ renderButton }) {
   const btnRef = useRef(null)
 
   useEffect(() => {
@@ -33,4 +33,4 @@ export default function AuthGate({ renderButton }) {
       </div>
     </div>
   )
-}
+})

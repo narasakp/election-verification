@@ -5,7 +5,7 @@ Prepare cross-reference JSON for the Review App.
 Merges data from 4 sources:
   1. ECT official (ect_stats_cons.json + ect_provinces.json)
   2. Killernay ground truth (killernay_summary_winners.csv)
-  3. Luengnat dashboard (placeholder — data not yet available)
+  3. Luengnat dashboard (district_dashboard_data.json)
   4. Our OCR data is loaded live in the React app
 
 Output: review-app/public/data/cross_reference_sources.json
@@ -19,6 +19,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 OUT = ROOT / "review-app" / "public" / "data" / "cross_reference_sources.json"
+
+# Provinces with OCR data — sorted by priority (first = top)
+OCR_PROVINCES = ["ชัยภูมิ", "ตาก", "เพชรบูรณ์"]
 
 
 def load_ect_provinces():
@@ -95,7 +98,7 @@ def load_killernay():
         print(f"⚠️  {path.name} not found")
         return {}
     result = {}
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, "r", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         for row in reader:
             prov = row.get("จังหวัด", "").strip()
@@ -124,7 +127,7 @@ def load_killernay_candidates():
     if not path.exists():
         return {}
     groups = {}
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, "r", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         for row in reader:
             prov = row.get("จังหวัด", "").strip()
@@ -137,6 +140,55 @@ def load_killernay_candidates():
             groups[key]["candidates"] += 1
             groups[key]["total_votes"] += _int(row.get("คะแนน", "0"))
     return groups
+
+
+def load_luengnat():
+    """Load Luengnat district dashboard JSON → dict keyed by 'province_zone'
+    Only constituency form_type items (not party_list)."""
+    path = DATA / "luengnat_district_dashboard.json"
+    if not path.exists():
+        print(f"⚠️  {path.name} not found — run: python -c \"import urllib.request; urllib.request.urlretrieve('https://luengnat.github.io/election-69-dashboard/docs/data/district_dashboard_data.json', 'data/luengnat_district_dashboard.json')\"")
+        return {}
+    raw = json.loads(path.read_text("utf-8"))
+    items = raw.get("items", [])
+    result = {}
+    for item in items:
+        if item.get("form_type") != "constituency":
+            continue
+        prov = item.get("province", "").strip()
+        zone = item.get("district_number", 0)
+        if not prov or not zone:
+            continue
+        key = f"{prov}_{zone}"
+        src = item.get("sources", {})
+        read_src = src.get("read", {})
+        result[key] = {
+            "source": "luengnat",
+            "province": prov,
+            "zone": zone,
+            "valid_votes": read_src.get("valid_votes", 0) or 0,
+            "invalid_votes": read_src.get("invalid_votes", 0) or 0,
+            "blank_votes": read_src.get("blank_votes", 0) or 0,
+            "candidate_count": len(item.get("votes", {})),
+            "drive_url": item.get("drive_url", ""),
+            "ocr_check_exact": item.get("ocr_check", {}).get("exact", False),
+            "ocr_check_delta": item.get("ocr_check", {}).get("delta", 0),
+            # Compute turnout = valid + invalid + blank
+            "turnout": (read_src.get("valid_votes", 0) or 0)
+                     + (read_src.get("invalid_votes", 0) or 0)
+                     + (read_src.get("blank_votes", 0) or 0),
+        }
+    return result
+
+
+def load_drive_mapping():
+    """Load ECT Drive folder URLs per province → {province: drive_url}"""
+    path = DATA / "ect_drive_mapping.json"
+    if not path.exists():
+        print(f"⚠️  {path.name} not found")
+        return {}
+    raw = json.loads(path.read_text("utf-8"))
+    return {e["province"]: e["drive_url"] for e in raw if e.get("province") and e.get("drive_url")}
 
 
 def _int(s):
@@ -161,8 +213,23 @@ def main():
     killernay_cands = load_killernay_candidates()
     print(f"   Killernay candidate groups: {len(killernay_cands)}")
 
-    # Merge all keys
-    all_keys = sorted(set(list(ect_data.keys()) + list(killernay_data.keys())))
+    luengnat_data = load_luengnat()
+    print(f"   Luengnat constituencies: {len(luengnat_data)}")
+
+    drive_map = load_drive_mapping()
+    print(f"   Drive folder mappings: {len(drive_map)}")
+
+    # Build sort priority: OCR provinces first, then Thai alphabetical
+    ocr_prio = {p: i for i, p in enumerate(OCR_PROVINCES)}  # 0,1,2
+
+    def sort_key(k):
+        province = (ect_data.get(k) or killernay_data.get(k) or luengnat_data.get(k) or {}).get("province", k.rsplit("_", 1)[0])
+        zone_str = k.rsplit("_", 1)[-1]
+        zone = int(zone_str) if zone_str.isdigit() else 0
+        prio = ocr_prio.get(province, 1000)  # OCR provinces get 0-2, rest get 1000
+        return (prio, province, zone)
+
+    all_keys = sorted(set(list(ect_data.keys()) + list(killernay_data.keys()) + list(luengnat_data.keys())), key=sort_key)
     print(f"   Total unique constituencies: {len(all_keys)}")
 
     # Build merged records
@@ -172,15 +239,22 @@ def main():
         kn = killernay_data.get(key)
         kn_cands = killernay_cands.get(key, {})
 
+        ln = luengnat_data.get(key)
+
         # Determine province/zone from whichever source has it
-        province = (ect or kn or {}).get("province", key.rsplit("_", 1)[0])
+        province = (ect or kn or ln or {}).get("province", key.rsplit("_", 1)[0])
         zone_str = key.rsplit("_", 1)[-1]
         zone = int(zone_str) if zone_str.isdigit() else zone_str
+
+        # sort_priority: 0-2 for OCR provinces, 1000 for rest
+        prio = ocr_prio.get(province, 1000)
 
         rec = {
             "key": key,
             "province": province,
             "zone": zone,
+            "sort_priority": prio,
+            "drive_folder": drive_map.get(province, ""),
         }
 
         if ect:
@@ -209,8 +283,19 @@ def main():
                 kn_rec["total_candidate_votes"] = kn_cands["total_votes"]
             rec["killernay"] = kn_rec
 
-        # Luengnat placeholder
-        rec["luengnat"] = None  # data not yet available
+        if ln:
+            rec["luengnat"] = {
+                "turnout": ln["turnout"],
+                "valid_votes": ln["valid_votes"],
+                "invalid_votes": ln["invalid_votes"],
+                "blank_votes": ln["blank_votes"],
+                "candidate_count": ln["candidate_count"],
+                "drive_url": ln["drive_url"],
+                "ocr_exact": ln["ocr_check_exact"],
+                "ocr_delta": ln["ocr_check_delta"],
+            }
+        else:
+            rec["luengnat"] = None
 
         # Compute diffs where both sources available
         if ect and kn:
@@ -226,6 +311,18 @@ def main():
                 "valid_pct": round((ect_valid - kn_valid) / max(kn_valid, 1) * 100, 2),
             }
 
+        if ect and ln:
+            rec["diff_ect_ln"] = {
+                "valid_votes": ect["valid_votes"] - ln["valid_votes"],
+                "valid_pct": round((ect["valid_votes"] - ln["valid_votes"]) / max(ln["valid_votes"], 1) * 100, 2),
+            }
+
+        if kn and ln:
+            rec["diff_kn_ln"] = {
+                "valid_votes": kn["valid_votes"] - ln["valid_votes"],
+                "valid_pct": round((kn["valid_votes"] - ln["valid_votes"]) / max(ln["valid_votes"], 1) * 100, 2),
+            }
+
         records.append(rec)
 
     # Province summary for ECT
@@ -238,10 +335,11 @@ def main():
 
     output = {
         "generated": __import__("datetime").datetime.now().isoformat(),
+        "ocr_provinces": OCR_PROVINCES,
         "sources": {
-            "ect": {"name": "กกต. (ECT Official)", "records": len(ect_data), "status": "available"},
-            "killernay": {"name": "Killernay (OCR Ground Truth)", "records": len(killernay_data), "status": "available"},
-            "luengnat": {"name": "Luengnat Dashboard", "records": 0, "status": "pending"},
+            "ect": {"name": "กกต. (ECT Official)", "records": len(ect_data), "status": "available", "url": "https://www.ect.go.th/ect_th/th/election-2026"},
+            "killernay": {"name": "Killernay (OCR Ground Truth)", "records": len(killernay_data), "status": "available", "url": "https://github.com/killernay/election-69-OCR-result"},
+            "luengnat": {"name": "Luengnat Dashboard", "records": len(luengnat_data), "status": "available" if luengnat_data else "pending", "url": "https://luengnat.github.io/election-69-dashboard/"},
             "ocr": {"name": "ระบบ OCR ของเรา", "records": 0, "status": "live"},
         },
         "province_summary": prov_summary,
@@ -253,7 +351,7 @@ def main():
     size_kb = OUT.stat().st_size / 1024
     print(f"\n✅ Output: {OUT.relative_to(ROOT)} ({size_kb:.0f} KB)")
     print(f"   {len(records)} constituency records")
-    print(f"   Sources: ECT={len(ect_data)}, Killernay={len(killernay_data)}, Luengnat=0 (pending)")
+    print(f"   Sources: ECT={len(ect_data)}, Killernay={len(killernay_data)}, Luengnat={len(luengnat_data)}")
 
 
 if __name__ == "__main__":

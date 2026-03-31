@@ -10,7 +10,7 @@ function getConfidenceStyle(confidence) {
   return { bg: 'bg-gray-50', border: 'border-gray-200', badge: 'bg-gray-200 text-gray-600', label: '?' }
 }
 
-export default function FieldRow({ label, unit, value, confidence, correctedValue, onCorrect }) {
+export default React.memo(function FieldRow({ label, unit, value, confidence, correctedValue, onCorrect }) {
   const [editing, setEditing] = useState(false)
   const [editVal, setEditVal] = useState('')
   const style = getConfidenceStyle(confidence)
@@ -92,4 +92,4 @@ export default function FieldRow({ label, unit, value, confidence, correctedValu
       )}
     </div>
   )
-}
+})

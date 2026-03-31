@@ -1,27 +1,37 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useCallback, useMemo, Suspense, lazy } from 'react'
 import ReviewCard from './components/ReviewCard'
 import FilterBar from './components/FilterBar'
 import StatsBar from './components/StatsBar'
-import DataStatsPanel from './components/DataStatsPanel'
-import BackupDashboard from './components/BackupDashboard'
-import AnalyticsDashboard from './components/AnalyticsDashboard'
-import ProvinceHeatmap from './components/ProvinceHeatmap'
-import ReviewerLeaderboard from './components/ReviewerLeaderboard'
-import CrossReferencePanel from './components/CrossReferencePanel'
-import UploadPanel from './components/UploadPanel'
-import AdminPanel from './components/AdminPanel'
 import AuthGate from './components/AuthGate'
+
+// Lazy-loaded heavy components (code splitting)
+const DataStatsPanel = lazy(() => import('./components/DataStatsPanel'))
+const BackupDashboard = lazy(() => import('./components/BackupDashboard'))
+const AnalyticsDashboard = lazy(() => import('./components/AnalyticsDashboard'))
+const ProvinceHeatmap = lazy(() => import('./components/ProvinceHeatmap'))
+const ReviewerLeaderboard = lazy(() => import('./components/ReviewerLeaderboard'))
+const CrossReferencePanel = lazy(() => import('./components/CrossReferencePanel'))
+const UploadPanel = lazy(() => import('./components/UploadPanel'))
+const AdminPanel = lazy(() => import('./components/AdminPanel'))
 import useAuth from './hooks/useAuth'
+import useDarkMode from './hooks/useDarkMode'
 import { submitToGoogleForm, submitLoginEvent, submitLogoutEvent } from './utils/submitReview'
 import { getReviewLog, appendReviewLog, getAllSummaries, getUserReviewKey, checkRateLimit, recordReviewTiming, validateEditValue, getAllAnomalyScores, mergeReviewLogs, verifyLogIntegrity } from './utils/reviewLog'
 import { validateItem, getWorstSeverity } from './utils/validation'
-import { ChevronLeft, ChevronRight, Download, Upload, FolderUp, LogOut, ShieldCheck, ChevronDown, Filter } from 'lucide-react'
+import { computeItemAnomalyScore } from './utils/anomalyScore'
+import { ChevronLeft, ChevronRight, Download, Upload, FolderUp, LogOut, ShieldCheck, ChevronDown, Filter, Moon, Sun } from 'lucide-react'
 
 const DATA_URL = './data/review_data.json'
 const ANOMALY_FLAGS_URL = './data/anomaly_flags.json'
 
+const csvEsc = (v) => {
+  const s = String(v == null ? '' : v)
+  return s.includes(',') || s.includes('"') || s.includes('\n') ? '"' + s.replace(/"/g, '""') + '"' : s
+}
+
 function App() {
   const { user, loading: authLoading, signOut, renderButton } = useAuth()
+  const { dark, toggle: toggleDark } = useDarkMode()
   const [prevUser, setPrevUser] = useState(null)
   const [allItems, setAllItems] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -37,6 +47,7 @@ function App() {
   const [error, setError] = useState(null)
   const [showUpload, setShowUpload] = useState(false)
   const [showExportMenu, setShowExportMenu] = useState(false)
+  const [showImportInfo, setShowImportInfo] = useState(false)
   const [rateLimitWarning, setRateLimitWarning] = useState(null)
   const [showAdminPanel, setShowAdminPanel] = useState(false)
   const [anomalyFlags, setAnomalyFlags] = useState({})
@@ -165,6 +176,11 @@ function App() {
       if (filterStatus === 'cand_mismatch') {
         if (!item._candidate_mismatch) return false
       }
+      if (filterStatus === 'anomaly') {
+        const flags = anomalyFlags[`${item.province}_${item.constituency}`] || null
+        const { score } = computeItemAnomalyScore(item, flags)
+        if (score === 0) return false
+      }
       if (filterStatus === 'has_errors') {
         const w = validateItem(item)
         if (!w.some(v => v.severity === 'error')) return false
@@ -189,12 +205,26 @@ function App() {
       }
       return true
     })
-  }, [allItems, review, filterStatus, filterProvince, filterConstituency, filterVoteType, searchText])
+  }, [allItems, review, filterStatus, filterProvince, filterConstituency, filterVoteType, searchText, anomalyFlags])
+
+  // Anomaly score map — computed for filtered items, sorted when anomaly filter is active
+  const { sortedFilteredItems, anomalyScoreMap } = useMemo(() => {
+    const scoreMap = {}
+    filteredItems.forEach(item => {
+      const flags = anomalyFlags[`${item.province}_${item.constituency}`] || null
+      scoreMap[item.id] = computeItemAnomalyScore(item, flags)
+    })
+    if (filterStatus === 'anomaly') {
+      const sorted = [...filteredItems].sort((a, b) => (scoreMap[b.id]?.score || 0) - (scoreMap[a.id]?.score || 0))
+      return { sortedFilteredItems: sorted, anomalyScoreMap: scoreMap }
+    }
+    return { sortedFilteredItems: filteredItems, anomalyScoreMap: scoreMap }
+  }, [filteredItems, anomalyFlags, filterStatus])
 
   // Reset index when filter changes
   useEffect(() => { setCurrentIndex(0) }, [filterStatus, filterProvince, filterConstituency, filterVoteType, searchText])
 
-  const currentItem = filteredItems[currentIndex] || null
+  const currentItem = sortedFilteredItems[currentIndex] || null
 
   // Detect first page of each constituency (for shared edits)
   const constituencyFirstPages = useMemo(() => {
@@ -210,8 +240,8 @@ function App() {
   const isFirstPage = currentItem ? constituencyFirstPages[currentConstKey] === currentItem.id : false
 
   const goNext = useCallback(() => {
-    setCurrentIndex(i => Math.min(i + 1, filteredItems.length - 1))
-  }, [filteredItems.length])
+    setCurrentIndex(i => Math.min(i + 1, sortedFilteredItems.length - 1))
+  }, [sortedFilteredItems.length])
 
   const goPrev = useCallback(() => {
     setCurrentIndex(i => Math.max(i - 1, 0))
@@ -274,9 +304,9 @@ function App() {
     }
     // Auto-advance to next item after review action
     if (status !== 'pending') {
-      setTimeout(() => setCurrentIndex(i => Math.min(i + 1, filteredItems.length - 1)), 150)
+      setTimeout(() => setCurrentIndex(i => Math.min(i + 1, sortedFilteredItems.length - 1)), 150)
     }
-  }, [allItems, review, user, filteredItems.length])
+  }, [allItems, review, user, sortedFilteredItems.length])
 
   // Keyboard navigation
   useEffect(() => {
@@ -291,7 +321,11 @@ function App() {
       if (e.key === 'ArrowLeft' || e.key === 'k') goPrev()
       // Review shortcuts: 1=confirm, 2=flag, 3=reject, r=reset
       if (currentItem) {
-        if (e.key === '1') setItemStatus(currentItem.id, 'confirmed')
+        if (e.key === '1') {
+          if (window.confirm('✅ ยืนยัน\n\nตรวจสอบตัวเลขกับภาพต้นฉบับแล้ว ถูกต้อง\nหน้านี้จะถูกนับเป็นข้อมูลที่ผ่านการตรวจสอบแล้ว\n\nยืนยันหรือไม่?')) {
+            setItemStatus(currentItem.id, 'confirmed')
+          }
+        }
         if (e.key === '2') {
           if (window.confirm('🔄 ตรวจอีกรอบ\n\nหน้านี้จะถูกส่งให้อาสาคนอื่นตรวจซ้ำ\nยืนยันหรือไม่?')) {
             setItemStatus(currentItem.id, 'flagged')
@@ -302,7 +336,11 @@ function App() {
             setItemStatus(currentItem.id, 'rejected')
           }
         }
-        if (e.key === 'r') setItemStatus(currentItem.id, 'pending')
+        if (e.key === 'r') {
+          if (window.confirm('↩ รีเซ็ต\n\nสถานะจะกลับเป็น "รอตรวจ"\nค่าแก้ไขและหมายเหตุจะยังอยู่\n\nยืนยันหรือไม่?')) {
+            setItemStatus(currentItem.id, 'pending')
+          }
+        }
       }
     }
     window.addEventListener('keydown', handler)
@@ -396,11 +434,6 @@ function App() {
     a.href = URL.createObjectURL(blob)
     a.download = `audit_log_${new Date().toISOString().slice(0, 10)}.json`
     a.click()
-  }
-
-  const csvEsc = (v) => {
-    const s = String(v == null ? '' : v)
-    return s.includes(',') || s.includes('"') || s.includes('\n') ? '"' + s.replace(/"/g, '""') + '"' : s
   }
 
   const handleExportCSV = () => {
@@ -614,7 +647,8 @@ function App() {
       </div>
       {user && (
         <div className="flex items-center gap-2 text-sm text-gray-400">
-          <img src={user.picture} alt="" className="w-5 h-5 rounded-full" />
+          <img src={user.picture} alt="" className="w-5 h-5 rounded-full" referrerPolicy="no-referrer" crossOrigin="anonymous"
+            onError={e => { e.target.style.display = 'none' }} />
           <span>{user.name}</span>
           <button onClick={signOut} className="text-indigo-500 hover:underline ml-2">ออกจากระบบ</button>
         </div>
@@ -625,64 +659,95 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 pb-10">
       {/* Header */}
-      <header className="bg-gradient-to-r from-indigo-900 to-indigo-800 text-white sticky top-0 z-50 shadow-lg">
-        <div className="max-w-[1400px] mx-auto px-4 py-3 flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-bold flex items-center gap-2">🔍 OCR Review — สส.5/16</h1>
-            <p className="text-xs opacity-75">{stats.total} หน้า | {stats.confirmed + stats.flagged + stats.rejected} ตรวจแล้ว</p>
+      <header className="bg-gradient-to-r from-indigo-950 via-indigo-900 to-indigo-800 text-white sticky top-0 z-50 shadow-lg">
+        <div className="max-w-[1440px] mx-auto px-4 py-2.5 flex items-center gap-4">
+          {/* Logo + title */}
+          <div className="flex items-center gap-3 mr-auto">
+            <div className="w-9 h-9 bg-white/15 rounded-lg flex items-center justify-center text-lg">🔍</div>
+            <div>
+              <h1 className="text-base font-bold leading-tight">OCR Review — สส.5/16</h1>
+              <p className="text-[11px] text-indigo-300">{stats.total.toLocaleString()} หน้า | {(stats.confirmed + stats.flagged + stats.rejected).toLocaleString()} ตรวจแล้ว</p>
+            </div>
           </div>
+
+          {/* Progress */}
           <StatsBar stats={stats} />
-          <div className="flex items-center gap-2">
-            {user && (
-              <div className="flex items-center gap-2 mr-2">
-                {user.picture && <img src={user.picture} alt="" className="w-7 h-7 rounded-full border-2 border-white/50" />}
-                <span className="text-xs opacity-90 hidden sm:inline">{user.name}</span>
-                <span className="flex items-center gap-1 bg-emerald-400/20 text-emerald-200 px-2 py-0.5 rounded-full text-xs font-medium">
-                  <ShieldCheck size={12} /> ยืนยันแล้ว
-                </span>
-                <button onClick={signOut} className="flex items-center gap-1 px-2 py-1 bg-white/10 rounded text-xs hover:bg-white/20 transition" title="ออกจากระบบ">
-                  <LogOut size={12} />
-                </button>
+
+          {/* User info */}
+          {user && (
+            <div className="flex items-center gap-2 pl-3 border-l border-white/20">
+              {user.picture ? (
+                <img src={user.picture} alt={`${user.name} avatar`} className="w-7 h-7 rounded-full ring-2 ring-white/30" referrerPolicy="no-referrer" crossOrigin="anonymous"
+                  onError={e => { e.target.style.display = 'none'; e.target.nextElementSibling && (e.target.nextElementSibling.style.display = 'flex') }} />
+              ) : null}
+              <div className="w-7 h-7 rounded-full ring-2 ring-white/30 bg-indigo-500 items-center justify-center text-[11px] font-bold text-white" style={{ display: user.picture ? 'none' : 'flex' }}>
+                {(user.name || '?').charAt(0).toUpperCase()}
               </div>
-            )}
-            <button onClick={() => setShowAdminPanel(v => !v)} className="flex items-center gap-1 px-3 py-1.5 bg-amber-500/90 rounded text-sm hover:bg-amber-500 transition font-medium" title="Admin Panel">
+              <div className="hidden sm:block">
+                <span className="text-xs font-medium block leading-tight">{user.name}</span>
+                <span className="text-[10px] text-emerald-300 flex items-center gap-0.5"><ShieldCheck size={10} /> ยืนยันแล้ว</span>
+              </div>
+            </div>
+          )}
+
+          {/* Action buttons */}
+          <div className="flex items-center gap-1.5 pl-3 border-l border-white/20">
+            <button onClick={toggleDark} className="flex items-center gap-1 p-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs transition" title={dark ? 'Light mode' : 'Dark mode'} aria-label={dark ? 'เปลี่ยนเป็นโหมดสว่าง' : 'เปลี่ยนเป็นโหมดมืด'}>
+              {dark ? <Sun size={14} /> : <Moon size={14} />}
+            </button>
+            <button onClick={() => setShowAdminPanel(v => !v)} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-amber-500/80 hover:bg-amber-500 rounded-lg text-xs font-medium transition" title="Admin Panel" aria-label="เปิดแผงผู้ดูแลระบบ">
               🛡️ Admin
             </button>
-            <button onClick={() => setShowUpload(true)} className="flex items-center gap-1 px-3 py-1.5 bg-emerald-500/90 rounded text-sm hover:bg-emerald-500 transition font-medium">
-              <FolderUp size={14} /> อัปโหลด
+            <button onClick={() => setShowUpload(true)} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-emerald-500/80 hover:bg-emerald-500 rounded-lg text-xs font-medium transition" aria-label="อัปโหลดไฟล์">
+              <FolderUp size={13} /> อัปโหลด
             </button>
             <div className="relative" ref={exportMenuRef}>
-              <button onClick={() => setShowExportMenu(v => !v)} className="flex items-center gap-1 px-3 py-1.5 bg-white/20 rounded text-sm hover:bg-white/30 transition">
-                <Download size={14} /> Export <ChevronDown size={12} />
+              <button onClick={() => setShowExportMenu(v => !v)} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white/15 hover:bg-white/25 rounded-lg text-xs font-medium transition" aria-expanded={showExportMenu} aria-haspopup="true" aria-label="เมนูส่งออกข้อมูล">
+                <Download size={13} /> Export <ChevronDown size={11} />
               </button>
               {showExportMenu && (
-                <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-xl border z-50 min-w-[220px] overflow-hidden">
+                <div className="absolute right-0 top-full mt-1.5 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 min-w-[300px] overflow-hidden">
+                  <div className="px-4 py-2.5 bg-indigo-50 border-b border-indigo-100">
+                    <p className="text-xs font-bold text-indigo-800">📤 Export — ส่งออกข้อมูล</p>
+                    <p className="text-[10px] text-indigo-600 mt-0.5">ดาวน์โหลดข้อมูล OCR + ผลการตรวจสอบ เพื่อนำไปวิเคราะห์ต่อ หรือสำรองข้อมูล</p>
+                  </div>
+                  <div className="px-4 py-1.5 text-[10px] text-gray-400 uppercase bg-gray-50 font-semibold">ข้อมูลทั้งหมด ({allItems.length} รายการ)</div>
                   <button onClick={handleExportJSON} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition border-b border-gray-100">
-                    📄 JSON (ข้อมูล + review)
+                    <div className="font-medium">📄 JSON (ข้อมูล + review)</div>
+                    <div className="text-[10px] text-gray-400 mt-0.5">ข้อมูล OCR ทุกหน้า + สถานะ/ค่าแก้ไข/consensus — ใช้ Import กลับเข้าระบบได้</div>
                   </button>
                   <button onClick={handleExportCSV} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition border-b border-gray-100">
-                    📊 CSV สรุปทั้งหมด
+                    <div className="font-medium">📊 CSV สรุปทั้งหมด</div>
+                    <div className="text-[10px] text-gray-400 mt-0.5">ตารางสรุปสถิติ 1 แถว = 1 หน้า — เปิดใน Excel/Google Sheets ได้ทันที</div>
                   </button>
                   <button onClick={handleExportFullCSV} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition border-b border-gray-100">
-                    📋 CSV แบ่งเขต + ผู้สมัคร
+                    <div className="font-medium">📋 CSV แบ่งเขต + ผู้สมัคร</div>
+                    <div className="text-[10px] text-gray-400 mt-0.5">CSV เฉพาะแบ่งเขต มีคอลัมน์ผู้สมัครแต่ละคน — สำหรับวิเคราะห์เชิงลึก</div>
                   </button>
                   <button onClick={handleExportAuditLog} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-700 transition border-b border-gray-100">
-                    🔒 Audit Log (ประวัติการตรวจ)
+                    <div className="font-medium">🔒 Audit Log (ประวัติการตรวจ)</div>
+                    <div className="text-[10px] text-gray-400 mt-0.5">ประวัติการตรวจทุกครั้ง ทุกคน + ค่า anomaly — สำหรับ Admin ตรวจสอบย้อนหลัง</div>
                   </button>
                   <div className="px-4 py-1.5 text-[10px] text-gray-400 uppercase bg-gray-50 font-semibold">เฉพาะที่กรอง ({filteredItems.length} รายการ)</div>
                   <button onClick={handleExportFilteredJSON} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition border-b border-gray-100">
-                    <Filter size={12} className="inline mr-1" /> JSON (เฉพาะที่กรอง)
+                    <div className="font-medium"><Filter size={12} className="inline mr-1" /> JSON (เฉพาะที่กรอง)</div>
+                    <div className="text-[10px] text-gray-400 mt-0.5">เหมือน JSON ด้านบน แต่เฉพาะรายการที่ตรงกับ filter ที่เลือกอยู่</div>
                   </button>
                   <button onClick={handleExportFilteredCSV} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition">
-                    <Filter size={12} className="inline mr-1" /> CSV (เฉพาะที่กรอง)
+                    <div className="font-medium"><Filter size={12} className="inline mr-1" /> CSV (เฉพาะที่กรอง)</div>
+                    <div className="text-[10px] text-gray-400 mt-0.5">เหมือน CSV ด้านบน แต่เฉพาะรายการที่ตรงกับ filter ที่เลือกอยู่</div>
                   </button>
                 </div>
               )}
             </div>
-            <label className="flex items-center gap-1 px-3 py-1.5 bg-white/10 rounded text-sm hover:bg-white/20 transition cursor-pointer">
-              <Upload size={14} /> Import
-              <input type="file" accept=".json" className="hidden" onChange={handleImport} />
-            </label>
+            <button onClick={() => setShowImportInfo(true)} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-medium transition">
+              <Upload size={13} /> Import
+            </button>
+            {user && (
+              <button onClick={signOut} className="flex items-center gap-1 p-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs transition" title="ออกจากระบบ">
+                <LogOut size={13} />
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -705,41 +770,51 @@ function App() {
         setSearchText={setSearchText}
       />
 
-      {/* Data Stats */}
-      <DataStatsPanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} anomalyMeta={anomalyMeta} />
-
-      {/* ECT Backup Dashboard */}
-      <BackupDashboard />
-
-      {/* Analytics Dashboard */}
-      <AnalyticsDashboard allItems={allItems} review={review} reviewLog={reviewLog} anomalyFlags={anomalyFlags} />
-
-      {/* Province Review Heatmap */}
-      <ProvinceHeatmap allItems={allItems} review={review} />
-
-      {/* Reviewer Leaderboard */}
-      <ReviewerLeaderboard reviewLog={reviewLog} allItems={allItems} review={review} />
-
-      {/* Cross-Reference Panel */}
-      <CrossReferencePanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} anomalyMeta={anomalyMeta} />
+      {/* Dashboard Panels (lazy-loaded) */}
+      <Suspense fallback={<div className="max-w-[1440px] mx-auto px-4 mt-3"><div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center text-gray-400 animate-pulse">กำลังโหลดแดชบอร์ด…</div></div>}>
+        <div className="max-w-[1440px] mx-auto px-4 mt-3">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden divide-y divide-gray-100">
+            <DataStatsPanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} anomalyMeta={anomalyMeta} />
+            <BackupDashboard />
+            <AnalyticsDashboard allItems={allItems} review={review} reviewLog={reviewLog} anomalyFlags={anomalyFlags} />
+            <ProvinceHeatmap allItems={allItems} review={review} />
+            <ReviewerLeaderboard reviewLog={reviewLog} allItems={allItems} review={review} />
+            <CrossReferencePanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} anomalyMeta={anomalyMeta} />
+          </div>
+        </div>
+      </Suspense>
 
       {/* Navigation */}
-      <div className="max-w-[1400px] mx-auto px-4 py-2 flex items-center justify-between">
-        <button onClick={goPrev} disabled={currentIndex === 0}
-          className="flex items-center gap-1 px-3 py-1.5 bg-white border rounded text-sm hover:bg-gray-50 disabled:opacity-30">
-          <ChevronLeft size={16} /> ก่อนหน้า
-        </button>
-        <span className="text-sm text-gray-500">
-          {filteredItems.length > 0 ? `${currentIndex + 1} / ${filteredItems.length}` : 'ไม่พบข้อมูล'}
-        </span>
-        <button onClick={goNext} disabled={currentIndex >= filteredItems.length - 1}
-          className="flex items-center gap-1 px-3 py-1.5 bg-white border rounded text-sm hover:bg-gray-50 disabled:opacity-30">
-          ถัดไป <ChevronRight size={16} />
-        </button>
+      <div className="max-w-[1440px] mx-auto px-4 py-3">
+        <div className="flex items-center justify-between bg-white rounded-xl shadow-sm border border-gray-200 px-4 py-2.5">
+          <button onClick={goPrev} disabled={currentIndex === 0}
+            aria-label="หน้าก่อนหน้า"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-100 disabled:opacity-30 transition">
+            <ChevronLeft size={16} /> ก่อนหน้า
+          </button>
+          <span className="text-sm text-gray-600 font-medium flex items-center gap-2" aria-live="polite" aria-atomic="true">
+            {sortedFilteredItems.length > 0 ? `${currentIndex + 1} / ${sortedFilteredItems.length}` : 'ไม่พบข้อมูล'}
+            {filterStatus === 'anomaly' && currentItem && anomalyScoreMap[currentItem.id] && (
+              <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                anomalyScoreMap[currentItem.id].score >= 50 ? 'bg-red-600 text-white' :
+                anomalyScoreMap[currentItem.id].score >= 30 ? 'bg-orange-500 text-white' :
+                anomalyScoreMap[currentItem.id].score >= 15 ? 'bg-yellow-500 text-white' :
+                'bg-blue-500 text-white'
+              }`}>
+                🚨 {anomalyScoreMap[currentItem.id].score}
+              </span>
+            )}
+          </span>
+          <button onClick={goNext} disabled={currentIndex >= sortedFilteredItems.length - 1}
+            aria-label="หน้าถัดไป"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-100 disabled:opacity-30 transition">
+            ถัดไป <ChevronRight size={16} />
+          </button>
+        </div>
       </div>
 
       {/* Main content */}
-      <main className="max-w-[1400px] mx-auto px-4">
+      <main className="max-w-[1440px] mx-auto px-4">
         {currentItem ? (
           <ReviewCard
             item={currentItem}
@@ -748,6 +823,7 @@ function App() {
             isFirstPage={isFirstPage}
             sharedEdits={sharedEdits[currentConstKey] || {}}
             anomalyFlags={anomalyFlags[`${currentItem.province}_${currentItem.constituency}`] || null}
+            anomalyScore={anomalyScoreMap[currentItem.id] || null}
             onSetStatus={(status) => setItemStatus(currentItem.id, status)}
             onSetNote={(note) => setItemNote(currentItem.id, note)}
             onEdit={(field, value, orig) => setItemEdit(currentItem.id, field, value, orig)}
@@ -759,8 +835,15 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-white border-t py-1 text-center text-xs text-gray-400">
-        ←→ / j k เลื่อน | <b>1</b> ยืนยัน | <b>2</b> ตรวจอีกรอบ | <b>3</b> ใช้ไม่ได้ | <b>r</b> รีเซ็ต | <b>Esc</b> ออกจากช่อง | อัตโนมัติข้ามหน้าหลังกดตรวจ
+      <footer className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 py-1.5 text-center text-[11px] text-gray-500 z-40">
+        <span className="inline-flex items-center gap-3 flex-wrap justify-center">
+          <span>←→ / <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">j</kbd> <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">k</kbd> เลื่อน</span>
+          <span><kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">1</kbd> ยืนยัน</span>
+          <span><kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">2</kbd> ตรวจอีกรอบ</span>
+          <span><kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">3</kbd> ใช้ไม่ได้</span>
+          <span><kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">r</kbd> รีเซ็ต</span>
+          <span><kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">Esc</kbd> ออกจากช่อง</span>
+        </span>
       </footer>
 
       {/* Rate limit warning toast (F2) */}
@@ -772,25 +855,72 @@ function App() {
 
       {/* Admin Panel (F6) */}
       {showAdminPanel && (
-        <AdminPanel
-          reviewLog={reviewLog}
-          allItems={allItems}
-          review={review}
-          onClose={() => setShowAdminPanel(false)}
-          onImportLog={(extLog) => {
-            const result = mergeReviewLogs(extLog)
-            setReviewLog(result.merged)
-            alert(`นำเข้าสำเร็จ: เพิ่ม ${result.added} รายการใหม่`)
-          }}
-        />
+        <Suspense fallback={<div className="fixed inset-0 bg-black/40 z-[100] flex items-center justify-center"><div className="bg-white rounded-xl p-8 text-gray-400 animate-pulse">กำลังโหลด Admin Panel…</div></div>}>
+          <AdminPanel
+            reviewLog={reviewLog}
+            allItems={allItems}
+            review={review}
+            onClose={() => setShowAdminPanel(false)}
+            onImportLog={(extLog) => {
+              const result = mergeReviewLogs(extLog)
+              setReviewLog(result.merged)
+              alert(`นำเข้าสำเร็จ: เพิ่ม ${result.added} รายการใหม่`)
+            }}
+          />
+        </Suspense>
+      )}
+
+      {/* Import info modal */}
+      {showImportInfo && (
+        <div className="fixed inset-0 bg-black/40 z-[100] flex items-center justify-center" onClick={() => setShowImportInfo(false)}>
+          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full mx-4 overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="px-5 py-3 border-b bg-teal-50 border-teal-200">
+              <h3 className="text-base font-bold text-teal-800">📥 Import — นำเข้าผล Review</h3>
+            </div>
+            <div className="px-5 py-4 text-sm text-gray-700 space-y-3">
+              <div>
+                <p className="font-semibold text-teal-800 mb-1">📌 หน้าที่:</p>
+                <p className="text-gray-600">นำเข้าไฟล์ JSON ที่ส่งออก (Export) ไว้ก่อนหน้า เพื่อกู้คืนสถานะการตรวจสอบ (ยืนยัน/ตรวจอีกรอบ/ใช้ไม่ได้) กลับเข้าสู่ระบบ</p>
+              </div>
+              <div>
+                <p className="font-semibold text-teal-800 mb-1">📋 ขั้นตอน:</p>
+                <ol className="list-decimal ml-5 space-y-1 text-gray-600">
+                  <li><strong>กด "เลือกไฟล์ JSON"</strong> ด้านล่าง</li>
+                  <li><strong>เลือกไฟล์</strong> ที่ Export ไว้ (รูปแบบ <code className="bg-gray-100 px-1 rounded text-xs">ocr_reviewed_*.json</code>)</li>
+                  <li><strong>ระบบจะโหลด</strong> สถานะ review ทั้งหมดจากไฟล์ทับลงในระบบปัจจุบัน</li>
+                </ol>
+              </div>
+              <div>
+                <p className="font-semibold text-teal-800 mb-1">⚠️ ข้อควรระวัง:</p>
+                <ul className="list-disc ml-5 space-y-0.5 text-gray-600">
+                  <li>ไฟล์ต้องเป็น <strong>JSON</strong> เท่านั้น (.json)</li>
+                  <li>สถานะ review ปัจจุบันจะถูก <strong>แทนที่</strong> ด้วยข้อมูลจากไฟล์</li>
+                  <li>ใช้สำหรับ <strong>กู้คืนข้อมูล</strong> หรือ <strong>ย้ายผลงาน</strong> ระหว่างเครื่อง</li>
+                  <li>แนะนำ <strong>Export ไว้ก่อน</strong> เพื่อสำรองข้อมูลเดิม</li>
+                </ul>
+              </div>
+            </div>
+            <div className="px-5 py-3 bg-gray-50 border-t flex gap-2 justify-end">
+              <button onClick={() => setShowImportInfo(false)} className="px-4 py-1.5 text-sm rounded border border-gray-300 text-gray-600 hover:bg-gray-100 transition">
+                ยกเลิก
+              </button>
+              <label className="px-4 py-1.5 text-sm font-medium rounded bg-teal-600 text-white hover:bg-teal-700 transition cursor-pointer inline-flex items-center gap-1.5">
+                <Upload size={14} /> เลือกไฟล์ JSON
+                <input type="file" accept=".json" className="hidden" onChange={(e) => { handleImport(e); setShowImportInfo(false) }} />
+              </label>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Upload panel */}
       {showUpload && (
-        <UploadPanel
-          onClose={() => setShowUpload(false)}
-          onDataRefresh={loadData}
-        />
+        <Suspense fallback={<div className="fixed inset-0 bg-black/40 z-[100] flex items-center justify-center"><div className="bg-white rounded-xl p-8 text-gray-400 animate-pulse">กำลังโหลด…</div></div>}>
+          <UploadPanel
+            onClose={() => setShowUpload(false)}
+            onDataRefresh={loadData}
+          />
+        </Suspense>
       )}
     </div>
   )

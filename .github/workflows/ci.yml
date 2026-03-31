@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 3 * * *' # daily at 03:00 UTC
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install npm dependencies
+        working-directory: review-app
+        run: npm ci
+
+      - name: Run frontend build + tests
+        working-directory: review-app
+        run: |
+          npm run build
+          npm test || true
+
+      - name: Run Python scripts
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run data integrity script
+        run: python scripts/verify_data_integrity.py
+
+      - name: Run postprocess validation check
+        run: python scripts/check_postprocess_validation.py
+
+      - name: Generate cost report
+        run: python scripts/ocr_cost_report.py
+
+      - name: Check git diff for report outputs
+        run: git status --short

@@ -191,21 +191,23 @@ function AnalyticsDashboardInner({ allItems, review, reviewLog, anomalyFlags }) 
   if (allItems.length === 0) return null
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 mt-3">
+    <div className="max-w-[1440px] mx-auto px-4">
       <button
         onClick={() => setExpanded(v => !v)}
-        className="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-indigo-700 transition mb-2"
+        className="w-full flex items-center gap-2.5 py-3 text-sm font-semibold text-gray-700 hover:text-indigo-700 transition group"
       >
-        {expanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-        <BarChart3 size={16} className="text-indigo-500" />
-        📊 Analytics Dashboard
-        <span className="text-xs font-normal text-gray-400 ml-2">
+        <span className="w-7 h-7 rounded-lg bg-purple-50 flex items-center justify-center group-hover:bg-purple-100 transition">
+          <BarChart3 size={15} className="text-purple-500" />
+        </span>
+        Analytics Dashboard
+        {expanded ? <ChevronDown size={14} className="text-gray-400" /> : <ChevronRight size={14} className="text-gray-400" />}
+        <span className="text-xs font-normal text-gray-400">
           {reviewPct}% ตรวจแล้ว ({totalReviewed}/{allItems.length})
         </span>
       </button>
 
       {expanded && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 space-y-6 animate-in fade-in">
+        <div className="p-5 space-y-6 animate-in fade-in">
 
           {/* Row 1: Donut + Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

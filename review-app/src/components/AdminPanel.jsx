@@ -1,12 +1,13 @@
 import React, { useMemo, useState } from 'react'
 import { getAllAnomalyScores, getAllSummaries, verifyLogIntegrity } from '../utils/reviewLog'
 import { X, Upload, AlertTriangle, Shield, Users, Activity } from 'lucide-react'
+import ErrorBoundary from './ErrorBoundary'
 
 /**
  * Admin Panel (F6) — shows user activity, anomaly scores, consensus conflicts,
  * integrity checks, and allows importing external review logs.
  */
-export default function AdminPanel({ reviewLog, allItems, review, onClose, onImportLog }) {
+function AdminPanelInner({ reviewLog, allItems, review, onClose, onImportLog }) {
   const [activeTab, setActiveTab] = useState('users')
 
   // Anomaly scores for all users
@@ -371,5 +372,13 @@ export default function AdminPanel({ reviewLog, allItems, review, onClose, onImp
         </div>
       </div>
     </div>
+  )
+}
+
+export default function AdminPanel(props) {
+  return (
+    <ErrorBoundary compact>
+      <AdminPanelInner {...props} />
+    </ErrorBoundary>
   )
 }

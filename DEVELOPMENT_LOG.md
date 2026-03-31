@@ -2,7 +2,7 @@
 # Election Verification System — Development Log
 
 > **ผู้พัฒนา:** narasak poophayang  
-> **ระยะเวลา:** 12 กุมภาพันธ์ – 19 มีนาคม 2569 (36 วัน)  
+> **ระยะเวลา:** 12 กุมภาพันธ์ – 27 มีนาคม 2569 (44 วัน)  
 > **สถานะ:** Active Development  
 
 ---
@@ -33,6 +33,14 @@
 - [Phase 21: UI/UX Polish, Testing & Documentation](#phase-21-uiux-polish-testing--documentation) — 19 มี.ค.
 - [Phase 22: Data & Analytics Dashboards](#phase-22-data--analytics-dashboards) — 19 มี.ค.
 - [Phase 23: Cross-Reference 4 แหล่งข้อมูล](#phase-23-cross-reference-4-แหล่งข้อมูล) — 19 มี.ค.
+- [Phase 24: ProvinceHeatmap — SVG Choropleth Map](#phase-24-provinceheatmap--svg-choropleth-map) — 20–21 มี.ค.
+- [Phase 25: BackupDashboard — Thailand Map + Enhanced Visualization](#phase-25-backupdashboard--thailand-map--enhanced-visualization) — 21 มี.ค.
+- [Phase 26: UX Improvements — Confirmations, Help, Import/Export Info](#phase-26-ux-improvements--confirmations-help-importexport-info) — 21–22 มี.ค.
+- [Phase 27: Google Drive Links + Progress >100% Explanation](#phase-27-google-drive-links--progress-100-explanation) — 22 มี.ค.
+- [Phase 28: README v4.0 — Comprehensive Update](#phase-28-readme-v40--comprehensive-update) — 22 มี.ค.
+- [Phase 29: Refactor, Testing, Dark Mode & Code Splitting](#phase-29-refactor-testing-dark-mode--code-splitting) — 23 มี.ค.
+- [Phase 30: Test Expansion + Error Boundaries + Accessibility + Performance](#phase-30-test-expansion--error-boundaries--accessibility--performance) — 24 มี.ค.
+- [Phase 31: Cloud OCR Completion — API Key Fix + Dispatch ตาก & เพชรบูรณ์](#phase-31-cloud-ocr-completion--api-key-fix--dispatch-ตาก--เพชรบูรณ์) — 25–27 มี.ค.
 - [สรุป Timeline](#สรุป-timeline)
 - [สถาปัตยกรรมระบบสุดท้าย](#สถาปัตยกรรมระบบสุดท้าย)
 - [ข้อมูลอ้างอิงภายนอก](#ข้อมูลอ้างอิงภายนอก)
@@ -45,15 +53,16 @@
 | หมวด | จำนวน |
 |------|-------|
 | Python scripts | 172+ ไฟล์ |
-| React components | 10 ไฟล์ (+ hooks, utils) |
+| React components | 12 ไฟล์ (+ 3 hooks, utils) |
+| Unit tests | 115 tests (4 test files) |
 | Data files (data/) | 56 ไฟล์ |
-| Data files (review-app) | 3 ไฟล์ (review_data, anomaly_flags, backup_status) |
+| Data files (review-app) | 4 ไฟล์ (review_data, anomaly_flags, backup_status, cross_reference_sources) |
 | PDF ดาวน์โหลด | 149,936 ไฟล์ (77 จังหวัด) |
-| OCR records | 12,376 รายการ (3 จังหวัด) |
+| OCR records | 16,407 รายการ (3 จังหวัด) |
 | Review items | 6,111 รายการ (deployed) |
-| Git commits | 25 commits |
+| Git commits | 26+ commits |
 | Cloud Functions | 1 (Gemini OCR) |
-| Dashboards | 5 (main, anomaly, compare, review, backup) |
+| Dashboards | 7 (main, anomaly, compare, review, backup, analytics, province heatmap) |
 | GitHub Pages | Deploy อัตโนมัติผ่าน GitHub Actions |
 | Google Drive Backup | 77/77 จังหวัดครบ (149,936 PDFs) |
 
@@ -795,6 +804,485 @@
 
 ---
 
+## Phase 24: ProvinceHeatmap — SVG Choropleth Map
+### 20–21 มีนาคม 2569 (วันที่ 37–38)
+
+**เป้าหมาย:** เปลี่ยนแผนที่จังหวัดจากตารางกริดเป็นแผนที่ประเทศไทยจริง (SVG choropleth)
+
+**ปัญหาเดิม:**
+- `ProvinceHeatmap.jsx` แสดงเป็นตาราง grid สี่เหลี่ยมเล็กๆ เรียงกัน
+- ไม่ตรงกับรูปทรงประเทศไทยจริง ทำให้ผู้ใช้หาจังหวัดลำบาก
+- ไม่มี interactive hover หรือ tooltip
+
+**สิ่งที่ทำ:**
+
+### 24a. Rewrite ProvinceHeatmap.jsx — SVG Choropleth
+- **ลบโค้ดเดิม** (grid-based) เขียนใหม่ทั้งหมด (~450 lines)
+- **TopoJSON loading** — ดึง `thailand-provinces.topojson` (~4.5MB) แบบ lazy-load เมื่อกดเปิดแผง
+- **D3-geo projection** — ใช้ `geoMercator().fitSize()` ปรับขนาดแผนที่ให้พอดี SVG อัตโนมัติ
+- **Province coloring** — ชุดสีตาม % ความคืบหน้า:
+  - เขียว emerald (100%) → เหลือง amber (50-99%) → แดง red (<25%) → เทา gray (ไม่มีข้อมูล)
+  - สีน้ำเงิน indigo — มีข้อมูลแต่ยังไม่ได้ตรวจ (0%)
+- **Interactive hover** — จังหวัดเปลี่ยนสี indigo เมื่อชี้เมาส์ + floating tooltip:
+  - สถิติละเอียด: ทั้งหมด, ยืนยัน, ตรวจซ้ำ, ใช้ไม่ได้, รอตรวจ
+  - Progress bar ใน tooltip
+- **Right panel** — Legend, summary cards 3 ใบ, รายชื่อจังหวัดเรียงตาม % (scroll ได้, hover sync กับแผนที่)
+- **EN→TH mapping** — ครอบคลุม 77 จังหวัด + `SHORT_NAMES` สำหรับ label บนแผนที่
+- **SKIP_FEATURES** — กรองทะเลสาบ/เกาะที่ไม่ต้องการออก
+- **Error/loading states** — spinner ขณะโหลด, error message เมื่อล้มเหลว
+
+### 24b. Dependencies + Asset ใหม่
+- เพิ่ม `topojson-client` — แปลง TopoJSON → GeoJSON features
+- `d3-geo` — map projection + SVG path generation (มีอยู่แล้ว)
+- `review-app/public/thailand-provinces.topojson` (~4.5MB) — ขอบเขตจังหวัด 77 จังหวัด
+
+### 24c. Iterative Improvements
+- **ขยายแผนที่ 3-4x** — `MAP_W = 1600`, `MAP_H = 2000` เพื่อให้อ่านง่ายขึ้น
+- **เพิ่ม province labels** พร้อมสถิติบนแผนที่ — ใช้ `geoCentroid` หาตำแหน่งกลางจังหวัด
+- **ปรับสีให้สดใสขึ้น** — vivid color scheme
+- **Default expanded = true** — แผนที่แสดงทันทีเมื่อเปิด
+- **แยกสี "มีข้อมูลแต่ 0%"** (indigo) กับ **"ไม่มีข้อมูล"** (gray) ให้ชัดเจน
+
+**ผลลัพธ์:**
+- แผนที่ประเทศไทยจริงแสดงความคืบหน้าการตรวจสอบแต่ละจังหวัด
+- Hover interactive + tooltip + sync กับรายชื่อจังหวัด
+- Build ผ่านเรียบร้อย
+
+**Files ที่สร้าง/แก้ไข:**
+- `review-app/src/components/ProvinceHeatmap.jsx` (rewritten, ~450 lines)
+- `review-app/public/thailand-provinces.topojson` (new, ~4.5MB)
+- `review-app/package.json` (เพิ่ม `topojson-client`)
+
+---
+
+## Phase 25: BackupDashboard — Thailand Map + Enhanced Visualization
+### 21 มีนาคม 2569 (วันที่ 38)
+
+**เป้าหมาย:** เพิ่มแผนที่ประเทศไทยแสดงคุณภาพข้อมูล backup ใน BackupDashboard
+
+**ปัญหาเดิม:**
+- `BackupDashboard.jsx` แสดงเฉพาะตารางจังหวัด ไม่มี visual map
+- ไม่เห็นภาพรวมว่าจังหวัดไหนมีข้อมูลครบ/ไม่ครบ
+
+**สิ่งที่ทำ:**
+
+### 25a. Thailand Map ใน BackupDashboard
+- **เพิ่ม imports**: `d3-geo` (`geoMercator`, `geoPath`), `topojson-client` (`feature`), `useCallback`, `useRef`
+- **EN_TO_TH mapping** — 77 จังหวัด (เหมือน ProvinceHeatmap แต่ specific สำหรับ backup)
+- **SHORT_NAMES** — ชื่อย่อจังหวัดสำหรับ label บนแผนที่
+- **SKIP_FEATURES** — กรอง features ที่ไม่ต้องการ
+- **Backup-specific color functions:**
+  - `getBackupFill(prov)` — สีพื้นตาม % backup (emerald 100%, lime 80-99%, amber 50-79%, red <50%, gray ไม่มีข้อมูล)
+  - `getBackupStroke(prov)` — สีขอบจังหวัด
+  - `getBackupLabelColor(prov)` — สีตัวอักษร label
+- **MAP dimensions** — `MAP_W = 1600`, `MAP_H = 2000`
+
+### 25b. Map Features
+- **Map-related state** — TopoJSON loading, `provMap` lookup, projection, mouse handler
+- **Province labels** — ชื่อจังหวัด + สถิติ (actual/expected) บนแผนที่
+- **Floating tooltip** — แสดงรายละเอียด backup ของจังหวัดที่ชี้เมาส์
+- **Legend panel** — อธิบายความหมายของสี
+- **Summary stats** — การ์ดสรุปสถานะ backup
+- **Watermark** — "Backup ข้อมูล กกต." บนแผนที่
+
+### 25c. วางตำแหน่งบน UI
+- แผนที่วางระหว่าง progress bar กับตารางจังหวัด
+- LazyLoad — โหลด TopoJSON เมื่อ expand เท่านั้น
+
+**ผลลัพธ์:**
+- แผนที่ประเทศไทยแสดงคุณภาพ backup data 77 จังหวัด
+- Hover interactive + tooltip + province labels
+- Build ผ่านเรียบร้อย
+
+**Files ที่แก้ไข:**
+- `review-app/src/components/BackupDashboard.jsx` (เพิ่ม ~350 lines — map section)
+
+---
+
+## Phase 26: UX Improvements — Confirmations, Help, Import/Export Info
+### 21–22 มีนาคม 2569 (วันที่ 38–39)
+
+**เป้าหมาย:** ปรับปรุง UX ป้องกันการกดผิด + เพิ่มคำอธิบายช่วยเหลือ
+
+**สิ่งที่ทำ:**
+
+### 26a. ReviewCard — Confirmation Modals
+- เพิ่ม **confirmation modal** สำหรับทุก review status:
+  - ✅ ยืนยัน — "ตรวจสอบตัวเลขกับภาพต้นฉบับแล้ว ถูกต้อง"
+  - 🔄 ตรวจอีกรอบ — "ไม่แน่ใจ ส่งให้คนอื่นตรวจอีกรอบ"
+  - 🚫 ใช้ไม่ได้ — "PDF เบลอ/ไม่ตรง/อ่านไม่ออก"
+  - ↩ รีเซ็ต — "สถานะจะกลับเป็นรอตรวจ"
+- Modal แสดง **คำอธิบายละเอียด** + **ปุ่มยืนยัน/ยกเลิก** สีตาม status
+- ป้องกันการกด status เปลี่ยนโดยไม่ตั้งใจ
+
+### 26b. Keyboard Shortcuts — Confirmation Dialogs
+- ปุ่ม `1` (ยืนยัน) และ `R` (รีเซ็ต) แสดง `window.confirm()` ก่อนเปลี่ยน status
+- ข้อความ confirm ตรงกับ modal — ภาษาไทยอธิบายผลกระทบ
+
+### 26c. UploadPanel — Collapsible Help Section
+- เพิ่ม section **คู่มือใช้งาน** (collapsible) ด้านบน UploadPanel:
+  - อธิบายวัตถุประสงค์ของ Upload Panel
+  - ขั้นตอนการใช้งาน (5 ขั้นตอน)
+  - ไฟล์ที่รองรับ (JSON, CSV)
+  - คำเตือนเรื่องข้อมูลซ้ำ
+
+### 26d. App.jsx — Import Info Modal + Export Descriptions
+- **Import Info Modal** — กดปุ่ม Import แสดง modal อธิบายก่อนเลือกไฟล์:
+  - วิธีใช้งาน
+  - ไฟล์ที่รองรับ
+  - คำเตือน (ข้อมูลจะถูกรวมเข้า ไม่ใช่แทนที่)
+- **Export Dropdown** — เพิ่มคำอธิบายละเอียดสำหรับแต่ละตัวเลือก export:
+  - 📄 JSON — ข้อมูลดิบ + สถานะ review
+  - 📊 CSV สรุป — เปิดด้วย Excel ได้
+  - 📋 CSV แบ่งเขต — รวมคะแนนผู้สมัคร
+  - 🔍 JSON/CSV เฉพาะที่กรอง — export เฉพาะรายการที่แสดงอยู่
+- เพิ่ม `showImportInfo` state สำหรับ modal
+
+**ผลลัพธ์:**
+- ผู้ใช้ต้องยืนยันก่อนเปลี่ยน review status — ป้องกันกดผิด
+- คำอธิบายช่วยเหลือครบทุกจุดสำคัญ
+- Build ผ่านเรียบร้อย
+
+**Files ที่แก้ไข:**
+- `review-app/src/components/ReviewCard.jsx` (confirmation modals)
+- `review-app/src/components/UploadPanel.jsx` (help section, ~65 lines)
+- `review-app/src/App.jsx` (Import modal, Export descriptions, keyboard confirms)
+
+---
+
+## Phase 27: Google Drive Links + Progress >100% Explanation
+### 22 มีนาคม 2569 (วันที่ 39)
+
+**เป้าหมาย:** เพิ่มลิงก์ Google Drive ใน BackupDashboard + อธิบายความคืบหน้าเกิน 100%
+
+**สิ่งที่ทำ:**
+
+### 27a. Google Drive Links — 4 จุด
+เพิ่ม `DRIVE_URL` constant + ลิงก์คลิกได้ 4 ตำแหน่ง:
+1. **Header button text** — "Backup ข้อมูล กกต." คลิกไปหน้า Google Drive
+2. **Progress bar label** — "%% completed" คลิกได้
+3. **Map watermark** — "Backup ข้อมูล กกต." บนแผนที่คลิกได้
+4. **Province table header** — ลิงก์ไป Google Drive
+
+ใช้ `e.stopPropagation()` บน header link เพื่อไม่ให้กระทบ collapse/expand
+
+### 27b. เปลี่ยน Label — 2 จุด
+- "ECT Backup" → **"Backup ข้อมูล กกต."** ที่ header button + map watermark
+
+### 27c. อธิบาย Progress >100%
+- **Summary Card** — เพิ่มข้อความ sub อธิบายว่าทำไม % เกิน 100 ("PDF จริงมากกว่าที่คาดไว้")
+- **Progress Bar** — เพิ่ม **amber badge** เมื่อ pct > 100:
+  ```
+  ⚠️ เกิน 100% — PDF จริง (149,936) มากกว่าที่คาดไว้ (147,603)
+  ```
+  - สไตล์: `bg-amber-50 text-amber-700 border-amber-200 rounded-md`
+- **Province Table** — แถวที่ >100% แสดง `⚠️` + สีส้ม amber
+
+### 27d. ปรับปรุง Icon Visibility
+- **ก่อน:** ⓘ icon เล็กมาก อ่านไม่ออก
+- **หลัง:** amber badge ขนาดใหญ่ พร้อม emoji ⚠️ + ข้อความอธิบายเต็ม
+- ใช้ `inline-flex items-center gap-1` สำหรับจัดวาง
+
+**ผลลัพธ์:**
+- ลิงก์ Google Drive คลิกได้ 4 จุด — เข้าถึงข้อมูลต้นทางได้ทันที
+- อธิบาย >100% ชัดเจนทั้ง progress bar, summary card, และ table
+- Build ผ่านเรียบร้อย
+
+**Files ที่แก้ไข:**
+- `review-app/src/components/BackupDashboard.jsx` (DRIVE_URL, links, labels, amber badges)
+
+---
+
+## Phase 28: README v4.0 — Comprehensive Update
+### 22 มีนาคม 2569 (วันที่ 39)
+
+**เป้าหมาย:** อัปเดต README ให้ครบถ้วน โดยศึกษาจาก Killernay และ Luengnat READMEs
+
+**ปัญหาเดิม:**
+- README v3 ขาดหัวข้อสำคัญหลายอย่างที่ Killernay มี (disclaimer, attribution, QA, data source)
+- ไม่มีข้อมูล cross-reference 4 แหล่ง
+- ไม่มีตารางเปรียบเทียบ 3 โครงการ
+- ไม่ได้เน้นจุดเด่น station-level OCR
+
+**สิ่งที่ทำ:**
+
+### 28a. ศึกษา README ของโครงการอื่น
+- อ่าน **Killernay** README — 776 PDFs, สส.6/1, QA 8 ขั้นตอน, pipeline diagram, disclaimer (EN+TH)
+- อ่าน **Luengnat** README — Data sources, site link, operations manual, security hygiene
+
+### 28b. เพิ่มหัวข้อใหม่ (9 หัวข้อ)
+
+| หัวข้อใหม่ | ได้แรงบันดาลใจจาก | รายละเอียด |
+|---|---|---|
+| **⚠️ Disclaimer (EN + TH)** | Killernay | อาสาสมัครภาคประชาชน, ไม่เกี่ยวข้องพรรคการเมือง, ทุนส่วนตัว |
+| **📊 Data Coverage** | Killernay | ตารางสถิติสำคัญ 10 รายการ + ตารางเปรียบเทียบ 3 โครงการ |
+| **⚠️ PDF Source Quality Issues** | Killernay | ลายมือเขียน, คุณภาพสแกน, หลายหน่วยต่อไฟล์, ชื่อไฟล์ไม่ตรง |
+| **🔗 Cross-Reference** | ทั้งสอง | เปรียบเทียบ 4 แหล่ง (OCR/กกต./Killernay/Luengnat), 401 เขต |
+| **🛠️ Processing Pipeline** | Killernay | แผนผัง ASCII ภาษาไทย ครบทุกขั้นตอน |
+| **🔍 Quality Assurance** | Killernay | QA 4 ด้าน (multi-model, pipeline 9 กฎ, anomaly 8 มิติ, cross-ref) + known limitations |
+| **📄 Data Source** | Killernay | ลิงก์แหล่งข้อมูลต้นฉบับทั้ง 5 แหล่ง |
+| **📌 Attribution** | Killernay | วิธีให้เครดิต (EN + TH) |
+| **🐛 Found an Error?** | Killernay | ลิงก์ GitHub Issues |
+
+### 28c. ปรับปรุงหัวข้อเดิม
+- **Title** — เพิ่มชื่อภาษาไทย "ระบบตรวจสอบผลเลือกตั้ง 2569"
+- **Description** — เพิ่มภาษาไทย + mention Killernay/Luengnat
+- **Links** — เพิ่ม Google Drive link ด้านบนสุด
+- **Project Structure** — เพิ่ม `CrossReferencePanel.jsx`, `ProvinceHeatmap.jsx`, `cross_reference_sources.json`, `thailand-provinces.topojson`
+- **Tech Stack** — เพิ่ม Maps row (TopoJSON, d3-geo)
+- **Key Features** — เพิ่ม Cross-Reference Panel, Thailand choropleth map, dynamic prompts
+- **Related Projects** — ขยายเป็น 5 คอลัมน์ (+ Description, Link)
+- **License** — เพิ่มข้อความอธิบายเกี่ยวกับเอกสารรัฐ
+
+**ผลลัพธ์:**
+- README v4.0 — สองภาษา (EN + TH) ตลอดทั้งเอกสาร
+- เน้นจุดเด่น station-level OCR — เป็นโครงการเดียวที่ OCR ระดับหน่วย
+- ครบถ้วนตามมาตรฐาน: disclaimer, data coverage, QA, attribution, contact, license
+- Version 4.0, วันที่ 22 มีนาคม 2569
+
+**Files ที่แก้ไข:**
+- `README.md` (rewritten, ~412 lines)
+
+---
+
+## Phase 29: Refactor, Testing, Dark Mode & Code Splitting
+### 23 มีนาคม 2569 (วันที่ 40)
+
+**เป้าหมาย:** ปรับปรุงคุณภาพ codebase — ลด code ซ้ำ, เพิ่ม test coverage, รองรับ dark mode, และ optimize performance
+
+### 29a. Extract Shared Map Hook (`useThailandMap.js`)
+
+**ปัญหาเดิม:** `ProvinceHeatmap.jsx` และ `BackupDashboard.jsx` มี code ซ้ำกันมาก — province name mappings, TopoJSON loading, d3-geo projection, mouse event handlers
+
+**สิ่งที่ทำ:**
+- สร้าง `src/hooks/useThailandMap.js` — reusable hook รวม:
+  - `EN_TO_TH` province name mapping (77 จังหวัด)
+  - `SHORT_NAMES` สำหรับ label บนแผนที่
+  - `SKIP_FEATURES` สำหรับกรอง lake features ออก
+  - `MAP_WIDTH` / `MAP_HEIGHT` constants
+  - TopoJSON loading + error handling
+  - d3 `geoMercator` projection + `geoPath` generator
+  - Mouse event handlers สำหรับ tooltip positioning
+  - `resolveThaiName()` — resolve English → Thai พร้อม alias override
+- Refactor `ProvinceHeatmap.jsx` — ใช้ hook + `HEATMAP_ALIAS` สำหรับ Bangkok/Ayutthaya
+- Refactor `BackupDashboard.jsx` — ใช้ hook, แทนที่ `EN_TO_TH` ทั้งหมดด้วย `resolveThaiName`
+
+**ผลลัพธ์:**
+- ลด code ซ้ำ ~200 บรรทัด
+- Province mappings อยู่ที่เดียว — แก้ครั้งเดียวใช้ได้ทุกที่
+
+### 29b. Unit Tests (37 → 67 tests)
+
+**สิ่งที่ทำ:**
+- สร้าง `src/hooks/useThailandMap.test.js` — 18 tests:
+  - EN_TO_TH mapping ครบ 77 จังหวัด
+  - SHORT_NAMES ไม่เกิน 8 ตัวอักษร
+  - SKIP_FEATURES มี lake features
+  - MAP_WIDTH / MAP_HEIGHT ค่าถูกต้อง
+- ขยาย `src/utils/reviewLog.test.js` — เพิ่ม 31 tests:
+  - `computeAnomalyScore` — rapid reviews, same-IP, conflicting status
+  - `getAllAnomalyScores` — batch scoring
+  - `getAllSummaries` — summary aggregation
+  - `mergeReviewLogs` — merge + dedup + integrity verification
+
+**ผลลัพธ์:**
+- **67 tests ผ่านทั้งหมด** (จาก 37 เดิม — เพิ่ม 81%)
+- Coverage ครอบคลุม hooks, validation, และ review log utilities
+
+### 29c. Dark Mode Support
+
+**สิ่งที่ทำ:**
+- เปิด Tailwind `darkMode: 'class'` ใน `tailwind.config.js`
+- สร้าง `src/hooks/useDarkMode.js` — hook สำหรับ toggle dark mode:
+  - localStorage persistence
+  - System preference detection (`prefers-color-scheme: dark`)
+  - Auto-sync เมื่อ system preference เปลี่ยน
+- เพิ่ม global CSS dark mode overrides ใน `index.css` (~140 บรรทัด):
+  - Background, text, border inversions
+  - Colored backgrounds (indigo, emerald, amber, red, teal) → dark variants
+  - Form inputs, scrollbar, confidence classes, shadows, modals
+  - Code/kbd elements, table styling
+- เพิ่มปุ่ม toggle (Moon/Sun icon) ใน App.jsx header
+
+**ผลลัพธ์:**
+- Dark mode ทำงานทั้ง app โดยไม่ต้องแก้ไขทุก component
+- ใช้ CSS-based approach — maintainable, ไม่เพิ่ม `dark:` class ใน 15+ component files
+- Persist ค่าผ่าน localStorage, default ตาม system preference
+
+### 29d. Code Splitting (React.lazy + Suspense)
+
+**สิ่งที่ทำ:**
+- แปลง 8 heavy components เป็น `React.lazy` imports:
+  - `DataStatsPanel`, `BackupDashboard`, `AnalyticsDashboard`, `ProvinceHeatmap`
+  - `ReviewerLeaderboard`, `CrossReferencePanel`, `UploadPanel`, `AdminPanel`
+- ครอบด้วย `<Suspense>` + Thai loading fallback
+- Critical path components คงเป็น eager load: `ReviewCard`, `FilterBar`, `StatsBar`, `AuthGate`
+
+**ผลลัพธ์:**
+- Main bundle: **382KB → 234KB** (ลด 39%)
+- แยกเป็น 8 lazy chunks (6–27KB each)
+- Initial load เร็วขึ้นมาก — dashboard panels โหลดเมื่อต้องการ
+
+**Files ที่สร้าง/แก้ไข:**
+- `src/hooks/useThailandMap.js` (สร้างใหม่, 138 บรรทัด)
+- `src/hooks/useDarkMode.js` (สร้างใหม่, 43 บรรทัด)
+- `src/hooks/useThailandMap.test.js` (สร้างใหม่, 80 บรรทัด)
+- `src/utils/reviewLog.test.js` (ขยาย, +158 บรรทัด)
+- `src/components/ProvinceHeatmap.jsx` (refactored)
+- `src/components/BackupDashboard.jsx` (refactored)
+- `src/App.jsx` (dark mode toggle + lazy imports + Suspense)
+- `src/index.css` (dark mode overrides, +140 บรรทัด)
+- `tailwind.config.js` (darkMode: 'class')
+
+---
+
+### Phase 30: Test Expansion + Error Boundaries + Accessibility + Performance (24 มี.ค. 2569)
+
+**เป้าหมาย**: ขยาย test coverage, เพิ่ม error boundary ครบทุก component, ปรับปรุง accessibility สำหรับ screen reader, และ audit performance ด้วย React.memo/useMemo
+
+#### 30.1 Test Expansion (67 → 115 tests, +72%)
+- **submitReview.test.js** (ใหม่, 18 tests): ครอบคลุม `submitToGoogleForm`, `submitLoginEvent`, `submitLogoutEvent` — mock fetch, console, early returns, FormData construction, error handling
+- **validation.test.js** (+12 tests): edge cases — boundary values, coercion, multiple violations, null candidates, negative fields, no_stats
+- **reviewLog.test.js** (+18 tests): extended `validateEditValue` (NaN, Infinity, boundary), `getItemSummary` (consensus ratio, conflicts, edit conflicts), `computeAnomalyScore` (danger level, fast avg, nonexistent user), `verifyLogIntegrity` (empty log, multiple corrupted)
+
+#### 30.2 Error Boundaries — ครบทุก component
+- **AdminPanel**: เพิ่ม `ErrorBoundary compact` wrapper (เดิมไม่มี)
+- **UploadPanel**: เพิ่ม `ErrorBoundary compact` wrapper (เดิมไม่มี)
+- ก่อนหน้า: ReviewCard, DataStatsPanel, BackupDashboard, AnalyticsDashboard, ProvinceHeatmap, ReviewerLeaderboard, CrossReferencePanel + root App — รวม **10/10 components** มี error boundary
+
+#### 30.3 Accessibility Improvements
+- **FilterBar**: `<div>` → `<nav aria-label>`, aria-labels บน select ทั้ง 3 ตัว (สถานะ/จังหวัด/เขต), `aria-pressed` บน vote type tabs, `type="search"` + `aria-label` บน search input
+- **StatsBar**: `role="status"` + `aria-label` บน container, `role="progressbar"` + `aria-valuenow/min/max` บน progress bar, `aria-label` บน stat items
+- **App.jsx header**: `aria-label` บนปุ่ม dark mode/admin/upload/export, `aria-expanded` + `aria-haspopup` บน export menu, `alt` text บน user avatar, `aria-live="polite"` บน pagination counter, `aria-label` บนปุ่ม prev/next
+
+#### 30.4 Performance: React.memo Audit
+- **เพิ่ม React.memo**: CandidateTable, FieldRow, AuthGate (เดิมมีแค่ FilterBar, StatsBar)
+- **ย้าย `csvEsc`** ออกนอก component scope (ไม่ต้องสร้างใหม่ทุก render)
+- **สรุป**: ทุก component ที่รับ props จาก parent มี React.memo แล้ว — **7/7 leaf components** memoized
+- App.jsx: useCallback/useMemo ครบทุก handler + derived data อยู่แล้ว (ไม่ต้องเปลี่ยน)
+
+#### สรุปตัวเลข Phase 30
+| Metric | Before | After |
+|--------|--------|-------|
+| Unit tests | 67 | 115 (+72%) |
+| Error boundaries | 8/10 | 10/10 (100%) |
+| Aria labels | ~0 | 20+ attributes |
+| React.memo components | 2/7 | 7/7 (100%) |
+
+#### ไฟล์ที่แก้ไข
+- `src/utils/submitReview.test.js` (ใหม่, 150 บรรทัด)
+- `src/utils/validation.test.js` (+80 บรรทัด)
+- `src/utils/reviewLog.test.js` (+170 บรรทัด)
+- `src/components/AdminPanel.jsx` (ErrorBoundary wrapper)
+- `src/components/UploadPanel.jsx` (ErrorBoundary wrapper)
+- `src/components/FilterBar.jsx` (nav + aria-labels)
+- `src/components/StatsBar.jsx` (role + aria)
+- `src/components/CandidateTable.jsx` (React.memo)
+- `src/components/FieldRow.jsx` (React.memo)
+- `src/components/AuthGate.jsx` (React.memo)
+- `src/App.jsx` (aria-labels + csvEsc refactor)
+
+---
+
+## Phase 31: Cloud OCR Completion — API Key Fix + Dispatch ตาก & เพชรบูรณ์
+### 25–27 มีนาคม 2569 (วันที่ 42–44)
+
+**เป้าหมาย:** OCR ตากและเพชรบูรณ์ให้ครบ + เก็บ Performance & Cost Metrics สำหรับบทความวิจัย Q1 SJR
+
+**ปัญหาเดิม:**
+- ตาก: OCR ครบแค่ 36% (3,155/~3,762 records), เพชรบูรณ์: แค่ 2% (3,329/~6,750 records)
+- Gemini API Key ถูก revoke เพราะหลุดเข้า public repo ผ่านไฟล์ `cloud/_deploy.cmd`
+- Cloud Function ใช้งานไม่ได้จนกว่าจะแก้ API key
+
+### 31a. API Key Security Fix
+- สร้าง Gemini API Key ใหม่
+- แก้ `cloud/_deploy.cmd` — อ่าน key จาก `.env` แทน hardcode
+- เพิ่ม `cloud/_deploy.cmd` เข้า `.gitignore`
+- สร้าง `.githooks/pre-commit` — scan staged files สำหรับ pattern `AIzaSy` ป้องกัน key หลุดอีก
+- ตั้ง `git config core.hooksPath .githooks`
+- ทดสอบ key ใหม่: `scripts/_test_new_key.py` — ยืนยัน 3 models ทำงาน (gemini-2.5-flash, gemini-2.0-flash, gemini-2.0-flash-lite)
+
+### 31b. Cloud Function Redeploy
+- Deploy `ocr-worker` ใหม่ด้วย `--update-env-vars GEMINI_API_KEY=xxx,GCS_BUCKET=election69-ocr-results-th`
+- ยืนยัน function ทำงาน: ส่ง 1 page ทดสอบ → OK
+- Config: Gen2, Python 3.11, asia-southeast1, 512MB, timeout 540s
+
+### 31c. Dispatch ตาก (4 รอบ)
+| รอบ | Workers | ส่ง | สำเร็จ | ผิดพลาด | เวลา |
+|-----|---------|-----|--------|---------|------|
+| R1  | 30      | 619 | 538    | 81      | ~10 นาที |
+| R2  | 30      | 81  | 8      | 73      | ~2 นาที |
+| R3  | 10      | 30  | 18     | 12      | ~1 นาที |
+| R4  | 5       | 12  | 0      | 12      | ~1 นาที |
+
+**ผลลัพธ์ตาก:** 3,762 records (1,081 files) — **99.3% complete** (2,318/2,335 front pages)
+- เหลือ 17 หน้า: 9 persistent 503 (ไฟล์รวม ต.นาโบสถ์) + 3 PDF download failed + 5 station p5
+
+### 31d. Dispatch เพชรบูรณ์ (4 รอบ)
+| รอบ | Workers | ส่ง   | สำเร็จ | ผิดพลาด | เวลา |
+|-----|---------|-------|--------|---------|------|
+| R1  | 30      | 4,689 | 2,372  | 2,317   | ~74 นาที |
+| R2  | 30      | 2,317 | 348    | 1,969   | ~33 นาที |
+| R3  | 10      | 1,788 | 365    | 1,423   | ~33 นาที |
+| R4  | 5       | 1,423 | 155    | 1,268   | ~41 นาที |
+
+**ผลลัพธ์เพชรบูรณ์:** 6,750 records (1,106 files) — **80.1% complete** (5,094/6,362 front pages)
+- เหลือ 1,268 หน้า: 1,132 PDF download failed (ถาวร) + 136 persistent 503
+- PDF ที่ดาวน์โหลดไม่ได้กระจุกอยู่ในเขต 5-6 (อ.บึงสามพัน, อ.วิเชียรบุรี, อ.ศรีเทพ)
+
+### 31e. Error Analysis
+- สร้าง `scripts/_analyze_errors.py` — จำแนก error แยกประเภท:
+  - **HTTP 503 Service Unavailable** — Cloud Function scaling limit → retryable
+  - **HTTP 502 PDF download failed** — ไฟล์ต้นทางบน Google Drive เข้าไม่ได้ → ถาวร
+- ตาก: unique PDF fail file_ids = 1 (3 หน้า) + 503 = 9 (1 ไฟล์รวม)
+- เพชรบูรณ์: unique PDF fail file_ids = หลายสิบไฟล์ (1,132 หน้า) + 503 = 136
+
+### 31f. Collect & Merge Results
+- รัน `cloud/collect.py --province tak --merge` × 4 ครั้ง
+- รัน `cloud/collect.py --province phetchabun --merge` × 4 ครั้ง
+- Download จาก GCS bucket `gs://election69-ocr-results-th/`
+- Merge กับ JSON ท้องถิ่น, deduplicate
+
+### 31g. Performance & Cost Metrics (สำหรับบทความวิจัย Q1)
+- สร้าง `scripts/_ocr_metrics.py` — วิเคราะห์ metrics ครบถ้วน
+- สร้าง `scripts/_check_ocr_v2.py`, `scripts/_check_missing_front_pages.py` — ตรวจสอบ completion
+
+**สถิติ OCR สุดท้าย (3 จังหวัด รวม):**
+
+| จังหวัด | ไฟล์ PDF | ผลลัพธ์ OCR | หน้าข้อมูล (front) | ความสมบูรณ์ |
+|---------|---------|------------|-------------------|------------|
+| ชัยภูมิ | 263 | 5,895 | 5,595/5,595 | **100.0%** ✅ |
+| ตาก | 1,080 | 3,762 | 2,318/2,335 | **99.3%** ✅ |
+| เพชรบูรณ์ | 1,106 | 6,750 | 5,094/6,362 | **80.1%** |
+| **รวม** | **2,449** | **16,407** | **13,007/14,292** | **91.0%** |
+
+**ต้นทุนโดยประมาณ:**
+
+| รายการ | ต้นทุน |
+|--------|--------|
+| Gemini API (รวม retry) | ~$10.88 (~380 บาท) |
+| Cloud Functions | ~$3.25 (~114 บาท) |
+| Cloud Storage | ~$0.01 |
+| **รวมทั้งหมด** | **~$14.14 (~495 บาท)** |
+| **ต้นทุนต่อหน้า** | **$0.0011 (~0.04 บาท)** |
+
+**ความเร็ว:**
+- Cloud Function (20 workers): ~40-60 หน้า/นาที
+- Per-page latency: ~1-2 วินาที
+- เร็วกว่า local OCR: ~50-100 เท่า
+
+**Scripts สร้างใหม่:**
+`_test_new_key.py`, `_analyze_errors.py`, `_ocr_metrics.py`, `_check_ocr_v2.py`, `_check_missing_front_pages.py`, `_find_missing_pdfs.py`
+
+**Files ที่แก้ไข:**
+- `cloud/_deploy.cmd` (อ่าน key จาก .env)
+- `.gitignore` (เพิ่ม `cloud/_deploy.cmd`)
+- `.githooks/pre-commit` (สร้างใหม่ — API key scan)
+- `data/ocr_multimodel_tak.json` (3,155 → 3,762 records)
+- `data/ocr_multimodel_phetchabun.json` (3,329 → 6,750 records)
+
+---
+
 ## สรุป Timeline
 
 ```
@@ -818,8 +1306,15 @@
 13–15 มี.ค.    Production deploy, GitHub Pages, CI/CD               12+
 16–17 มี.ค.    PDF split 5,089 items + anomaly + backup dashboard   14+ (ข้ามคืน)
 19 มี.ค.       UI/UX polish + Data & Analytics + 4-source CrossRef  10+
+20–21 มี.ค.    ProvinceHeatmap SVG choropleth + BackupDashboard map 12+
+21–22 มี.ค.    UX improvements (confirmations, help, import/export)  6+
+22 มี.ค.       Google Drive links + Progress >100% + README v4.0    8+
+23 มี.ค.       Refactor hook + 67 tests + dark mode + code split    6+
+24 มี.ค.       115 tests + ErrorBoundary + a11y + React.memo      4+
+25–27 มี.ค.    API key fix + Cloud OCR dispatch ตาก/เพชรบูรณ์     10+
+               Collect + merge + metrics สำหรับบทความ Q1
 ─────────────  ─────────────────────────────────────────────────  ────────
-                                                        รวมประมาณ  266+ ชั่วโมง
+                                                        รวมประมาณ  312+ ชั่วโมง
 ```
 
 ---
@@ -850,8 +1345,10 @@
 │  ocr_multimodel.py — multi-model with fallback chain             │
 │  cloud/function/main.py — Cloud Function (serverless)            │
 │  cloud/dispatch.py — distributed dispatch                        │
+│  cloud/dispatch_missing.py — retry missing pages                  │
+│  cloud/collect.py — collect + merge from GCS                      │
 └──────────────────────────┬──────────────────────────────────────┘
-                           │ 12,376 records (3 provinces)
+                           │ 16,407 records (3 provinces)
                            ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                  Postprocessing Pipeline                          │
@@ -864,18 +1361,26 @@
                            │
               ┌────────────┼────────────┐
               ▼            ▼            ▼
-┌──────────────────┐ ┌──────────┐ ┌──────────────────────┐
-│ React Review App │ │ Citizen  │ │ Data Analysis        │
-│ (GitHub Pages)   │ │ Review   │ │ Dashboards           │
-│ - ReviewCard     │ │ (GitHub  │ │ - Anomaly (anomaly   │
-│ - DataStatsPanel │ │  Pages)  │ │   .html)             │
-│ - BackupDashboard│ │ - Google │ │ - Compare            │
-│ - AnomalyFlags   │ │   Auth   │ │ - Backup (integrated │
-│ - Validation     │ │ - Forms  │ │   into Review App)   │
-│ - CSV/JSON Export│ │          │ │                      │
-│ - Filter/Search  │ │          │ │                      │
-│ - CI/CD (Actions)│ │          │ │                      │
-└──────────────────┘ └──────────┘ └──────────────────────┘
+┌───────────────────────┐ ┌──────────┐ ┌──────────────────────┐
+│ React Review App      │ │ Citizen  │ │ Data Analysis        │
+│ (GitHub Pages)        │ │ Review   │ │ Dashboards           │
+│ - ReviewCard          │ │ (GitHub  │ │ - Anomaly (anomaly   │
+│ - CrossReferencePanel │ │  Pages)  │ │   .html)             │
+│   (4 sources)         │ │ - Google │ │ - Compare            │
+│ - DataStatsPanel      │ │   Auth   │ │ - Backup (integrated │
+│ - BackupDashboard     │ │ - Forms  │ │   into Review App)   │
+│   (Thailand SVG map)  │ │          │ │                      │
+│ - ProvinceHeatmap     │ │          │ │                      │
+│   (SVG choropleth)    │ │          │ │                      │
+│ - AnomalyFlags        │ │          │ │                      │
+│ - Validation (11 กฎ)  │ │          │ │                      │
+│ - CSV/JSON Export     │ │          │ │                      │
+│ - Filter/Search       │ │          │ │                      │
+│ - CI/CD (Actions)     │ │          │ │                      │
+│ - Dark Mode (toggle)  │ │          │ │                      │
+│ - Code Splitting      │ │          │ │                      │
+│   (React.lazy)        │ │          │ │                      │
+└───────────────────────┘ └──────────┘ └──────────────────────┘
 ```
 
 ---
@@ -885,7 +1390,8 @@
 | แหล่งข้อมูล | รายละเอียด |
 |-------------|-----------|
 | กกต. (ECT) | ผลเลือกตั้งระดับเขต, ข้อมูลผู้สมัคร, PDF สส.5/16, สส.5/18 |
-| Killernay | ข้อมูล ground truth ระดับหน่วยเลือกตั้ง (แบ่งเขต + บัญชีรายชื่อ) |
+| Killernay | OCR ground truth ระดับเขต (สส.6/1) — 397/400 เขต, cross-validated กับ Reporter DB |
+| Luengnat | Constituency-level dashboard — ECT + Drive + Killernay, 400 เขต |
 | Google Drive | จัดเก็บ PDF 149,936 ไฟล์ (77 จังหวัด) + single-page splits (5,089 ไฟล์) |
 | Google Cloud | Gemini API (OCR), Cloud Vision API, Cloud Functions |
 | GitHub Pages | Deploy อัตโนมัติผ่าน GitHub Actions |
@@ -903,9 +1409,11 @@
 7. **Name matching** — ชื่อผู้สมัคร OCR อาจสะกดต่างจาก ECT reference — ต้อง fuzzy matching
 8. **Incomplete ECT data** — ข้อมูล กกต. เป็น snapshot ขณะนับคะแนนยังไม่ครบ ทำให้ turnout % ต่ำผิดปกติ — ต้องกรอง anomaly flags ด้วย percent_counted
 9. **Multi-page PDF display** — ReviewCard แสดง PDF หน้าแรกเสมอ → แก้โดยตัดเป็น single-page + อัปโหลดแยก
+10. **API key leak** — hardcoded API key ใน `_deploy.cmd` หลุดเข้า public repo → key ถูก revoke → แก้ด้วย .env + .gitignore + pre-commit hook
+11. **PDF inaccessible on Drive** — บาง PDF บน Google Drive ดาวน์โหลดไม่ได้ (HTTP 502) → ต้องหา PDF จากแหล่งสำรอง (กกต. จังหวัด / Drive backup)
 
 ---
 
 *บันทึกนี้สร้างจากข้อมูล git history, file timestamps, และ code analysis*  
 *สร้างเมื่อ: 10 มีนาคม 2569*  
-*อัปเดตล่าสุด: 19 มีนาคม 2569 — เพิ่ม Phase 23 (Cross-Reference 4 แหล่งข้อมูล)*
+*อัปเดตล่าสุด: 27 มีนาคม 2569 — เพิ่ม Phase 31 (Cloud OCR Completion: API key fix, dispatch ตาก/เพชรบูรณ์ 4 รอบ, 16,407 records, cost $14.14)*
