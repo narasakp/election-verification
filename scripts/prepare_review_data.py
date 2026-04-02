@@ -749,6 +749,10 @@ def main():
         # Enrich with ECT reference + auto-fix candidates
         if ect_ref:
             _enrich_with_ect(item, ect_ref)
+        # Propagate data quality flags from source OCR
+        for _qflag in ('_c1_suspect', '_vote_remap_applied'):
+            if r.get(_qflag) is not None:
+                item[_qflag] = r[_qflag]
         review_items.append(item)
 
     # Filter out back pages with no data

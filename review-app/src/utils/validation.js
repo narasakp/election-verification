@@ -107,6 +107,22 @@ const rules = [
       return { id: 'candidate_mismatch', severity: 'warning', message: `จำนวนผู้สมัครไม่ตรง ECT: ${d._candidate_mismatch_detail || ''}` }
     return null
   },
+
+  // V12: ผู้มีสิทธิ (C1) ต้องสงสัย — OCR อ่านค่าผิดที่ทราบแล้ว
+  (d) => {
+    if (d._c1_suspect === 'systematic_285')
+      return { id: 'c1_suspect_systematic', severity: 'warning', message: 'ข้อมูลคุณภาพต่ำ: ผู้มีสิทธิ (C1) อาจอ่านผิดจาก OCR — ปัญหา systematic ที่ทราบแล้วในเพชรบูรณ์ เขต 3 (ค่า 285)' }
+    if (d._c1_suspect === 'c1_exceeds_c2')
+      return { id: 'c1_suspect_logic', severity: 'warning', message: 'ข้อมูลคุณภาพต่ำ: ผู้มีสิทธิ (C1) สูงกว่ามาแสดงตน (C2) ผิดปกติ — อาจเป็นปัญหา OCR' }
+    return null
+  },
+
+  // V13: คะแนนผู้สมัครถูกปรับแก้อัตโนมัติ (vote permutation remap)
+  (d) => {
+    if (d._vote_remap_applied)
+      return { id: 'vote_remap_applied', severity: 'info', message: `คะแนนผู้สมัครถูกปรับแก้ลำดับอัตโนมัติ (vote remap: ${d._vote_remap_applied}) — เนื่องจาก OCR อ่านตำแหน่งผิดพลาดแบบ systematic` }
+    return null
+  },
 ]
 
 export function validateItem(item) {

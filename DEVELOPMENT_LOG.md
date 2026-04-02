@@ -1867,6 +1867,70 @@ OCR (Gemini 2.5 Flash, Phase 32) อ่านคะแนนผู้สมั�
 
 ---
 
+## Phase 40 — Data Quality Notifications (2 เมษายน 2569)
+
+### เป้าหมาย
+แจ้งผู้ตรวจสอบข้อมูลเกี่ยวกับปัญหาคุณภาพ OCR ที่ทราบแล้วใน 3 ระดับ:
+1. **Per-record** — กล่องเตือนใน ReviewCard (validation rules)
+2. **Aggregate** — หมวดหมู่ใน AnomalySummaryPanel (anomaly scoring)
+
+### สิ่งที่ทำ
+
+#### 1. Propagate Data Quality Flags → review_data.json
+
+**ปัญหาที่พบ:** `_c1_suspect` และ `_vote_remap_applied` ถูก set ใน source OCR JSON (Phase 37–39) แต่ `prepare_review_data.py` ไม่ได้ copy ฟิลด์เหล่านี้ไปยัง review_data.json — ทำให้ validation rules อ่านไม่เจอ
+
+**แก้ไข:** เพิ่ม flag propagation loop ใน `prepare_review_data.py`:
+```python
+for _qflag in ('_c1_suspect', '_vote_remap_applied'):
+    if r.get(_qflag) is not None:
+        item[_qflag] = r[_qflag]
+```
+Rebuilt review_data.json — **9,215 items** พร้อม flags ครบ
+
+**ผลลัพธ์ flags ใน review_data.json:**
+| Flag | ค่า | จำนวน records |
+|------|-----|--------------|
+| `_c1_suspect` | `systematic_285` | 94 |
+| `_c1_suspect` | `c1_exceeds_c2` | 86 |
+| `_vote_remap_applied` | `z1_swap_1_8_9` | 250 |
+| `_vote_remap_applied` | `z2_permutation` | 255 |
+| `_vote_remap_applied` | `z5_full_permutation` | 211 |
+| `_vote_remap_applied` | `z7_swap_8_9` | 251 |
+| **รวม** | | **967 remap + 180 c1_suspect** |
+
+#### 2. Validation Rules V12–V13 (`review-app/src/utils/validation.js`)
+
+เพิ่ม 2 rules ใหม่ — แสดงใน **กล่อง "พบปัญหา N รายการ"** ด้านบน ReviewCard:
+
+- **V12** `_c1_suspect === 'systematic_285'` → ⚠️ warning: "ข้อมูลคุณภาพต่ำ: ผู้มีสิทธิ (C1) อาจอ่านผิดจาก OCR — ปัญหา systematic ที่ทราบแล้วในเพชรบูรณ์ เขต 3 (ค่า 285)"
+- **V12** `_c1_suspect === 'c1_exceeds_c2'` → ⚠️ warning: "ข้อมูลคุณภาพต่ำ: ผู้มีสิทธิ (C1) สูงกว่ามาแสดงตน (C2) ผิดปกติ — อาจเป็นปัญหา OCR"
+- **V13** `_vote_remap_applied` → ℹ️ info: "คะแนนผู้สมัครถูกปรับแก้ลำดับอัตโนมัติ (vote remap: {tag}) — เนื่องจาก OCR อ่านตำแหน่งผิดพลาดแบบ systematic"
+
+#### 3. Anomaly Score Rules M7, L4 (`review-app/src/utils/anomalyScore.js`)
+
+เพิ่ม 2 rules ใหม่ — แสดงใน **ภาพรวมข้อมูลผิดปกติ (AnomalySummaryPanel)**:
+
+- **M7** `_c1_suspect` → severity `medium` (8 pts): "OCR คุณภาพต่ำ: ผู้มีสิทธิ์ (C1) อาจอ่านผิด"
+  - เหตุผล: ค่าผิดยังอยู่ในระบบ — reviewer ต้องระวัง ไม่ควรใช้ค่า registered_voters จากเขต 3 เพชรบูรณ์
+- **L4** `_vote_remap_applied` → severity `low` (3 pts): "OCR vote permutation — ปรับแก้อัตโนมัติแล้ว"
+  - เหตุผล: แก้แล้วแต่แจ้ง transparency — ข้อมูลผ่านการ remap ก่อนแสดงผล
+
+### ผลรวม
+
+| ระดับ | Component | สิ่งที่แสดง |
+|-------|-----------|------------|
+| Per-record | ReviewCard warning box | warning สีเหลือง (c1_suspect) / info สีน้ำเงิน (vote_remap) |
+| Aggregate | AnomalySummaryPanel | medium: ~180 records / low: ~967 records |
+
+### ไฟล์ที่แก้ไข
+- `scripts/prepare_review_data.py` — propagate `_c1_suspect`, `_vote_remap_applied`
+- `review-app/src/utils/validation.js` — V12, V13
+- `review-app/src/utils/anomalyScore.js` — M7, L4
+- `review-app/public/data/review_data.json` — rebuilt with flags
+
+---
+
 *บันทึกนี้สร้างจากข้อมูล git history, file timestamps, และ code analysis*  
 *สร้างเมื่อ: 10 มีนาคม 2569*  
-*อัปเดตล่าสุด: 2 เมษายน 2569 — Phase 35–39*
+*อัปเดตล่าสุด: 2 เมษายน 2569 — Phase 40*
