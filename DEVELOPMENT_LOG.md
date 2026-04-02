@@ -44,6 +44,7 @@
 - [Phase 32: OCR Error Recovery — 503/502 Retry + Bug Fix + Near-100% Completion](#phase-32-ocr-error-recovery--503502-retry--bug-fix--near-100-completion) — 31 มี.ค.
 - [Phase 33: Data Integrity & Cross-Reference — Final Validation Pipeline](#phase-33-data-integrity--cross-reference--final-validation-pipeline) — 31 มี.ค.
 - [Phase 34: Review Throughput & User Experience — Bulk Operations & Anomaly Summary](#phase-34-review-throughput--user-experience--bulk-operations--anomaly-summary) — 1 เม.ย.
+- [Phase 44: Re-OCR บัญชีรายชื่อ n=33 — Missing Middle Page Fix](#phase-44--re-ocr-บัญชีรายชื่อ-n33--missing-middle-page-fix) — 2 เม.ย.
 - [สรุป Timeline](#สรุป-timeline)
 - [สถาปัตยกรรมระบบสุดท้าย](#สถาปัตยกรรมระบบสุดท้าย)
 - [ข้อมูลอ้างอิงภายนอก](#ข้อมูลอ้างอิงภายนอก)
@@ -2057,6 +2058,46 @@ Rebuilt review_data.json — **9,215 items** พร้อม flags ครบ
 
 ---
 
+---
+
+## Phase 44 — Re-OCR บัญชีรายชื่อ n=33 — Missing Middle Page Fix (2 เมษายน 2569)
+
+**ปัญหา:** 1,719 บัญชีรายชื่อ records มีผู้สมัคร n=33 แทนที่จะเป็น n=57
+
+**Root cause ที่ค้นพบใน Phase 43:** OCR pipeline ข้าม even-numbered middle pages ใน 3-page บัญชีรายชื่อ forms อย่างเป็นระบบ
+- Pattern: `_merged_pages=[13,15]` → page 14 (พรรค 11–34) ไม่ถูก OCR
+- ผลลัพธ์: ได้ pages 1+3 (พรรค 1–10 + พรรค 35–57) = 33 candidates แทน 57
+
+**วิธีแก้:**
+- เขียน `scripts/_reocr_n33_missing_page.py` — ดาวน์โหลด PDF ซ้ำ, OCR หน้ากลางที่หาย, merge candidates
+- เขียน `data/_reocr_n33_targets.json` — 1,719 targets จาก 274 unique PDFs
+
+| จังหวัด | Records | PDFs |
+|--------|---------|------|
+| ชัยภูมิ | 1,012 | — |
+| เพชรบูรณ์ | 580 | — |
+| ตาก | 127 | — |
+| **รวม** | **1,719** | **274** |
+
+**ผลลัพธ์ re-OCR:** *(จะอัปเดตหลัง script เสร็จ)*
+- Updated: TBD
+- Failed: TBD
+- n=33 ที่เหลือ: TBD
+- n=57 ใหม่: TBD
+
+**ปัญหาระหว่างทาง:**
+- GEMINI_API_KEY ถูก expose ใน task log → Google ระงับ key อัตโนมัติ (403 Forbidden)
+- แก้: สร้าง key ใหม่ และอัปเดต `.env`
+- `gemini-2.5-flash` คืน 400 intermittently → fallback to `gemini-2.5-flash-lite` ทำงานได้
+
+**ไฟล์ที่แก้ไข:**
+- `scripts/_reocr_n33_missing_page.py` — สร้างใหม่ (script หลัก)
+- `scripts/_verify_reocr_n33.py` — สร้างใหม่ (verify script)
+- `data/ocr_multimodel_*.json` — backup `.pre_reocr_n33`, updated *(หลัง re-OCR เสร็จ)*
+- `review-app/public/data/review_data.json` — rebuilt *(หลัง prepare_review_data.py)*
+
+---
+
 *บันทึกนี้สร้างจากข้อมูล git history, file timestamps, และ code analysis*  
 *สร้างเมื่อ: 10 มีนาคม 2569*  
-*อัปเดตล่าสุด: 2 เมษายน 2569 — Phase 43*
+*อัปเดตล่าสุด: 2 เมษายน 2569 — Phase 44 (in progress)*
