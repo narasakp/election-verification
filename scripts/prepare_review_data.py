@@ -382,9 +382,11 @@ def _infer_station_no_from_filename(items):
     """Infer station_no from filename patterns for records that lack it.
 
     Common patterns: หน่วยที่ X, หน่วย X, หน่วยที่X
+    Also infers from page position for multi-station PDFs (total_pages > 4).
     """
     import re
-    inferred = 0
+    inferred_name = 0
+    inferred_page = 0
     for item in items:
         if item.get('ocr_station_no') or item.get('station_no'):
             continue
@@ -398,15 +400,37 @@ def _infer_station_no_from_filename(items):
                 stn = f"ชุด{m.group(1)}"
                 item['ocr_station_no'] = stn
                 item['_station_no_inferred'] = True
-                inferred += 1
+                inferred_name += 1
                 continue
         if m:
             stn = m.group(1)
             item['ocr_station_no'] = stn
             item['_station_no_inferred'] = True
-            inferred += 1
-    if inferred:
-        print(f"  [search] Inferred station_no from filename for {inferred} records")
+            inferred_name += 1
+            continue
+
+        # Infer from page position for multi-station PDFs
+        total_pages = item.get('total_pages')
+        page = item.get('page')
+        if total_pages and page and isinstance(total_pages, (int, float)) and int(total_pages) > 4:
+            vt = item.get('vote_type', '')
+            if 'แบ่งเขต' in vt:
+                pps = 2  # 2 pages per station (front + back)
+            elif 'บัญชีรายชื่อ' in vt:
+                pps = 4  # 4 pages per station
+            else:
+                continue
+            calc_stn = (int(page) - 1) // pps + 1
+            max_stn = int(total_pages) // pps
+            calc_stn = min(calc_stn, max(max_stn, 1))
+            item['ocr_station_no'] = str(calc_stn)
+            item['_station_no_from_page'] = True
+            inferred_page += 1
+
+    if inferred_name:
+        print(f"  [search] Inferred station_no from filename for {inferred_name} records")
+    if inferred_page:
+        print(f"  [search] Inferred station_no from page position for {inferred_page} multi-station records")
     return items
 
 
@@ -546,15 +570,17 @@ def _enrich_with_ect(item, ect_ref):
             matched_nos.add(num)
             kept.append(c)
         else:
-            # Not in ECT [*] ghost candidate?
+            # Not in ECT [*] ghost or adjacent-station candidate
             name = c.get('name') or ''
             votes = c.get('votes')
             is_ghost = (not name.strip()) or (votes is None) or (votes == 0)
             if is_ghost:
                 removed.append(c)
             else:
-                # Has real votes but unknown number [*] keep but flag
+                # Has real votes but not in ECT — likely from adjacent station
+                # in multi-station PDF. Flag but collect separately.
                 c['_ect_matched'] = False
+                c['_ect_unmatched'] = True
                 kept.append(c)
 
     if removed:
@@ -573,11 +599,50 @@ def _enrich_with_ect(item, ect_ref):
                 '_ect_filled': True,   # not in OCR, filled from ECT
             })
 
+    # --- Phase 2b: Remove unmatched candidates if we have excess ---
+    # These are likely from adjacent stations in multi-station PDFs
+    unmatched = [c for c in kept if c.get('_ect_unmatched')]
+    if unmatched and len(kept) > ect_count:
+        # Remove unmatched candidates to trim down to ECT count
+        kept = [c for c in kept if not c.get('_ect_unmatched')]
+        removed.extend(unmatched)
+        item['_adjacent_station_candidates_removed'] = len(unmatched)
+        if not item.get('_candidates_auto_fixed'):
+            item['_candidates_auto_fixed'] = True
+            item['_candidates_removed'] = len(unmatched)
+
     # --- Phase 3: Sort by candidate number ---
     def sort_key(c):
         n = c.get('number')
         return (n if isinstance(n, int) else 9999, str(c.get('name', '')))
     kept.sort(key=sort_key)
+
+    # --- Phase 3b: Dedup + cap at ECT count ---
+    # Multi-station PDFs can produce duplicate candidate numbers from adjacent
+    # stations (same constituency, different station). Remove duplicates and
+    # cap at ECT count.
+    if len(kept) > ect_count:
+        seen_nos = set()
+        deduped = []
+        dup_count = 0
+        for c in kept:
+            no = c.get('number')
+            if no is not None and no in seen_nos:
+                dup_count += 1
+                continue
+            if no is not None:
+                seen_nos.add(no)
+            deduped.append(c)
+        if dup_count:
+            item['_adjacent_station_duplicates_removed'] = dup_count
+        # If still over, cap at ect_count (take first N by number)
+        if len(deduped) > ect_count:
+            excess = len(deduped) - ect_count
+            item['_adjacent_station_capped'] = excess
+            deduped = deduped[:ect_count]
+        kept = deduped
+        if not item.get('_candidates_auto_fixed') and (dup_count or len(kept) < len(item.get('candidates', []))):
+            item['_candidates_auto_fixed'] = True
 
     item['candidates'] = kept
 
