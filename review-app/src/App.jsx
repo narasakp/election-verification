@@ -13,11 +13,12 @@ const ReviewerLeaderboard = lazy(() => import('./components/ReviewerLeaderboard'
 const CrossReferencePanel = lazy(() => import('./components/CrossReferencePanel'))
 const UploadPanel = lazy(() => import('./components/UploadPanel'))
 const AdminPanel = lazy(() => import('./components/AdminPanel'))
+const AnomalySummaryPanel = lazy(() => import('./components/AnomalySummaryPanel'))
 import useAuth from './hooks/useAuth'
 import useDarkMode from './hooks/useDarkMode'
 import { submitToGoogleForm, submitLoginEvent, submitLogoutEvent } from './utils/submitReview'
 import { getReviewLog, appendReviewLog, getAllSummaries, getUserReviewKey, checkRateLimit, recordReviewTiming, validateEditValue, getAllAnomalyScores, mergeReviewLogs, verifyLogIntegrity } from './utils/reviewLog'
-import { validateItem, getWorstSeverity } from './utils/validation'
+import { validateItem, getWorstSeverity, isLowRiskItem } from './utils/validation'
 import { computeItemAnomalyScore } from './utils/anomalyScore'
 import { ChevronLeft, ChevronRight, Download, Upload, FolderUp, LogOut, ShieldCheck, ChevronDown, Filter, Moon, Sun } from 'lucide-react'
 
@@ -52,6 +53,10 @@ function App() {
   const [showAdminPanel, setShowAdminPanel] = useState(false)
   const [anomalyFlags, setAnomalyFlags] = useState({})
   const [anomalyMeta, setAnomalyMeta] = useState(null)
+  const [autoApproveEnabled, setAutoApproveEnabled] = useState(false)
+  const [bulkOperationInProgress, setBulkOperationInProgress] = useState(false)
+  const [priorityQueueEnabled, setPriorityQueueEnabled] = useState(false)
+  const [activeDashboard, setActiveDashboard] = useState(null)
   const exportMenuRef = React.useRef(null)
 
   // Close export menu on outside click
@@ -207,19 +212,32 @@ function App() {
     })
   }, [allItems, review, filterStatus, filterProvince, filterConstituency, filterVoteType, searchText, anomalyFlags])
 
-  // Anomaly score map — computed for filtered items, sorted when anomaly filter is active
+  // Anomaly score map — computed for filtered items, sorted when anomaly filter is active or priority queue enabled
   const { sortedFilteredItems, anomalyScoreMap } = useMemo(() => {
     const scoreMap = {}
     filteredItems.forEach(item => {
       const flags = anomalyFlags[`${item.province}_${item.constituency}`] || null
       scoreMap[item.id] = computeItemAnomalyScore(item, flags)
     })
+    
+    let sorted = [...filteredItems]
     if (filterStatus === 'anomaly') {
-      const sorted = [...filteredItems].sort((a, b) => (scoreMap[b.id]?.score || 0) - (scoreMap[a.id]?.score || 0))
-      return { sortedFilteredItems: sorted, anomalyScoreMap: scoreMap }
+      // Sort by anomaly score (high to low)
+      sorted.sort((a, b) => (scoreMap[b.id]?.score || 0) - (scoreMap[a.id]?.score || 0))
+    } else if (priorityQueueEnabled && filterStatus === 'pending') {
+      // Priority queue: sort pending items by anomaly score (high anomaly first)
+      sorted.sort((a, b) => (scoreMap[b.id]?.score || 0) - (scoreMap[a.id]?.score || 0))
+    } else {
+      // Default: items with online image (pdf_url) first, no-image items last
+      sorted.sort((a, b) => {
+        if (a.pdf_url && !b.pdf_url) return -1
+        if (!a.pdf_url && b.pdf_url) return 1
+        return 0
+      })
     }
-    return { sortedFilteredItems: filteredItems, anomalyScoreMap: scoreMap }
-  }, [filteredItems, anomalyFlags, filterStatus])
+
+    return { sortedFilteredItems: sorted, anomalyScoreMap: scoreMap }
+  }, [filteredItems, anomalyFlags, filterStatus, priorityQueueEnabled])
 
   // Reset index when filter changes
   useEffect(() => { setCurrentIndex(0) }, [filterStatus, filterProvince, filterConstituency, filterVoteType, searchText])
@@ -308,6 +326,49 @@ function App() {
     }
   }, [allItems, review, user, sortedFilteredItems.length])
 
+  // Bulk operations
+  const bulkAutoApprove = useCallback(async () => {
+    if (!autoApproveEnabled) return
+    
+    setBulkOperationInProgress(true)
+    const email = user?.email || 'anonymous'
+    let approvedCount = 0
+    
+    for (const item of sortedFilteredItems) {
+      const rev = review[item.id] || {}
+      if (rev.status === 'pending' && isLowRiskItem(item)) {
+        // Auto-approve low-risk pending items
+        setItemStatus(item.id, 'confirmed')
+        approvedCount++
+        
+        // Small delay to avoid overwhelming the system
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+    }
+    
+    setBulkOperationInProgress(false)
+    alert(`✅ Auto-approved ${approvedCount} low-risk items`)
+  }, [sortedFilteredItems, review, user, autoApproveEnabled, setItemStatus])
+
+  const bulkConfirmAll = useCallback(async () => {
+    if (!window.confirm(`⚠️ Bulk Confirm All\n\nยืนยันทั้งหมด ${sortedFilteredItems.length} รายการในหน้าจอนี้?\n\nคำเตือน: การกระทำนี้ไม่สามารถยกเลิกได้`)) return
+    
+    setBulkOperationInProgress(true)
+    let confirmedCount = 0
+    
+    for (const item of sortedFilteredItems) {
+      const rev = review[item.id] || {}
+      if (rev.status === 'pending') {
+        setItemStatus(item.id, 'confirmed')
+        confirmedCount++
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+    }
+    
+    setBulkOperationInProgress(false)
+    alert(`✅ Confirmed ${confirmedCount} items`)
+  }, [sortedFilteredItems, review, setItemStatus])
+
   // Keyboard navigation
   useEffect(() => {
     const handler = (e) => {
@@ -342,10 +403,37 @@ function App() {
           }
         }
       }
+      
+      // Bulk shortcuts (Ctrl key required for safety)
+      if (e.ctrlKey) {
+        if (e.key === 'a') {
+          e.preventDefault()
+          if (autoApproveEnabled) {
+            bulkAutoApprove()
+          } else {
+            alert('⚠️ Auto-approve is disabled. Enable it first with Ctrl+A (hold Ctrl, press A twice)')
+          }
+        }
+        if (e.key === 'b') {
+          e.preventDefault()
+          bulkConfirmAll()
+        }
+        if (e.key === 'p') {
+          e.preventDefault()
+          setPriorityQueueEnabled(v => !v)
+          alert(`🔄 Priority queue ${!priorityQueueEnabled ? 'enabled' : 'disabled'}`)
+        }
+      }
+      
+      // Toggle shortcuts (no Ctrl required)
+      if (e.key === 'A' && e.shiftKey) {
+        setAutoApproveEnabled(v => !v)
+        alert(`🤖 Auto-approve ${!autoApproveEnabled ? 'enabled' : 'disabled'}`)
+      }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [goNext, goPrev, currentItem, setItemStatus])
+  }, [goNext, goPrev, currentItem, setItemStatus, autoApproveEnabled, bulkAutoApprove, bulkConfirmAll, priorityQueueEnabled])
 
   const setItemNote = useCallback((itemId, note) => {
     setReview(prev => ({
@@ -698,6 +786,31 @@ function App() {
             <button onClick={() => setShowAdminPanel(v => !v)} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-amber-500/80 hover:bg-amber-500 rounded-lg text-xs font-medium transition" title="Admin Panel" aria-label="เปิดแผงผู้ดูแลระบบ">
               🛡️ Admin
             </button>
+            
+            {/* Phase 34: Review Throughput Controls */}
+            <button 
+              onClick={() => setAutoApproveEnabled(v => !v)} 
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition ${
+                autoApproveEnabled ? 'bg-green-500/80 hover:bg-green-500 text-white' : 'bg-white/15 hover:bg-white/25 text-white'
+              }`} 
+              title="Auto-approve low-risk items (Shift+A to toggle)"
+              aria-label="เปิด/ปิด auto-approve"
+              disabled={bulkOperationInProgress}
+            >
+              🤖 Auto-approve {autoApproveEnabled ? 'ON' : 'OFF'}
+            </button>
+            
+            <button 
+              onClick={() => setPriorityQueueEnabled(v => !v)} 
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition ${
+                priorityQueueEnabled ? 'bg-orange-500/80 hover:bg-orange-500 text-white' : 'bg-white/15 hover:bg-white/25 text-white'
+              }`} 
+              title="Priority queue for high-anomaly items (Ctrl+P to toggle)"
+              aria-label="เปิด/ปิด priority queue"
+            >
+              🔄 Priority {priorityQueueEnabled ? 'ON' : 'OFF'}
+            </button>
+            
             <button onClick={() => setShowUpload(true)} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-emerald-500/80 hover:bg-emerald-500 rounded-lg text-xs font-medium transition" aria-label="อัปโหลดไฟล์">
               <FolderUp size={13} /> อัปโหลด
             </button>
@@ -737,6 +850,25 @@ function App() {
                     <div className="font-medium"><Filter size={12} className="inline mr-1" /> CSV (เฉพาะที่กรอง)</div>
                     <div className="text-[10px] text-gray-400 mt-0.5">เหมือน CSV ด้านบน แต่เฉพาะรายการที่ตรงกับ filter ที่เลือกอยู่</div>
                   </button>
+                  
+                  {/* Phase 34: Bulk Operations */}
+                  <div className="px-4 py-1.5 text-[10px] text-gray-400 uppercase bg-amber-50 font-semibold border-t border-gray-200">⚡ Bulk Operations</div>
+                  <button 
+                    onClick={bulkAutoApprove} 
+                    disabled={!autoApproveEnabled || bulkOperationInProgress} 
+                    className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition border-b border-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <div className="font-medium">🤖 Auto-approve Low-risk ({sortedFilteredItems.filter(item => (review[item.id]?.status || 'pending') === 'pending' && isLowRiskItem(item)).length} รายการ)</div>
+                    <div className="text-[10px] text-gray-400 mt-0.5">ยืนยันอัตโนมัติสำหรับรายการที่ไม่มี error/warning — ใช้ Ctrl+A</div>
+                  </button>
+                  <button 
+                    onClick={bulkConfirmAll} 
+                    disabled={bulkOperationInProgress} 
+                    className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <div className="font-medium">✅ Bulk Confirm All ({sortedFilteredItems.filter(item => (review[item.id]?.status || 'pending') === 'pending').length} รายการ)</div>
+                    <div className="text-[10px] text-gray-400 mt-0.5">ยืนยันทั้งหมดในหน้าจอนี้ — ใช้ Ctrl+B</div>
+                  </button>
                 </div>
               )}
             </div>
@@ -751,6 +883,66 @@ function App() {
           </div>
         </div>
       </header>
+
+      {/* Dashboard Tab Bar */}
+      {(() => {
+        const tabs = [
+          { key: 'stats',       label: '📊 สถิติ' },
+          { key: 'anomaly',     label: '🚨 ผิดปกติ', filterShortcut: 'anomaly_summary' },
+          { key: 'backup',      label: '💾 Backup' },
+          { key: 'analytics',   label: '📈 Analytics' },
+          { key: 'heatmap',     label: '🗺️ แผนที่' },
+          { key: 'leaderboard', label: '🏆 ผู้ตรวจ' },
+          { key: 'crossref',    label: '🔗 Cross-Ref' },
+        ]
+        return (
+          <div className="max-w-[1440px] mx-auto px-4 py-1.5">
+            <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-xl px-3 py-1.5 shadow-sm overflow-x-auto">
+              {tabs.map(t => {
+                const isActive = t.filterShortcut
+                  ? filterStatus === t.filterShortcut
+                  : activeDashboard === t.key
+                return (
+                  <button
+                    key={t.key}
+                    onClick={() => {
+                      if (t.filterShortcut) {
+                        setFilterStatus(prev => prev === t.filterShortcut ? 'all' : t.filterShortcut)
+                        setActiveDashboard(null)
+                      } else {
+                        setActiveDashboard(prev => prev === t.key ? null : t.key)
+                        if (filterStatus === 'anomaly_summary') setFilterStatus('all')
+                      }
+                    }}
+                    className={`whitespace-nowrap px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                      isActive
+                        ? t.filterShortcut
+                          ? 'bg-red-600 text-white shadow-sm'
+                          : 'bg-indigo-600 text-white shadow-sm'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                )
+              })}
+            </div>
+
+            {activeDashboard && (
+              <Suspense fallback={<div className="mt-2 bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-400 animate-pulse">กำลังโหลด…</div>}>
+                <div className="mt-2 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                  {activeDashboard === 'stats'       && <DataStatsPanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} anomalyMeta={anomalyMeta} />}
+                  {activeDashboard === 'backup'      && <BackupDashboard />}
+                  {activeDashboard === 'analytics'   && <AnalyticsDashboard allItems={allItems} review={review} reviewLog={reviewLog} anomalyFlags={anomalyFlags} />}
+                  {activeDashboard === 'heatmap'     && <ProvinceHeatmap allItems={allItems} review={review} />}
+                  {activeDashboard === 'leaderboard' && <ReviewerLeaderboard reviewLog={reviewLog} allItems={allItems} review={review} />}
+                  {activeDashboard === 'crossref'    && <CrossReferencePanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} anomalyMeta={anomalyMeta} />}
+                </div>
+              </Suspense>
+            )}
+          </div>
+        )
+      })()}
 
       {/* Filter bar */}
       <FilterBar
@@ -770,52 +962,50 @@ function App() {
         setSearchText={setSearchText}
       />
 
-      {/* Dashboard Panels (lazy-loaded) */}
-      <Suspense fallback={<div className="max-w-[1440px] mx-auto px-4 mt-3"><div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center text-gray-400 animate-pulse">กำลังโหลดแดชบอร์ด…</div></div>}>
-        <div className="max-w-[1440px] mx-auto px-4 mt-3">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden divide-y divide-gray-100">
-            <DataStatsPanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} anomalyMeta={anomalyMeta} />
-            <BackupDashboard />
-            <AnalyticsDashboard allItems={allItems} review={review} reviewLog={reviewLog} anomalyFlags={anomalyFlags} />
-            <ProvinceHeatmap allItems={allItems} review={review} />
-            <ReviewerLeaderboard reviewLog={reviewLog} allItems={allItems} review={review} />
-            <CrossReferencePanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} anomalyMeta={anomalyMeta} />
+      {/* Navigation */}
+      {filterStatus !== 'anomaly_summary' && (
+        <div className="max-w-[1440px] mx-auto px-4 py-3">
+          <div className="flex items-center justify-between bg-white rounded-xl shadow-sm border border-gray-200 px-4 py-2.5">
+            <button onClick={goPrev} disabled={currentIndex === 0}
+              aria-label="หน้าก่อนหน้า"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-100 disabled:opacity-30 transition">
+              <ChevronLeft size={16} /> ก่อนหน้า
+            </button>
+            <span className="text-sm text-gray-600 font-medium flex items-center gap-2" aria-live="polite" aria-atomic="true">
+              {sortedFilteredItems.length > 0 ? `${currentIndex + 1} / ${sortedFilteredItems.length}` : 'ไม่พบข้อมูล'}
+              {filterStatus === 'anomaly' && currentItem && anomalyScoreMap[currentItem.id] && (
+                <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                  anomalyScoreMap[currentItem.id].score >= 50 ? 'bg-red-600 text-white' :
+                  anomalyScoreMap[currentItem.id].score >= 30 ? 'bg-orange-500 text-white' :
+                  anomalyScoreMap[currentItem.id].score >= 15 ? 'bg-yellow-500 text-white' :
+                  'bg-blue-500 text-white'
+                }`}>
+                  🚨 {anomalyScoreMap[currentItem.id].score}
+                </span>
+              )}
+            </span>
+            <button onClick={goNext} disabled={currentIndex >= sortedFilteredItems.length - 1}
+              aria-label="หน้าถัดไป"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-100 disabled:opacity-30 transition">
+              ถัดไป <ChevronRight size={16} />
+            </button>
           </div>
         </div>
-      </Suspense>
-
-      {/* Navigation */}
-      <div className="max-w-[1440px] mx-auto px-4 py-3">
-        <div className="flex items-center justify-between bg-white rounded-xl shadow-sm border border-gray-200 px-4 py-2.5">
-          <button onClick={goPrev} disabled={currentIndex === 0}
-            aria-label="หน้าก่อนหน้า"
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-100 disabled:opacity-30 transition">
-            <ChevronLeft size={16} /> ก่อนหน้า
-          </button>
-          <span className="text-sm text-gray-600 font-medium flex items-center gap-2" aria-live="polite" aria-atomic="true">
-            {sortedFilteredItems.length > 0 ? `${currentIndex + 1} / ${sortedFilteredItems.length}` : 'ไม่พบข้อมูล'}
-            {filterStatus === 'anomaly' && currentItem && anomalyScoreMap[currentItem.id] && (
-              <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                anomalyScoreMap[currentItem.id].score >= 50 ? 'bg-red-600 text-white' :
-                anomalyScoreMap[currentItem.id].score >= 30 ? 'bg-orange-500 text-white' :
-                anomalyScoreMap[currentItem.id].score >= 15 ? 'bg-yellow-500 text-white' :
-                'bg-blue-500 text-white'
-              }`}>
-                🚨 {anomalyScoreMap[currentItem.id].score}
-              </span>
-            )}
-          </span>
-          <button onClick={goNext} disabled={currentIndex >= sortedFilteredItems.length - 1}
-            aria-label="หน้าถัดไป"
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-100 disabled:opacity-30 transition">
-            ถัดไป <ChevronRight size={16} />
-          </button>
-        </div>
-      </div>
+      )}
 
       {/* Main content */}
       <main className="max-w-[1440px] mx-auto px-4">
-        {currentItem ? (
+        {filterStatus === 'anomaly_summary' ? (
+          <Suspense fallback={<div className="text-center py-20 text-gray-400 animate-pulse">กำลังโหลดภาพรวมผิดปกติ…</div>}>
+            <AnomalySummaryPanel 
+              allItems={allItems}
+              anomalyScoreMap={anomalyScoreMap}
+              anomalyFlags={anomalyFlags}
+              filterProvince={filterProvince}
+              filterConstituency={filterConstituency}
+            />
+          </Suspense>
+        ) : currentItem ? (
           <ReviewCard
             item={currentItem}
             review={getReview(currentItem.id)}
@@ -835,16 +1025,18 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 py-1.5 text-center text-[11px] text-gray-500 z-40">
-        <span className="inline-flex items-center gap-3 flex-wrap justify-center">
-          <span>←→ / <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">j</kbd> <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">k</kbd> เลื่อน</span>
-          <span><kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">1</kbd> ยืนยัน</span>
-          <span><kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">2</kbd> ตรวจอีกรอบ</span>
-          <span><kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">3</kbd> ใช้ไม่ได้</span>
-          <span><kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">r</kbd> รีเซ็ต</span>
-          <span><kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">Esc</kbd> ออกจากช่อง</span>
-        </span>
-      </footer>
+      {filterStatus !== 'anomaly_summary' && (
+        <footer className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 py-1.5 text-center text-[11px] text-gray-500 z-40">
+          <span className="inline-flex items-center gap-3 flex-wrap justify-center">
+            <span>←→ / <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">j</kbd> <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">k</kbd> เลื่อน</span>
+            <span><kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">1</kbd> ยืนยัน</span>
+            <span><kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">2</kbd> ตรวจอีกรอบ</span>
+            <span><kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">3</kbd> ใช้ไม่ได้</span>
+            <span><kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">r</kbd> รีเซ็ต</span>
+            <span><kbd className="px-1 py-0.5 bg-gray-100 rounded text-[10px] font-mono">Esc</kbd> ออกจากช่อง</span>
+          </span>
+        </footer>
+      )}
 
       {/* Rate limit warning toast (F2) */}
       {rateLimitWarning && (

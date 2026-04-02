@@ -17,7 +17,7 @@ function ProgressRing({ percent, size = 40, strokeWidth = 4, color = '#4f46e5' }
 }
 
 function DataStatsPanelInner({ allItems, review, anomalyFlags, anomalyMeta }) {
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(true)
 
   const provStats = useMemo(() => {
     const map = {}
@@ -111,8 +111,7 @@ function DataStatsPanelInner({ allItems, review, anomalyFlags, anomalyMeta }) {
 
   return (
     <div>
-      <div className="max-w-[1440px] mx-auto px-4">
-        <button
+      <button
           onClick={() => setExpanded(v => !v)}
           className="w-full flex items-center gap-2.5 py-3 text-sm font-semibold text-indigo-700 hover:text-indigo-900 transition group"
         >
@@ -326,7 +325,6 @@ function DataStatsPanelInner({ allItems, review, anomalyFlags, anomalyMeta }) {
             })}
           </div>
         )}
-      </div>
     </div>
   )
 }

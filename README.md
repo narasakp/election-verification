@@ -35,12 +35,13 @@ For official and authoritative results, please always refer to the original docu
 | สำรองข้อมูลบน Google Drive | **149,936** / 147,603 ที่คาดไว้ (101.6%) |
 | จังหวัดที่ผ่าน OCR | **3** จังหวัด (ชัยภูมิ, ตาก, เพชรบูรณ์) |
 | เขตเลือกตั้งที่มี OCR | **16** เขต |
-| รายการ OCR (records) | **12,376** records |
-| รายการรอตรวจสอบ (review items) | **6,111** items |
+| รายการ OCR (records) | **17,628** records |
+| รายการรอตรวจสอบ (review items) | **10,238** items |
+| Single-page PDF splits | **5,357+** ไฟล์ (ชัยภูมิ+ตากครบ 100%, เพชรบูรณ์กำลังดำเนินการ) |
 | แหล่งข้อมูล Cross-Reference | **4** แหล่ง (OCR ของเรา, กกต., Killernay, Luengnat) |
 | เขตเลือกตั้งใน Cross-Reference | **401** เขต (ทั้งแบ่งเขต + บัญชีรายชื่อ) |
-| Python scripts | **60+** scripts |
-| ชั่วโมงพัฒนา | **256+** ชั่วโมง |
+| Python scripts | **172+** scripts |
+| ชั่วโมงพัฒนา | **316+** ชั่วโมง |
 
 ### จุดเด่นของโครงการนี้ — Station-Level OCR
 
@@ -274,7 +275,7 @@ election-verification/
 │   └── deploy.yml             # CI/CD: auto-deploy to GitHub Pages
 │
 ├── .env.example               # API key template
-├── DEVELOPMENT_LOG.md         # Detailed development history (20+ phases)
+├── DEVELOPMENT_LOG.md         # Detailed development history (35 phases)
 ├── SECURITY.md                # API key security guide
 └── README.md                  # This file
 ```
@@ -336,7 +337,7 @@ See [SECURITY.md](SECURITY.md) for detailed API key management guidelines.
 
 ## Development
 
-See [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md) for the full 20+ phase development history with commit hashes, problems, solutions, and results for each phase.
+See [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md) for the full 35-phase development history with commit hashes, problems, solutions, and results for each phase.
 
 ### Running tests
 

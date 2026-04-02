@@ -72,7 +72,7 @@ function ValidationBarChart({ data, height = 120 }) {
 }
 
 function AnalyticsDashboardInner({ allItems, review, reviewLog, anomalyFlags }) {
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(true)
 
   // Review status breakdown
   const statusData = useMemo(() => {
@@ -191,7 +191,7 @@ function AnalyticsDashboardInner({ allItems, review, reviewLog, anomalyFlags }) 
   if (allItems.length === 0) return null
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4">
+    <div>
       <button
         onClick={() => setExpanded(v => !v)}
         className="w-full flex items-center gap-2.5 py-3 text-sm font-semibold text-gray-700 hover:text-indigo-700 transition group"

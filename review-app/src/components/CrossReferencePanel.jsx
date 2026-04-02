@@ -64,7 +64,7 @@ function SourceStatusBadge({ status }) {
 }
 
 function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta }) {
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(true)
   const [crossRefData, setCrossRefData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [filterSeverity, setFilterSeverity] = useState('all')
@@ -251,7 +251,7 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
   if (allItems.length === 0) return null
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4">
+    <div>
       <button
         onClick={() => setExpanded(v => !v)}
         className="w-full flex items-center gap-2.5 py-3 text-sm font-semibold text-gray-700 hover:text-indigo-700 transition group"

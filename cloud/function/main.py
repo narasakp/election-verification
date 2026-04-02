@@ -403,6 +403,11 @@ def _process_request(file_id, file_label, province, google_api_key,
 
         # Build output record
         record = ocr_result.get('result', {})
+        # Handle case where Gemini returns a list instead of a dict
+        if isinstance(record, list):
+            record = record[0] if record else {}
+        if not isinstance(record, dict):
+            record = {}
         # Always override with file metadata (ground truth from file path)
         if meta.get('province'):
             record['province'] = meta['province']

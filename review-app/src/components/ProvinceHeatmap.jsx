@@ -79,7 +79,7 @@ function ProvinceHeatmapInner({ allItems, review }) {
   const hoveredStats = hoveredProv ? provStats[hoveredProv] : null
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4">
+    <div>
       <button
         onClick={() => setExpanded(v => !v)}
         className="w-full flex items-center gap-2.5 py-3 text-sm font-semibold text-gray-700 hover:text-indigo-700 transition group"

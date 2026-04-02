@@ -47,7 +47,7 @@ function fmt(n) {
 
 function BackupDashboardInner() {
   const [data, setData] = useState(null)
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(true)
   const [search, setSearch] = useState('')
   const [sortCol, setSortCol] = useState('name')
   const [sortAsc, setSortAsc] = useState(true)
@@ -106,7 +106,6 @@ function BackupDashboardInner() {
 
   return (
     <div>
-      <div className="max-w-[1440px] mx-auto px-4">
         <button
           onClick={() => setExpanded(v => !v)}
           className="w-full flex items-center gap-2.5 py-3 text-sm font-semibold text-slate-700 hover:text-slate-900 transition group"
@@ -480,7 +479,6 @@ function BackupDashboardInner() {
             </div>
           </div>
         )}
-      </div>
     </div>
   )
 }

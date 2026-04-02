@@ -10,7 +10,7 @@ function Medal({ rank }) {
 }
 
 function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(true)
   const [sortBy, setSortBy] = useState('reviews') // reviews | speed | accuracy
 
   // Parse reviewLog to extract per-reviewer stats
@@ -82,10 +82,16 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
   const totalUniqueReviewers = reviewers.length
   const totalActiveReviews = reviewers.reduce((s, r) => s + r.activeReviews, 0)
 
-  if (!reviewLog || reviewLog.length === 0) return null
+  if (!reviewLog || reviewLog.length === 0) return (
+    <div className="p-8 text-center text-gray-400 text-sm">
+      <Trophy size={32} className="mx-auto mb-2 text-gray-200" />
+      <div>ยังไม่มีข้อมูล Review Log</div>
+      <div className="text-xs mt-1">เริ่มตรวจสอบ OCR เพื่อดูสถิติผู้ตรวจที่นี่</div>
+    </div>
+  )
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4">
+    <div>
       <button
         onClick={() => setExpanded(v => !v)}
         className="w-full flex items-center gap-2.5 py-3 text-sm font-semibold text-gray-700 hover:text-indigo-700 transition group"

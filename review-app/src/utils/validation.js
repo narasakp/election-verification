@@ -113,6 +113,12 @@ export function validateItem(item) {
   return rules.map(r => r(item)).filter(Boolean)
 }
 
+export function isLowRiskItem(item) {
+  const warnings = validateItem(item)
+  // Low risk = no errors or warnings, only info messages allowed
+  return !warnings.some(w => w.severity === 'error' || w.severity === 'warning')
+}
+
 export function getWorstSeverity(warnings) {
   if (warnings.some(w => w.severity === 'error')) return 'error'
   if (warnings.some(w => w.severity === 'warning')) return 'warning'

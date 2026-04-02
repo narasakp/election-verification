@@ -21,7 +21,7 @@ except ImportError:
 PROJECT_ROOT = os.path.join(SCRIPT_DIR, '..')
 DATA_DIR = os.path.join(PROJECT_ROOT, 'data')
 
-# Canonical slug → Thai province name mapping
+# Canonical slug [*] Thai province name mapping
 SLUG_TO_PROVINCE = {
     "bangkok": "กรุงเทพมหานคร",
     "krabi": "กระบี่",
@@ -155,7 +155,7 @@ def _classify_vote_type(item):
         has_bn = bool(_re.search(r'(?:^|[/\\\s(])บช(?:[/\\\s).]|$)', fname))
     if has_bk and has_bn:
         # Combined file: use candidate count to distinguish
-        # แบ่งเขต typically has ≤10 candidates, บัญชีรายชื่อ has 11+
+        # แบ่งเขต typically has [*]10 candidates, บัญชีรายชื่อ has 11+
         n_cands = len(item.get('candidates') or [])
         if n_cands > 10:
             return 'บัญชีรายชื่อ'
@@ -176,7 +176,7 @@ def _classify_vote_type(item):
     if has_bk:
         return 'แบ่งเขต'
 
-    # 3b) นอกเขต — reclassify as proper vote type based on candidate count
+    # 3b) นอกเขต [*] reclassify as proper vote type based on candidate count
     #    Out-of-area forms without explicit party list marker are constituency forms
     if 'นอกเขต' in fname or 'นอกราช' in fname:
         n_cands = len(item.get('candidates') or [])
@@ -199,13 +199,13 @@ def _consolidate_multipage_records(items):
     """Merge multi-page records for the same station into single records.
 
     Party list forms (บัญชีรายชื่อ) often span 2+ pages per station due to
-    40+ party candidates. This merges consecutive pages (gap ≤ 2) from the
+    40+ party candidates. This merges consecutive pages (gap [*] 2) from the
     same file and station into one consolidated record.
     Also applies to แบ่งเขต where duplicates exist.
 
     Two strategies:
-    1) Records WITH station_no → group by (file, station_no, vote_type)
-    2) Records WITHOUT station_no → group consecutive pages by (file, vote_type)
+    1) Records WITH station_no [*] group by (file, station_no, vote_type)
+    2) Records WITHOUT station_no [*] group consecutive pages by (file, vote_type)
     """
     from collections import defaultdict
 
@@ -244,12 +244,12 @@ def _consolidate_multipage_records(items):
         no_stn_merged += _merge_consecutive_pages(recs, result)
 
     merged_count += no_stn_merged
-    print(f"  📑 Consolidated {merged_count} multi-page records (incl. {no_stn_merged} without station_no)")
+    print(f"  [*] Consolidated {merged_count} multi-page records (incl. {no_stn_merged} without station_no)")
     return result
 
 
 def _merge_consecutive_pages(recs, result_list):
-    """Sort records by page, merge consecutive pages (gap ≤ 2, max 4 per group).
+    """Sort records by page, merge consecutive pages (gap [*] 2, max 4 per group).
     Appends results to result_list. Returns number of records saved by merging."""
     recs.sort(key=lambda r: r.get('page', 0) or 0)
 
@@ -349,7 +349,7 @@ def _infer_station_no_from_filename(items):
             item['_station_no_inferred'] = True
             inferred += 1
     if inferred:
-        print(f"  🔍 Inferred station_no from filename for {inferred} records")
+        print(f"  [search] Inferred station_no from filename for {inferred} records")
     return items
 
 
@@ -399,12 +399,12 @@ def _balance_vote_types(items):
         bn = vt_groups.get('บัญชีรายชื่อ', [])
 
         if not bk or not bn:
-            # Only one vote type → keep all
+            # Only one vote type [*] keep all
             result.extend(bk)
             result.extend(bn)
             continue
 
-        # Both types exist → trim larger to match smaller
+        # Both types exist [*] trim larger to match smaller
         target = min(len(bk), len(bn))
 
         # Sort by quality descending, keep top `target`
@@ -428,7 +428,7 @@ def _balance_vote_types(items):
         ratio = bn / bk if bk > 0 else 999
         print(f"    {prov}: แบ่งเขต={bk}, บัญชีฯ={bn} (ratio {ratio:.2f}x)")
 
-    print(f"  ⚖️  Balanced: trimmed {trimmed} excess records")
+    print(f"  [*][*]  Balanced: trimmed {trimmed} excess records")
     return result
 
 
@@ -447,7 +447,7 @@ def _enrich_with_ect(item, ect_ref):
 
     Strategy (ECT = ground truth):
     1. Build lookup {candidate_no: {name, party}} from ECT
-    2. For each OCR candidate matched by number → override name & party with ECT
+    2. For each OCR candidate matched by number [*] override name & party with ECT
     3. Remove ghost candidates (number not in ECT AND no real votes)
     4. Fill missing ECT candidates (votes=None) so every page has the full list
     5. Sort by candidate number for consistency
@@ -470,10 +470,10 @@ def _enrich_with_ect(item, ect_ref):
 
     ocr_cands = item.get('candidates') or []
     if not ocr_cands:
-        # No OCR candidates at all — nothing to normalize
+        # No OCR candidates at all [*] nothing to normalize
         return
 
-    # --- Phase 1: Match OCR → ECT by number, override name+party ---
+    # --- Phase 1: Match OCR [*] ECT by number, override name+party ---
     matched_nos = set()
     kept = []
     removed = []
@@ -489,14 +489,14 @@ def _enrich_with_ect(item, ect_ref):
             matched_nos.add(num)
             kept.append(c)
         else:
-            # Not in ECT — ghost candidate?
+            # Not in ECT [*] ghost candidate?
             name = c.get('name') or ''
             votes = c.get('votes')
             is_ghost = (not name.strip()) or (votes is None) or (votes == 0)
             if is_ghost:
                 removed.append(c)
             else:
-                # Has real votes but unknown number — keep but flag
+                # Has real votes but unknown number [*] keep but flag
                 c['_ect_matched'] = False
                 kept.append(c)
 
@@ -586,7 +586,7 @@ def main():
             item['_source_type'] = 'multimodel'
             seen_file_page.add((_norm_file(item.get('file', '')), item.get('page')))
         results.extend(items)
-        print(f"  📄 {os.path.basename(jf)}: {len(items)} items (multimodel)")
+        print(f"  [pdf] {os.path.basename(jf)}: {len(items)} items (multimodel)")
 
     # Add vision records that don't overlap with multimodel (by normalized file+page)
     for jf in vision_files:
@@ -603,14 +603,14 @@ def main():
                 seen_file_page.add(key)
         results.extend(new_items)
         if new_items:
-            print(f"  📄 {os.path.basename(jf)}: +{len(new_items)} vision-only items (of {len(items)} total)")
+            print(f"  [pdf] {os.path.basename(jf)}: +{len(new_items)} vision-only items (of {len(items)} total)")
 
     if not results:
         print(f"[ERROR] No ocr_multimodel_*.json or ocr_vision_*.json files found in {DATA_DIR}")
         sys.exit(1)
 
     n_provinces = len(set(os.path.basename(f).replace('ocr_multimodel_','').replace('ocr_vision_','').replace('.json','') for f in multimodel_files + vision_files))
-    print(f"📄 Loaded {len(results)} OCR results from {n_provinces} province(s)")
+    print(f"[pdf] Loaded {len(results)} OCR results from {n_provinces} province(s)")
 
     os.makedirs(PUBLIC_DATA_DIR, exist_ok=True)
     os.makedirs(PUBLIC_IMG_DIR, exist_ok=True)
@@ -753,25 +753,25 @@ def main():
 
     # Filter out back pages with no data
     content_items = [item for item in review_items if not item.get('is_back_page')]
-    print(f"📋 Content pages: {len(content_items)} (filtered {len(review_items) - len(content_items)} back pages)")
+    print(f"[list] Content pages: {len(content_items)} (filtered {len(review_items) - len(content_items)} back pages)")
 
     # Infer station_no from filename for records that lack it
     content_items = _infer_station_no_from_filename(content_items)
 
     # Consolidate multi-page records (e.g. 2-page party list forms) into single records
     content_items = _consolidate_multipage_records(content_items)
-    print(f"📋 After consolidation: {len(content_items)} records")
+    print(f"[list] After consolidation: {len(content_items)} records")
 
-    # Balance vote types: trim excess records per station so แบ่งเขต ≈ บัญชีรายชื่อ
+    # Balance vote types: trim excess records per station so แบ่งเขต [*] บัญชีรายชื่อ
     content_items = _balance_vote_types(content_items)
-    print(f"📋 After balancing: {len(content_items)} records")
+    print(f"[list] After balancing: {len(content_items)} records")
 
     # Also create a version with ALL items for reference
     out_all = os.path.join(PUBLIC_DATA_DIR, 'review_data.json')
     with open(out_all, 'w', encoding='utf-8') as f:
         json.dump(content_items, f, ensure_ascii=False, indent=2)
-    print(f"💾 Saved {len(content_items)} items to {out_all}")
-    print(f"🖼️  Images copied: {images_copied}")
+    print(f"[save] Saved {len(content_items)} items to {out_all}")
+    print(f"[*][*]  Images copied: {images_copied}")
 
     # Stats
     low_conf = sum(1 for item in content_items

@@ -34,12 +34,18 @@ def collect_records(prefix):
 
 def main():
     print('=== Data integrity check ===')
-    drive_index = collect_records('drive_index_chaiyaphum.json')
-    if not drive_index:
-        print('[INFO] No drive index JSON in root, scanning pattern')
-        # compatibility: maybe in data files directly
-        for p in DATA_DIR.glob('drive_index_*.json'):
-            drive_index |= load_json(p)
+    # Load all drive index files
+    drive_index = {}
+    for p in DATA_DIR.glob('drive_index_*.json'):
+        data = load_json(p)
+        if isinstance(data, list):
+            # Convert list to dict using file_id as key
+            for item in data:
+                key = item.get('file_id')
+                if key:
+                    drive_index[key] = item
+        elif isinstance(data, dict):
+            drive_index.update(data)
     ocr_files = list(DATA_DIR.glob('ocr_multimodel_*.json'))
     if not ocr_files:
         print('[ERROR] No OCR files found in data/')
@@ -51,10 +57,11 @@ def main():
         ocr_keys = set()
         if isinstance(ocr_records, list):
             for item in ocr_records:
-                if isinstance(item, dict) and item.get('file_id'):
-                    ocr_keys.add(item['file_id'])
-                elif item.get('station_id'):
-                    ocr_keys.add(item['station_id'])
+                if isinstance(item, dict):
+                    # Use drive_file_id as the key to match with drive index
+                    key = item.get('drive_file_id') or item.get('file_id') or item.get('station_id')
+                    if key:
+                        ocr_keys.add(key)
         missing = [k for k in ocr_keys if k not in drive_index]
         extra = [k for k in drive_index if k not in ocr_keys]
         print(f'   OCR records: {len(ocr_keys):,}')
