@@ -833,7 +833,7 @@ def main():
     # Also create a version with ALL items for reference
     out_all = os.path.join(PUBLIC_DATA_DIR, 'review_data.json')
     with open(out_all, 'w', encoding='utf-8') as f:
-        json.dump(content_items, f, ensure_ascii=False, indent=2)
+        json.dump(content_items, f, ensure_ascii=False, separators=(',', ':'))
     print(f"[save] Saved {len(content_items)} items to {out_all}")
     print(f"[*][*]  Images copied: {images_copied}")
 
