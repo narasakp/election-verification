@@ -1931,6 +1931,41 @@ Rebuilt review_data.json — **9,215 items** พร้อม flags ครบ
 
 ---
 
+## Phase 41 — เพชรบูรณ์ Zone 3 C1 Null Fix (2 เมษายน 2569)
+
+### ปัญหา
+เพชรบูรณ์ Zone 3: `registered_voters` (C1) มีค่าผิดจาก OCR อ่านผิดตำแหน่งใน form layout
+- **systematic_285**: 141 records — ค่าซ้ำกัน (เช่น 850, 800 ซ้ำ 103 records) ชัดเจนว่าเป็น OCR error
+- **c1_exceeds_c2**: 110 records — ค่า registered_voters > turnout (เป็นไปได้ปกติ แต่ใน Zone 3 คือ flag ว่าค่าน่าสงสัย)
+- ผลกระทบ: V8 (ผู้มีสิทธิสูงผิดปกติ) และ M5 trigger ผิดพลาด
+
+### การแก้ไข
+- Set `registered_voters = None` สำหรับทุก record ที่มี `_c1_suspect` (251 records ใน source OCR)
+- ดีกว่าเก็บค่าผิด — null ชัดเจนว่า "ไม่รู้ค่าที่ถูกต้อง"
+- Backup: `ocr_multimodel_phetchabun.json.pre_c1null`
+
+### ผลลัพธ์ใน review_data.json
+- เพชรบูรณ์ Zone 3 แบ่งเขต: 269 records → **113 null c1** (records ที่ผ่าน balancing)
+- False validation warnings จาก wrong c1 ลดลง
+
+### ไฟล์ที่แก้ไข
+- `data/ocr_multimodel_phetchabun.json` — 251 records nulled (backup: `.pre_c1null`)
+- `review-app/public/data/review_data.json` — rebuilt
+
+### Known Remaining Issues (n=0 candidates)
+วิเคราะห์ records ที่ candidates=[] แต่มีข้อมูลบัตร (OCR failure จริง ไม่ใช่ back page):
+| จังหวัด | Zone | จำนวน |
+|---------|------|-------|
+| เพชรบูรณ์ | 4 | 28 |
+| เพชรบูรณ์ | 5 | 59 |
+| ตาก | 2 | 7 |
+| ชัยภูมิ | 2/6/7 | 3 |
+| **รวม** | | **97 records** |
+
+ทุก records มี turnout/valid_ballots แต่ candidates=[] → re-OCR ได้ในงวดถัดไป
+
+---
+
 *บันทึกนี้สร้างจากข้อมูล git history, file timestamps, และ code analysis*  
 *สร้างเมื่อ: 10 มีนาคม 2569*  
-*อัปเดตล่าสุด: 2 เมษายน 2569 — Phase 40*
+*อัปเดตล่าสุด: 2 เมษายน 2569 — Phase 41*
