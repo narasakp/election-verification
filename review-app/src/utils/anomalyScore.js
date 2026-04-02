@@ -190,17 +190,19 @@ export function computeItemAnomalyScore(item, ectFlags = null) {
   // M7: C1 (registered voters) suspect — known OCR quality issue
   if (item._c1_suspect === 'systematic_285') {
     reasons.push({
-      label: 'OCR คุณภาพต่ำ: ผู้มีสิทธิ์ (C1) อาจอ่านผิด',
+      label: 'ผู้มีสิทธิ์ (C1) อาจอ่านผิด — ยังไม่ได้แก้',
       detail: 'ปัญหา systematic ที่ทราบแล้วในเพชรบูรณ์ เขต 3 — OCR อ่านค่า C1 เป็น 285 ผิดพลาด',
       severity: 'medium',
       points: 8,
+      source: 'ocr_quality',
     })
   } else if (item._c1_suspect === 'c1_exceeds_c2') {
     reasons.push({
-      label: 'OCR คุณภาพต่ำ: ผู้มีสิทธิ์ (C1) สูงกว่ามาแสดงตน (C2)',
+      label: 'ผู้มีสิทธิ์ (C1) สูงกว่ามาแสดงตน (C2) — ยังไม่ได้แก้',
       detail: `C1=${reg != null ? reg.toLocaleString() : '?'} > C2=${turn != null ? turn.toLocaleString() : '?'} — อาจเป็นปัญหา OCR`,
       severity: 'medium',
       points: 8,
+      source: 'ocr_quality',
     })
   }
 
@@ -235,10 +237,11 @@ export function computeItemAnomalyScore(item, ectFlags = null) {
   // L4: Vote permutation was auto-corrected (transparency flag)
   if (item._vote_remap_applied) {
     reasons.push({
-      label: 'OCR vote permutation — ปรับแก้อัตโนมัติแล้ว',
+      label: 'Vote permutation — แก้ไขอัตโนมัติแล้ว',
       detail: `คะแนนผู้สมัครถูก remap (${item._vote_remap_applied}) เนื่องจาก OCR อ่านลำดับผิด systematic`,
       severity: 'low',
-      points: 3,
+      points: 0,
+      source: 'ocr_quality',
     })
   }
 
