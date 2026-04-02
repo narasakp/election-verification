@@ -63,6 +63,14 @@
         "value": 141,
         "detail": "141/517 หน่วยไม่มีข้อมูลสถิติ",
         "severity": "medium"
+      },
+      {
+        "category": "coverage_gap",
+        "flag": "ข้อมูลตกหล่น ~20%",
+        "value": 20,
+        "detail": "ยืนยันว่า PDF หายจากต้นทาง กกต. — ตรวจสอบเชิงเทียบกับข้อมูล Killernay และ Backup Drive แล้ว",
+        "severity": "high",
+        "source": "confirmed_missing_pdf"
       }
     ],
     "ชัยภูมิ_3": [
@@ -86,6 +94,14 @@
         "value": 62.1,
         "detail": "เฉลี่ย 62.1% (10/173 หน่วย < 50%)",
         "severity": "medium"
+      },
+      {
+        "category": "coverage_gap",
+        "flag": "ข้อมูลตกหล่น ~28%",
+        "value": 28,
+        "detail": "ยืนยันว่า PDF หายจากต้นทาง กกต. — ตรวจสอบเชิงเทียบกับข้อมูล Killernay และ Backup Drive แล้ว",
+        "severity": "high",
+        "source": "confirmed_missing_pdf"
       }
     ],
     "ชัยภูมิ_4": [
@@ -178,6 +194,14 @@
         "value": 65.5,
         "detail": "เฉลี่ย 65.5% (8/240 หน่วย < 50%)",
         "severity": "medium"
+      },
+      {
+        "category": "coverage_gap",
+        "flag": "ข้อมูลตกหล่น ~12%",
+        "value": 12,
+        "detail": "ยืนยันว่า PDF หายจากต้นทาง กกต. + พบ 2 PDFs ที่มีเพียง 1 หน้า (ไม่สมบูรณ์จากต้นทาง)",
+        "severity": "medium",
+        "source": "confirmed_missing_pdf"
       }
     ],
     "ตาก_1": [

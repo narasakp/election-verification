@@ -2006,6 +2006,57 @@ Rebuilt review_data.json — **9,215 items** พร้อม flags ครบ
 
 ---
 
+## Phase 43 — P2 Data Completeness (2 เมษายน 2569)
+
+### P2-1: บัญชีรายชื่อ Invalid Records — Triage
+
+วิเคราะห์ 3,948 บัญชีรายชื่อ records จริง พบว่าปัญหาใหญ่กว่า "265" ที่เคยบันทึกไว้:
+
+| Category | จำนวน | Root cause | Fixable? |
+|----------|-------|------------|---------|
+| n=57 (fully consolidated) | 489 | Valid — all 3 pages merged | ✅ |
+| n=10/24/23 (single page) | 833 | Valid single-page | ✅ |
+| n=0 (empty) | 14 | Structural/back pages | ❌ |
+| **n=33 (missing page 2)** | **1,719** | **OCR pipeline skipped even-numbered pages** | **✅ re-OCR-able** |
+| n=56 (missing 1) | 356 | OCR truncation at party #35 | บางส่วน |
+| n<10 | 84 | Cover/signature pages | ❌ |
+| n>57 | 14 | Over-extracted | ตรวจเพิ่ม |
+| อื่นๆ | ~540 | Various | mixed |
+
+**Root cause n=33**: merged_pages = `[13, 15]` (ข้าม page 14) — OCR pipeline ข้าม even-numbered middle pages ใน multi-page บัญชีรายชื่อ forms อย่างเป็นระบบ
+- 274 unique PDFs ต้อง re-OCR middle page → **Phase ถัดไป**
+
+### P2-2: ชัยภูมิ Vision Records — Drive URL Fix
+
+38 vision records ไม่มี pdf_url (ไม่มี Drive integration เพราะ old pipeline):
+- Matched 19/38 ด้วย sub_district + zone + drive_index_chaiyaphum.json
+- อัปเดต `ocr_vision_chaiyaphum.json` ด้วย drive_file_id + drive_view_url
+- หลัง rebuild: **22 records ได้ pdf_url** (จาก _split_progress), 17 ยังไม่ได้ (zone 7 นอกเขต + ตำบลที่ชื่อไม่ตรง)
+- Backup: `ocr_vision_chaiyaphum.json.pre_viewurl`
+
+### P2-3: Coverage Gap Documentation — ชัยภูมิ Z2/3/7
+
+บันทึกอย่างเป็นทางการว่า PDF หายจากต้นทาง กกต. — ไม่ใช่ error ของ pipeline:
+
+| Zone | Coverage gap | Records | หมายเหตุ |
+|------|-------------|---------|---------|
+| Zone 2 | ~20% | 517 | ยืนยันแล้วจาก Killernay + Backup Drive |
+| Zone 3 | ~28% | 361 | ยืนยันแล้วจาก Killernay + Backup Drive |
+| Zone 7 | ~12% | 494 | ยืนยัน + พบ 2 PDFs ที่มีเพียง 1 หน้า (ไม่สมบูรณ์) |
+
+เพิ่ม flag `coverage_gap` ใน `anomaly_flags.json` สำหรับ 3 zones:
+```json
+{"category": "coverage_gap", "flag": "ข้อมูลตกหล่น ~N%", "severity": "high/medium", "source": "confirmed_missing_pdf"}
+```
+ผลลัพธ์: AnomalySummaryPanel (ECT Anomaly Flags section) จะแสดง coverage gap badge บน ReviewCards ของ Zone 2/3/7
+
+### ไฟล์ที่แก้ไข
+- `data/ocr_vision_chaiyaphum.json` — เพิ่ม drive_view_url/file_id 45 records (backup: `.pre_viewurl`)
+- `review-app/public/data/anomaly_flags.json` — เพิ่ม coverage_gap flags Z2/3/7 (backup: `.pre_covgap`)
+- `review-app/public/data/review_data.json` — rebuilt
+
+---
+
 *บันทึกนี้สร้างจากข้อมูล git history, file timestamps, และ code analysis*  
 *สร้างเมื่อ: 10 มีนาคม 2569*  
-*อัปเดตล่าสุด: 2 เมษายน 2569 — Phase 42*
+*อัปเดตล่าสุด: 2 เมษายน 2569 — Phase 43*
