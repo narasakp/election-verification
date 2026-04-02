@@ -321,6 +321,63 @@ def _merge_page_group(recs):
     return base
 
 
+def _fill_missing_party_candidates(items):
+    """Fill missing boundary candidates for บัญชีรายชื่อ records near n=57.
+
+    OCR systematically misses candidates at page boundaries (especially #35).
+    For records with 50-56 candidates, insert placeholders with votes=None
+    for the missing party numbers. Uses killernay_party_list.csv for names.
+    """
+    import csv
+
+    # Load party reference (number -> party name)
+    party_ref_path = os.path.join(DATA_DIR, 'killernay_party_list.csv')
+    party_names = {}
+    if os.path.exists(party_ref_path):
+        with open(party_ref_path, 'r', encoding='utf-8-sig') as f:
+            for row in csv.DictReader(f):
+                try:
+                    num = int(row.get('หมายเลข', 0))
+                    name = row.get('พรรค', '')
+                    if num and name and num not in party_names:
+                        party_names[num] = name
+                except (ValueError, TypeError):
+                    pass
+
+    filled_count = 0
+    for item in items:
+        if item.get('vote_type') != 'บัญชีรายชื่อ':
+            continue
+        cands = item.get('candidates') or []
+        existing_nums = {c.get('number') for c in cands if c.get('number') is not None}
+        n = len(existing_nums)
+        if n < 50 or n >= 57:
+            continue
+
+        # Find missing numbers in 1-57
+        missing = [num for num in range(1, 58) if num not in existing_nums]
+        if not missing:
+            continue
+
+        for num in missing:
+            placeholder = {
+                'number': num,
+                'name': party_names.get(num, f'พรรคหมายเลข {num}'),
+                'party': party_names.get(num, ''),
+                'votes': None,
+                '_boundary_fill': True,
+            }
+            cands.append(placeholder)
+
+        cands.sort(key=lambda c: (c.get('number') is None, c.get('number') or 999))
+        item['candidates'] = cands
+        filled_count += 1
+
+    if filled_count:
+        print(f"  [fix] Filled missing boundary candidates for {filled_count} บัญชีรายชื่อ records (n≥50 → n=57)")
+    return items
+
+
 def _infer_station_no_from_filename(items):
     """Infer station_no from filename patterns for records that lack it.
 
@@ -765,6 +822,9 @@ def main():
     # Consolidate multi-page records (e.g. 2-page party list forms) into single records
     content_items = _consolidate_multipage_records(content_items)
     print(f"[list] After consolidation: {len(content_items)} records")
+
+    # Fill missing boundary candidates for บัญชีรายชื่อ near n=57
+    content_items = _fill_missing_party_candidates(content_items)
 
     # Balance vote types: trim excess records per station so แบ่งเขต [*] บัญชีรายชื่อ
     content_items = _balance_vote_types(content_items)
