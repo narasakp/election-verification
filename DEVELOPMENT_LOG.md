@@ -1966,6 +1966,46 @@ Rebuilt review_data.json — **9,215 items** พร้อม flags ครบ
 
 ---
 
+## Phase 42 — n=0 Investigation + GitHub Pages Deploy (2 เมษายน 2569)
+
+### สิ่งที่ทำ
+
+#### 1. n=0 Candidate Records Investigation
+
+วิเคราะห์ 97 records ใน review_data.json ที่มีบัตร statistics แต่ candidates=[] เพื่อหาว่า re-OCR จะช่วยได้ไหม
+
+**ผลการวิเคราะห์:**
+- ตัวเลข: เพชรบูรณ์ Z4(28) + Z5(59), ตาก Z2(7), ชัยภูมิ(3) = 97 records
+- 96 มี drive_file_id → เขียน script `scripts/_reocr_n0_candidates.py` (24 unique PDFs)
+- รัน re-OCR: ทุก page ยังคืน candidates=0 หลัง re-OCR ด้วย Gemini
+
+**สาเหตุที่แท้จริง:**
+- Pages เหล่านี้เป็น **หน้าสถิติ (statistics page) ของ form 2 หน้า** — ไม่ใช่ OCR failure
+- หน้าสถิติมีแถว C1-C5 (turnout, valid_ballots ฯลฯ) แต่ไม่มีตาราง candidate votes
+- ตาราง candidate votes อยู่ในหน้าที่ 2 ซึ่ง OCR เป็น record แยกต่างหาก
+- Page pattern ทุก 8 หน้า (15, 23, 31...) ยืนยัน multi-station PDF structure
+
+**ข้อสรุป:** n=0 เหล่านี้เป็น **known data limitation** ไม่ใช่ bug ที่แก้ได้
+
+#### 2. GitHub Pages Deploy
+
+- Build: `npm run build` → dist/ สำเร็จ (251kB JS, gzip 74kB)
+- Push 6 commits (Phase 37-42) → trigger GitHub Actions deploy workflow
+- Workflow: `.github/workflows/deploy.yml` → build + upload artifact + deploy pages
+
+### ผลรวม
+
+| รายการ | ผล |
+|--------|-----|
+| n=0 records | ยืนยันว่า back-pages — ไม่ต้อง re-OCR |
+| GitHub Pages | Deployed (6 commits ahead of previous deploy) |
+| Phases deployed | 37, 38, 39, 40, 41, 42 |
+
+### ไฟล์ที่แก้ไข
+- `scripts/_reocr_n0_candidates.py` — investigation script (added)
+
+---
+
 *บันทึกนี้สร้างจากข้อมูล git history, file timestamps, และ code analysis*  
 *สร้างเมื่อ: 10 มีนาคม 2569*  
-*อัปเดตล่าสุด: 2 เมษายน 2569 — Phase 41*
+*อัปเดตล่าสุด: 2 เมษายน 2569 — Phase 42*
