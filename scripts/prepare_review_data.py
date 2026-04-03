@@ -142,7 +142,7 @@ def _classify_vote_type(item):
     fname_lower = fname.lower()
     if any(k in fname for k in ['ประชามติ', 'มติ']):
         return 'ประชามติ'
-    if any(k in fname_lower for k in ['อ.ส. 4', 'อ.ส.4', 'อส 4', '4-7', '4/7', '4ทับ7']):
+    if any(k in fname_lower for k in ['อ.ส. 4', 'อ.ส.4', 'อส 4', 'อส.4', 'อส4', '4-7', '4/7', '4ทับ7', '4_7']):
         return 'ประชามติ'
 
     # 2) Detect combined files (both keywords in path, e.g. "ต.XXX-แบ่งเขต/บัญชีรายชื่อ.pdf")
@@ -193,6 +193,16 @@ def _classify_vote_type(item):
         return 'บัญชีรายชื่อ'
     if 'เขต' in vt and 'นอก' not in vt:
         return 'แบ่งเขต'
+
+    # 6) Candidate-based classification (last resort before ไม่ระบุ)
+    cands = item.get('candidates') or []
+    cand_names = [(c.get('name') or '') for c in cands]
+    if any('เห็นชอบ' in n for n in cand_names):
+        return 'ประชามติ'
+    n_cands = len(cands)
+    if n_cands > 10:
+        return 'บัญชีรายชื่อ'
+
     return vt or 'ไม่ระบุ'
 
 def _consolidate_multipage_records(items):
@@ -1131,6 +1141,30 @@ def main():
     _vision_removed = _before_dedup - len(content_items)
     if _vision_removed:
         print(f"  [dedup] Removed {_vision_removed} vision items already covered by multimodel")
+
+    # Reclassify remaining ไม่ระบุ items from sibling pages in the same file
+    _unknown_items = [i for i in content_items if i.get('vote_type') == 'ไม่ระบุ']
+    if _unknown_items:
+        from collections import Counter as _Ctr
+        _file_vt = {}
+        for i in content_items:
+            f = i.get('file', '')
+            vt = i.get('vote_type', '')
+            if f and vt not in ('ไม่ระบุ', ''):
+                _file_vt.setdefault(f, _Ctr())[vt] += 1
+        _reclassified_sibling = 0
+        for i in _unknown_items:
+            f = i.get('file', '')
+            if f in _file_vt:
+                best_vt = _file_vt[f].most_common(1)[0][0]
+                i['vote_type'] = best_vt
+                i['_reclassified_from'] = 'ไม่ระบุ (sibling)'
+                _reclassified_sibling += 1
+        if _reclassified_sibling:
+            print(f"  [reclass] Reclassified {_reclassified_sibling} ไม่ระบุ items from sibling pages")
+        _still_unknown = sum(1 for i in content_items if i.get('vote_type') == 'ไม่ระบุ')
+        if _still_unknown:
+            print(f"  [reclass] Still ไม่ระบุ: {_still_unknown}")
 
     # Consolidate multi-page records (e.g. 2-page party list forms) into single records
     content_items = _consolidate_multipage_records(content_items)
