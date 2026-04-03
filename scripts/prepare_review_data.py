@@ -345,14 +345,27 @@ def _fill_missing_party_candidates(items):
                     pass
 
     filled_count = 0
+    filled_aggressive = 0
     for item in items:
         if item.get('vote_type') != 'บัญชีรายชื่อ':
             continue
         cands = item.get('candidates') or []
-        existing_nums = {c.get('number') for c in cands if c.get('number') is not None}
+        existing_nums = set()
+        for c in cands:
+            num = c.get('number')
+            if num is not None:
+                try:
+                    existing_nums.add(int(num))
+                except (ValueError, TypeError):
+                    pass
         n = len(existing_nums)
-        if n < 50 or n >= 57:
+        if n < 30 or n >= 57:
             continue
+        # Quality check: numbers should be within 1-57 range
+        if existing_nums and (min(existing_nums) < 1 or max(existing_nums) > 57):
+            continue
+
+        is_aggressive = n < 50
 
         # Find missing numbers in 1-57
         missing = [num for num in range(1, 58) if num not in existing_nums]
@@ -372,31 +385,59 @@ def _fill_missing_party_candidates(items):
         cands.sort(key=lambda c: (c.get('number') is None, c.get('number') or 999))
         item['candidates'] = cands
         filled_count += 1
+        if is_aggressive:
+            filled_aggressive += 1
 
     if filled_count:
-        print(f"  [fix] Filled missing boundary candidates for {filled_count} บัญชีรายชื่อ records (n≥50 → n=57)")
+        print(f"  [fix] Filled missing boundary candidates for {filled_count} บัญชีรายชื่อ records (n≥30 → n=57, {filled_aggressive} aggressive n<50)")
     return items
 
 
 def _infer_station_no_from_filename(items):
-    """Infer station_no from filename patterns for records that lack it.
+    """Infer or override station_no from filename patterns and page position.
 
     Common patterns: หน่วยที่ X, หน่วย X, หน่วยที่X
-    Also infers from page position for multi-station PDFs (total_pages > 4).
+    For multi-station PDFs (total_pages > 4):
+      - บัญชีรายชื่อ: ALWAYS override station_no from page position (OCR unreliable)
+      - แบ่งเขต: infer only if missing
     """
     import re
     inferred_name = 0
     inferred_page = 0
+    overridden_page = 0
+
     for item in items:
+        total_pages = item.get('total_pages')
+        page = item.get('page')
+        vt = item.get('vote_type', '')
+
+        # For บัญชีรายชื่อ in multi-station PDFs: ALWAYS override station_no
+        # OCR frequently misreads station numbers → wrong page grouping → broken consolidation
+        if ('บัญชีรายชื่อ' in vt and total_pages and page
+                and isinstance(total_pages, (int, float)) and int(total_pages) > 4):
+            pps = 4  # 4 pages per station (3 data + 1 signature)
+            calc_stn = (int(page) - 1) // pps + 1
+            max_stn = int(total_pages) // pps
+            calc_stn = min(calc_stn, max(max_stn, 1))
+            old_stn = item.get('ocr_station_no') or item.get('station_no')
+            item['ocr_station_no'] = str(calc_stn)
+            item['_station_no_from_page'] = True
+            if old_stn and str(old_stn) != str(calc_stn):
+                overridden_page += 1
+            else:
+                inferred_page += 1
+            continue
+
+        # For items that already have station_no, skip further inference
         if item.get('ocr_station_no') or item.get('station_no'):
             continue
+
         fname = item.get('file', '')
         # Try multiple patterns: หน่วยที่ X, หน่วย X, ชุดที่ X
         m = re.search(r'หน่วย(?:ที่)?\s*(\d+)', fname)
         if not m:
             m = re.search(r'ชุดที่\s*(\d+)', fname)
             if m:
-                # Use 'ชุด' prefix to avoid collisions with regular station numbers
                 stn = f"ชุด{m.group(1)}"
                 item['ocr_station_no'] = stn
                 item['_station_no_inferred'] = True
@@ -409,17 +450,10 @@ def _infer_station_no_from_filename(items):
             inferred_name += 1
             continue
 
-        # Infer from page position for multi-station PDFs
-        total_pages = item.get('total_pages')
-        page = item.get('page')
-        if total_pages and page and isinstance(total_pages, (int, float)) and int(total_pages) > 4:
-            vt = item.get('vote_type', '')
-            if 'แบ่งเขต' in vt:
-                pps = 2  # 2 pages per station (front + back)
-            elif 'บัญชีรายชื่อ' in vt:
-                pps = 4  # 4 pages per station
-            else:
-                continue
+        # Infer from page position for แบ่งเขต multi-station PDFs (only if missing)
+        if (total_pages and page and isinstance(total_pages, (int, float))
+                and int(total_pages) > 4 and 'แบ่งเขต' in vt):
+            pps = 2  # 2 pages per station (front + back)
             calc_stn = (int(page) - 1) // pps + 1
             max_stn = int(total_pages) // pps
             calc_stn = min(calc_stn, max(max_stn, 1))
@@ -431,6 +465,8 @@ def _infer_station_no_from_filename(items):
         print(f"  [search] Inferred station_no from filename for {inferred_name} records")
     if inferred_page:
         print(f"  [search] Inferred station_no from page position for {inferred_page} multi-station records")
+    if overridden_page:
+        print(f"  [search] Overrode OCR station_no with page position for {overridden_page} บัญชีรายชื่อ records")
     return items
 
 
