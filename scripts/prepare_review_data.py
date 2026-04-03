@@ -393,6 +393,94 @@ def _fill_missing_party_candidates(items):
     return items
 
 
+def _fix_combined_6pp_files(items):
+    """Fix combined แบ่งเขต/บัญชีรายชื่อ PDFs that use 6 pages per station.
+
+    These files have layout per station:
+      pos 1: แบ่งเขต data
+      pos 2: back page
+      pos 3: บัญชีรายชื่อ page 1 (parties 1-10, often misclassified as แบ่งเขต)
+      pos 4: บัญชีรายชื่อ page 2 (parties 11-34, often missing or misclassified)
+      pos 5: บัญชีรายชื่อ page 3 (parties 35-57, usually correct)
+      pos 6: back page
+
+    This function:
+    1) Detects 6pp layout by checking party-list page gaps
+    2) Reclassifies misclassified pages to บัญชีรายชื่อ
+    3) Overrides station_no using 6pp formula
+    """
+    from collections import defaultdict
+
+    by_file = defaultdict(list)
+    for item in items:
+        by_file[item.get('file', '')].append(item)
+
+    reclassified = 0
+    stn_fixed = 0
+
+    for f, recs in by_file.items():
+        tp = max((r.get('total_pages') or 0) for r in recs)
+        if not tp or tp <= 6:
+            continue
+
+        # Detect combined file by filename: both แบ่งเขต and บัญชีรายชื่อ/บัญชี in path
+        has_bk = 'แบ่งเขต' in f
+        has_bn = any(k in f for k in ['บัญชีรายชื่อ', 'บัญชี'])
+        if not (has_bk and has_bn):
+            continue
+
+        # Require at least 2 stations worth of pages
+        if tp < 12:
+            continue
+
+        # Confirmed 6pp layout
+        pps = 6
+        n_stations = tp // pps
+
+        for item in recs:
+            pg = item.get('page', 0)
+            if not pg or pg < 1:
+                continue
+
+            stn_idx = (pg - 1) // pps  # 0-based
+            pos = (pg - 1) % pps + 1   # 1-based position within block
+
+            # Override station_no for ALL pages in this file
+            calc_stn = stn_idx + 1
+            calc_stn = min(calc_stn, max(n_stations, 1))
+            item['ocr_station_no'] = str(calc_stn)
+            item['_station_no_from_page'] = True
+            item['_6pp_layout'] = True
+            stn_fixed += 1
+
+            # Reclassify positions 3,4 as บัญชีรายชื่อ if they have party-style candidates
+            if pos in (3, 4) and 'บัญชีรายชื่อ' not in (item.get('vote_type') or ''):
+                cands = item.get('candidates') or []
+                nums = set()
+                for c in cands:
+                    n = c.get('number')
+                    if n is not None:
+                        try:
+                            nums.add(int(n))
+                        except (ValueError, TypeError):
+                            pass
+                # Party list candidates are numbered 1-57
+                # If max candidate number <= 57 and we have some candidates, reclassify
+                if nums and max(nums) <= 57 and len(nums) >= 3:
+                    item['vote_type'] = 'บัญชีรายชื่อ'
+                    item['_reclassified_from'] = 'แบ่งเขต'
+                    reclassified += 1
+                # Also reclassify if no candidates but at position 4 (likely party list page 2)
+                elif pos == 4 and not cands:
+                    item['vote_type'] = 'บัญชีรายชื่อ'
+                    item['_reclassified_from'] = 'แบ่งเขต'
+                    reclassified += 1
+
+    if reclassified or stn_fixed:
+        print(f"  [6pp] Fixed {stn_fixed} station_no in combined files, reclassified {reclassified} pages to บัญชีรายชื่อ")
+    return items
+
+
 def _infer_station_no_from_filename(items):
     """Infer or override station_no from filename patterns and page position.
 
@@ -410,6 +498,10 @@ def _infer_station_no_from_filename(items):
         total_pages = item.get('total_pages')
         page = item.get('page')
         vt = item.get('vote_type', '')
+
+        # Skip items already fixed by _fix_combined_6pp_files
+        if item.get('_6pp_layout'):
+            continue
 
         # For บัญชีรายชื่อ in multi-station PDFs: ALWAYS override station_no
         # OCR frequently misreads station numbers → wrong page grouping → broken consolidation
@@ -917,6 +1009,9 @@ def main():
     content_items = [item for item in review_items if not item.get('is_back_page')]
     print(f"[list] Content pages: {len(content_items)} (filtered {len(review_items) - len(content_items)} back pages)")
 
+    # Fix combined แบ่งเขต/บัญชีรายชื่อ files (6pp layout)
+    content_items = _fix_combined_6pp_files(content_items)
+
     # Infer station_no from filename for records that lack it
     content_items = _infer_station_no_from_filename(content_items)
 
@@ -944,6 +1039,37 @@ def main():
     # Consolidate multi-page records (e.g. 2-page party list forms) into single records
     content_items = _consolidate_multipage_records(content_items)
     print(f"[list] After consolidation: {len(content_items)} records")
+
+    # Clean up over-merged party list records (n>57): cap at valid range 1-57
+    _capped = 0
+    for item in content_items:
+        if item.get('vote_type') != 'บัญชีรายชื่อ':
+            continue
+        cands = item.get('candidates') or []
+        if len(cands) <= 57:
+            continue
+        # Keep only candidates with number 1-57, deduplicate
+        clean = []
+        seen = set()
+        for c in cands:
+            num = c.get('number')
+            if num is not None:
+                try:
+                    num_int = int(num)
+                except (ValueError, TypeError):
+                    clean.append(c)
+                    continue
+                if num_int < 1 or num_int > 57:
+                    continue
+                if num_int in seen:
+                    continue
+                seen.add(num_int)
+            clean.append(c)
+        if len(clean) != len(cands):
+            item['candidates'] = clean
+            _capped += 1
+    if _capped:
+        print(f"  [cap] Capped {_capped} over-merged บัญชีรายชื่อ records to 1-57 range")
 
     # Fill missing boundary candidates for บัญชีรายชื่อ near n=57
     content_items = _fill_missing_party_candidates(content_items)
