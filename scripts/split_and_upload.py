@@ -148,9 +148,13 @@ def upload_pdf_bytes(service, pdf_bytes, filename, parent_id):
     return result["id"]
 
 
-def download_pdf(file_id, api_key):
-    """Download PDF from public Drive using multiple strategies."""
-    strategies = [
+def download_pdf(file_id, api_key, service=None):
+    """Download PDF from Drive using multiple strategies."""
+    strategies = []
+    # Strategy 0: OAuth service (separate quota from API key)
+    if service:
+        strategies.append(lambda: _download_oauth(file_id, service))
+    strategies += [
         # Strategy 1: Direct download URL (no API quota)
         lambda: _download_direct(file_id),
         # Strategy 2: API key download
@@ -164,6 +168,22 @@ def download_pdf(file_id, api_key):
             last_err = e
             continue
     raise last_err
+
+
+def _download_oauth(file_id, service):
+    """Download via authenticated OAuth service (different quota)."""
+    import io
+    from googleapiclient.http import MediaIoBaseDownload
+    request = service.files().get_media(fileId=file_id)
+    buf = io.BytesIO()
+    downloader = MediaIoBaseDownload(buf, request)
+    done = False
+    while not done:
+        _, done = _retry(lambda: downloader.next_chunk(), label=f"oauth-dl-{file_id[:8]}")
+    data = buf.getvalue()
+    if not _is_valid_pdf(data):
+        raise Exception(f"OAuth DL got {len(data)}b, not PDF")
+    return data
 
 
 def _is_valid_pdf(data):
@@ -442,7 +462,7 @@ def main():
 
         # Download
         try:
-            pdf_bytes = download_pdf(fid, api_key)
+            pdf_bytes = download_pdf(fid, api_key, service=service)
         except Exception as e:
             print(f"  DL FAIL: {e}", flush=True)
             stats["errors"] += len(pages_needed)
