@@ -884,6 +884,27 @@ def main():
     # Infer station_no from filename for records that lack it
     content_items = _infer_station_no_from_filename(content_items)
 
+    # Remove vision duplicates: if a multimodel item already covers the same station,
+    # drop the vision item (different file paths but same actual station data)
+    _mm_stations = set()
+    for item in content_items:
+        if item.get('_source_type') == 'multimodel':
+            stn = item.get('ocr_station_no') or item.get('station_no') or ''
+            if stn:
+                _mm_stations.add((item.get('province',''), str(item.get('constituency','')),
+                                  item.get('vote_type',''), str(stn)))
+    _before_dedup = len(content_items)
+    content_items = [item for item in content_items
+                     if item.get('_source_type') != 'vision'
+                     or (item.get('ocr_station_no') or item.get('station_no') or '') == ''
+                     or (item.get('province',''), str(item.get('constituency','')),
+                         item.get('vote_type',''),
+                         str(item.get('ocr_station_no') or item.get('station_no') or ''))
+                     not in _mm_stations]
+    _vision_removed = _before_dedup - len(content_items)
+    if _vision_removed:
+        print(f"  [dedup] Removed {_vision_removed} vision items already covered by multimodel")
+
     # Consolidate multi-page records (e.g. 2-page party list forms) into single records
     content_items = _consolidate_multipage_records(content_items)
     print(f"[list] After consolidation: {len(content_items)} records")
