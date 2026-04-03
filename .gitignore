@@ -50,6 +50,15 @@ service_account*.json
 gcloud-*.json
 client_secret*.json
 
+# Data backup files (.pre_* snapshots) — keep local only
+data/*.pre_*
+review-app/public/data/*.pre_*
+
+# Word documents & temp files — personal notes
+downloads/ss518/*.docx
+downloads/ss518/~*
+downloads/ss518/*.tmp
+
 # Temp files (analysis/debug/logs)
 _*.txt
 _*.json
