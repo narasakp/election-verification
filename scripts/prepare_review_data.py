@@ -393,6 +393,102 @@ def _fill_missing_party_candidates(items):
     return items
 
 
+def _apply_split_pdf_urls(items):
+    """Apply single-page split PDF URLs from _split_progress.json.
+
+    The split_and_upload.py script splits multi-page PDFs into single-page
+    files on Google Drive. This function reads that progress file and updates
+    pdf_url / drive_view_url / total_pages so the review app shows the
+    single-page PDF instead of the full multi-station document.
+    """
+    progress_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '_split_progress.json')
+    if not os.path.exists(progress_path):
+        return items
+
+    progress = json.load(open(progress_path, 'r', encoding='utf-8'))
+    if not progress:
+        return items
+
+    # Build lookup: (orig_fid, page) -> new_fid
+    fid_page_to_new = {}
+    for key, val in progress.items():
+        parts = key.rsplit('_', 1)
+        if len(parts) == 2:
+            orig_fid, page_str = parts
+            try:
+                fid_page_to_new[(orig_fid, int(page_str))] = val['new_fid']
+            except (ValueError, KeyError):
+                pass
+
+    def _get_fid(url):
+        if not url or '/d/' not in url:
+            return None
+        return url.split('/d/')[1].split('/')[0]
+
+    # Also build reverse index: fid -> set of available pages
+    fid_available = {}
+    for (f, p) in fid_page_to_new:
+        if f not in fid_available:
+            fid_available[f] = set()
+        fid_available[f].add(p)
+
+    updated = 0
+    fallback_matched = 0
+    for item in items:
+        tp = item.get('total_pages') or 1
+        if tp <= 2:
+            continue
+        fid = _get_fid(item.get('pdf_url', ''))
+        if not fid:
+            continue
+        # Try main page first, then merged pages
+        pages_to_try = [item.get('page', 1)]
+        for mp in (item.get('_merged_pages') or []):
+            if mp not in pages_to_try:
+                pages_to_try.append(mp)
+
+        matched_fid = None
+        for pg in pages_to_try:
+            matched_fid = fid_page_to_new.get((fid, pg))
+            if matched_fid:
+                break
+
+        # Fallback: try nearby pages in same station block
+        if not matched_fid and fid in fid_available:
+            pg = item.get('page', 1)
+            is_6pp = item.get('_6pp_layout', False)
+            pps = 6 if is_6pp else 4
+            first_page = ((pg - 1) // pps) * pps + 1
+            # Try all pages in station block + adjacent pages
+            candidates = list(range(first_page, min(first_page + pps, tp + 1)))
+            candidates += [pg - 1, pg + 1, pg - 2, pg + 2, pg - 3, pg + 3]
+            # Also try 4pp if 6pp didn't work, and vice versa
+            alt_pps = 4 if is_6pp else 6
+            alt_first = ((pg - 1) // alt_pps) * alt_pps + 1
+            candidates += list(range(alt_first, min(alt_first + alt_pps, tp + 1)))
+            # Deduplicate while preserving order
+            seen_cp = set()
+            for cp in candidates:
+                if cp in seen_cp or cp <= 0 or cp > tp:
+                    continue
+                seen_cp.add(cp)
+                matched_fid = fid_page_to_new.get((fid, cp))
+                if matched_fid:
+                    fallback_matched += 1
+                    break
+
+        if matched_fid:
+            item['pdf_url'] = f"https://drive.google.com/file/d/{matched_fid}/preview"
+            item['drive_view_url'] = f"https://drive.google.com/file/d/{matched_fid}/view"
+            item['_orig_total_pages'] = tp
+            item['total_pages'] = 1
+            updated += 1
+
+    if updated:
+        print(f"  [split] Applied {updated} single-page PDF URLs from split progress ({fallback_matched} via fallback)")
+    return items
+
+
 def _fix_combined_6pp_files(items):
     """Fix combined แบ่งเขต/บัญชีรายชื่อ PDFs that use 6 pages per station.
 
@@ -1077,6 +1173,9 @@ def main():
     # Balance vote types: trim excess records per station so แบ่งเขต [*] บัญชีรายชื่อ
     content_items = _balance_vote_types(content_items)
     print(f"[list] After balancing: {len(content_items)} records")
+
+    # Apply split PDF URLs from _split_progress.json
+    content_items = _apply_split_pdf_urls(content_items)
 
     # Also create a version with ALL items for reference
     out_all = os.path.join(PUBLIC_DATA_DIR, 'review_data.json')
