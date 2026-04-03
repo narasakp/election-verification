@@ -26,6 +26,9 @@ node_modules/
 review-app/public/images/
 review-app/public/data/*.png
 
+# Development log — private (for paper publishing)
+DEVELOPMENT_LOG.md
+
 # Secrets & tokens — NEVER commit these
 .env
 .env.*

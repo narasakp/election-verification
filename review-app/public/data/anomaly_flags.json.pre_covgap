@@ -1,0 +1,398 @@
+{
+  "metadata": {
+    "total_groups": 16,
+    "flagged_groups": 16,
+    "data_source": "OCR review_data.json (station-level)",
+    "provinces": [
+      "ชัยภูมิ",
+      "ตาก",
+      "เพชรบูรณ์"
+    ],
+    "generated": "2026-04-01",
+    "note": "Rebuilt from OCR data — replaces ECT API flags (encoding bug in original)"
+  },
+  "flags_by_prov_con": {
+    "ชัยภูมิ_1": [
+      {
+        "category": "data_errors",
+        "flag": "ข้อผิดพลาดหลายจุด (17 รายการ)",
+        "value": 17,
+        "detail": "พบ 17 errors และ 576 warnings ใน 490 หน่วย",
+        "severity": "high"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์สูง (>85%)",
+        "value": 64.7,
+        "detail": "เฉลี่ย 64.7% (11/232 หน่วย > 85%)",
+        "severity": "medium"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์ต่ำ (<50%)",
+        "value": 64.7,
+        "detail": "เฉลี่ย 64.7% (9/232 หน่วย < 50%)",
+        "severity": "medium"
+      }
+    ],
+    "ชัยภูมิ_2": [
+      {
+        "category": "data_errors",
+        "flag": "ข้อผิดพลาดหลายจุด (10 รายการ)",
+        "value": 10,
+        "detail": "พบ 10 errors และ 401 warnings ใน 517 หน่วย",
+        "severity": "high"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์สูง (>85%)",
+        "value": 64.0,
+        "detail": "เฉลี่ย 64.0% (17/240 หน่วย > 85%)",
+        "severity": "medium"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์ต่ำ (<50%)",
+        "value": 64.0,
+        "detail": "เฉลี่ย 64.0% (10/240 หน่วย < 50%)",
+        "severity": "medium"
+      },
+      {
+        "category": "missing_data",
+        "flag": "ข้อมูลขาดหาย (27%)",
+        "value": 141,
+        "detail": "141/517 หน่วยไม่มีข้อมูลสถิติ",
+        "severity": "medium"
+      }
+    ],
+    "ชัยภูมิ_3": [
+      {
+        "category": "data_errors",
+        "flag": "ข้อผิดพลาดหลายจุด (5 รายการ)",
+        "value": 5,
+        "detail": "พบ 5 errors และ 405 warnings ใน 362 หน่วย",
+        "severity": "high"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์สูง (>85%)",
+        "value": 62.1,
+        "detail": "เฉลี่ย 62.1% (5/173 หน่วย > 85%)",
+        "severity": "medium"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์ต่ำ (<50%)",
+        "value": 62.1,
+        "detail": "เฉลี่ย 62.1% (10/173 หน่วย < 50%)",
+        "severity": "medium"
+      }
+    ],
+    "ชัยภูมิ_4": [
+      {
+        "category": "data_errors",
+        "flag": "ข้อผิดพลาดหลายจุด (9 รายการ)",
+        "value": 9,
+        "detail": "พบ 9 errors และ 505 warnings ใน 427 หน่วย",
+        "severity": "high"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์สูง (>85%)",
+        "value": 61.3,
+        "detail": "เฉลี่ย 61.3% (5/204 หน่วย > 85%)",
+        "severity": "medium"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์ต่ำ (<50%)",
+        "value": 61.3,
+        "detail": "เฉลี่ย 61.3% (11/204 หน่วย < 50%)",
+        "severity": "medium"
+      }
+    ],
+    "ชัยภูมิ_5": [
+      {
+        "category": "data_errors",
+        "flag": "ข้อผิดพลาดหลายจุด (11 รายการ)",
+        "value": 11,
+        "detail": "พบ 11 errors และ 572 warnings ใน 480 หน่วย",
+        "severity": "high"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์สูง (>85%)",
+        "value": 64.9,
+        "detail": "เฉลี่ย 64.9% (7/230 หน่วย > 85%)",
+        "severity": "medium"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์ต่ำ (<50%)",
+        "value": 64.9,
+        "detail": "เฉลี่ย 64.9% (4/230 หน่วย < 50%)",
+        "severity": "medium"
+      }
+    ],
+    "ชัยภูมิ_6": [
+      {
+        "category": "data_errors",
+        "flag": "ข้อผิดพลาดหลายจุด (9 รายการ)",
+        "value": 9,
+        "detail": "พบ 9 errors และ 666 warnings ใน 510 หน่วย",
+        "severity": "high"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์สูง (>85%)",
+        "value": 64.1,
+        "detail": "เฉลี่ย 64.1% (10/245 หน่วย > 85%)",
+        "severity": "medium"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์ต่ำ (<50%)",
+        "value": 64.1,
+        "detail": "เฉลี่ย 64.1% (11/245 หน่วย < 50%)",
+        "severity": "medium"
+      }
+    ],
+    "ชัยภูมิ_7": [
+      {
+        "category": "data_errors",
+        "flag": "ข้อผิดพลาดหลายจุด (9 รายการ)",
+        "value": 9,
+        "detail": "พบ 9 errors และ 562 warnings ใน 494 หน่วย",
+        "severity": "high"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์สูง (>85%)",
+        "value": 65.5,
+        "detail": "เฉลี่ย 65.5% (10/240 หน่วย > 85%)",
+        "severity": "medium"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์ต่ำ (<50%)",
+        "value": 65.5,
+        "detail": "เฉลี่ย 65.5% (8/240 หน่วย < 50%)",
+        "severity": "medium"
+      }
+    ],
+    "ตาก_1": [
+      {
+        "category": "data_errors",
+        "flag": "ข้อผิดพลาดหลายจุด (12 รายการ)",
+        "value": 12,
+        "detail": "พบ 12 errors และ 463 warnings ใน 610 หน่วย",
+        "severity": "high"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์สูง (>85%)",
+        "value": 67.4,
+        "detail": "เฉลี่ย 67.4% (12/273 หน่วย > 85%)",
+        "severity": "medium"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์ต่ำ (<50%)",
+        "value": 67.4,
+        "detail": "เฉลี่ย 67.4% (11/273 หน่วย < 50%)",
+        "severity": "medium"
+      }
+    ],
+    "ตาก_2": [
+      {
+        "category": "data_errors",
+        "flag": "ข้อผิดพลาดหลายจุด (3 รายการ)",
+        "value": 3,
+        "detail": "พบ 3 errors และ 469 warnings ใน 595 หน่วย",
+        "severity": "medium"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์สูง (>85%)",
+        "value": 67.2,
+        "detail": "เฉลี่ย 67.2% (6/186 หน่วย > 85%)",
+        "severity": "medium"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์ต่ำ (<50%)",
+        "value": 67.2,
+        "detail": "เฉลี่ย 67.2% (11/186 หน่วย < 50%)",
+        "severity": "medium"
+      },
+      {
+        "category": "missing_data",
+        "flag": "ข้อมูลขาดหาย (24%)",
+        "value": 144,
+        "detail": "144/595 หน่วยไม่มีข้อมูลสถิติ",
+        "severity": "medium"
+      }
+    ],
+    "ตาก_3": [
+      {
+        "category": "data_errors",
+        "flag": "ข้อผิดพลาดหลายจุด (11 รายการ)",
+        "value": 11,
+        "detail": "พบ 11 errors และ 343 warnings ใน 435 หน่วย",
+        "severity": "high"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์สูง (>85%)",
+        "value": 70.5,
+        "detail": "เฉลี่ย 70.5% (11/182 หน่วย > 85%)",
+        "severity": "medium"
+      }
+    ],
+    "เพชรบูรณ์_1": [
+      {
+        "category": "data_errors",
+        "flag": "ข้อผิดพลาดหลายจุด (5 รายการ)",
+        "value": 5,
+        "detail": "พบ 5 errors และ 498 warnings ใน 660 หน่วย",
+        "severity": "high"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์สูง (>85%)",
+        "value": 64.2,
+        "detail": "เฉลี่ย 64.2% (3/214 หน่วย > 85%)",
+        "severity": "medium"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์ต่ำ (<50%)",
+        "value": 64.2,
+        "detail": "เฉลี่ย 64.2% (4/214 หน่วย < 50%)",
+        "severity": "medium"
+      },
+      {
+        "category": "missing_data",
+        "flag": "ข้อมูลขาดหาย (31%)",
+        "value": 202,
+        "detail": "202/660 หน่วยไม่มีข้อมูลสถิติ",
+        "severity": "medium"
+      }
+    ],
+    "เพชรบูรณ์_2": [
+      {
+        "category": "data_errors",
+        "flag": "ข้อผิดพลาดหลายจุด (22 รายการ)",
+        "value": 22,
+        "detail": "พบ 22 errors และ 648 warnings ใน 907 หน่วย",
+        "severity": "high"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์สูง (>85%)",
+        "value": 73.1,
+        "detail": "เฉลี่ย 73.1% (8/260 หน่วย > 85%)",
+        "severity": "medium"
+      }
+    ],
+    "เพชรบูรณ์_3": [
+      {
+        "category": "data_errors",
+        "flag": "ข้อผิดพลาดหลายจุด (25 รายการ)",
+        "value": 25,
+        "detail": "พบ 25 errors และ 591 warnings ใน 925 หน่วย",
+        "severity": "high"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์สูง (>85%)",
+        "value": 75.0,
+        "detail": "เฉลี่ย 75.0% (17/234 หน่วย > 85%)",
+        "severity": "medium"
+      }
+    ],
+    "เพชรบูรณ์_4": [
+      {
+        "category": "data_errors",
+        "flag": "ข้อผิดพลาดหลายจุด (9 รายการ)",
+        "value": 9,
+        "detail": "พบ 9 errors และ 584 warnings ใน 996 หน่วย",
+        "severity": "high"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์สูง (>85%)",
+        "value": 59.2,
+        "detail": "เฉลี่ย 59.2% (8/270 หน่วย > 85%)",
+        "severity": "medium"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์ต่ำ (<50%)",
+        "value": 59.2,
+        "detail": "เฉลี่ย 59.2% (29/270 หน่วย < 50%)",
+        "severity": "medium"
+      }
+    ],
+    "เพชรบูรณ์_5": [
+      {
+        "category": "data_errors",
+        "flag": "ข้อผิดพลาดหลายจุด (6 รายการ)",
+        "value": 6,
+        "detail": "พบ 6 errors และ 605 warnings ใน 952 หน่วย",
+        "severity": "high"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์สูง (>85%)",
+        "value": 59.7,
+        "detail": "เฉลี่ย 59.7% (10/240 หน่วย > 85%)",
+        "severity": "medium"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์ต่ำ (<50%)",
+        "value": 59.7,
+        "detail": "เฉลี่ย 59.7% (25/240 หน่วย < 50%)",
+        "severity": "medium"
+      },
+      {
+        "category": "missing_data",
+        "flag": "ข้อมูลขาดหาย (23%)",
+        "value": 222,
+        "detail": "222/952 หน่วยไม่มีข้อมูลสถิติ",
+        "severity": "medium"
+      }
+    ],
+    "เพชรบูรณ์_6": [
+      {
+        "category": "data_errors",
+        "flag": "ข้อผิดพลาดหลายจุด (8 รายการ)",
+        "value": 8,
+        "detail": "พบ 8 errors และ 578 warnings ใน 878 หน่วย",
+        "severity": "high"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์สูง (>85%)",
+        "value": 62.1,
+        "detail": "เฉลี่ย 62.1% (8/225 หน่วย > 85%)",
+        "severity": "medium"
+      },
+      {
+        "category": "turnout",
+        "flag": "อัตรามาใช้สิทธิ์ต่ำ (<50%)",
+        "value": 62.1,
+        "detail": "เฉลี่ย 62.1% (11/225 หน่วย < 50%)",
+        "severity": "medium"
+      },
+      {
+        "category": "missing_data",
+        "flag": "ข้อมูลขาดหาย (29%)",
+        "value": 251,
+        "detail": "251/878 หน่วยไม่มีข้อมูลสถิติ",
+        "severity": "medium"
+      }
+    ]
+  }
+}
