@@ -23,8 +23,8 @@ This document covers how to securely manage API keys and credentials for this pr
 - **`.env` in `.gitignore`** — API keys never committed to git
 - **`.env.example`** — template with empty values, safe to commit
 - **All token files gitignored** — `token*.json`, `credentials.json`, `service_account*.json`
-- **No hardcoded keys** — all keys loaded via `os.environ` or `.env` file
-- **Git history clean** — no secret files ever committed
+- **No hardcoded keys in current tracked files** — all keys loaded via `os.environ` or `.env` file
+- **⚠️ Git history contains leaked keys** — `cloud/env.yaml` and `cloud/_env_vars.yaml` were previously committed with a Gemini API key. The key (`AIzaSyC8_...`) has been **revoked** and is no longer valid. Files have been removed from tracking but remain in git history. Consider `git filter-repo` or BFG to fully purge if needed.
 
 ### Verification
 
@@ -192,4 +192,4 @@ Typical costs for this project's operations:
 
 ---
 
-*Last updated: 18 March 2026*
+*Last updated: 4 April 2026*

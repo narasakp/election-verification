@@ -37,8 +37,15 @@ credentials.json
 token.json
 token_full.json
 
-# Prevent API key leaks — deploy scripts that may embed keys
+# Prevent API key leaks — deploy scripts & env files with secrets
 cloud/_deploy.cmd
+cloud/_deploy_cmd.py
+cloud/_env_deploy.py
+cloud/_read_key.py
+cloud/env.yaml
+cloud/_env_vars.yaml
+cloud/_*.cmd
+cloud/_*.yaml
 token_dashboard.json
 token_*.json
 service_account*.json
