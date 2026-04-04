@@ -59,6 +59,9 @@ downloads/ss518/*.docx
 downloads/ss518/~*
 downloads/ss518/*.tmp
 
+# Diagnostic/debug scripts (one-off, keep local only)
+scripts/_*.py
+
 # Temp files (analysis/debug/logs)
 _*.txt
 _*.json

@@ -36,12 +36,12 @@ For official and authoritative results, please always refer to the original docu
 | จังหวัดที่ผ่าน OCR | **3** จังหวัด (ชัยภูมิ, ตาก, เพชรบูรณ์) |
 | เขตเลือกตั้งที่มี OCR | **16** เขต |
 | รายการ OCR (records) | **17,628** records |
-| รายการรอตรวจสอบ (review items) | **10,238** items |
-| Single-page PDF splits | **5,357+** ไฟล์ (ชัยภูมิ+ตากครบ 100%, เพชรบูรณ์กำลังดำเนินการ) |
+| รายการรอตรวจสอบ (review items) | **9,095** items |
+| Single-page PDF splits | **7,975+** ไฟล์ (99.97% ของ 3 จังหวัด) |
 | แหล่งข้อมูล Cross-Reference | **4** แหล่ง (OCR ของเรา, กกต., Killernay, Luengnat) |
 | เขตเลือกตั้งใน Cross-Reference | **401** เขต (ทั้งแบ่งเขต + บัญชีรายชื่อ) |
-| Python scripts | **172+** scripts |
-| ชั่วโมงพัฒนา | **316+** ชั่วโมง |
+| Python scripts | **180+** scripts |
+| ชั่วโมงพัฒนา | **381+** ชั่วโมง (46 phases, 51 วัน) |
 
 ### จุดเด่นของโครงการนี้ — Station-Level OCR
 

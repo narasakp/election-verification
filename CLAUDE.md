@@ -13,15 +13,15 @@
     - `public/data/` - review_data.json, anomaly_flags.json, backup_status.json, cross_reference_sources.json, thailand-provinces.topojson
   - `docs/` - static citizen review UI (GitHub Pages)
   - `assets/` - ไฟล์สื่อ/สไตล์
-  - `DEVELOPMENT_LOG.md` - บันทึกขั้นตอนทั้งหมด (Phases 1–34)
   - `README.md` v4.0, `SECURITY.md`, `.githooks/pre-commit`
 
-- สถิติสำคัญ (Phase 34):
-  - Python scripts 172+, React components 15+, unit tests 115+, data files 56+
+- สถิติสำคัญ (Phase 46):
+  - Python scripts 180+, React components 15+, unit tests 115+, data files 60+
   - OCR records **17,628** (3 จังหวัด), coverage **99.6%** (14,228/14,292 front pages)
-  - PDF 149,936 ไฟล์ (77 จังหวัด บน Google Drive) + single-page 5,089 ไฟล์
+  - PDF 149,936 ไฟล์ (77 จังหวัด บน Google Drive) + single-page **7,975+** ไฟล์ (99.97%)
+  - Review items **9,095** (deployed), vote type classification **99.99%**
   - Cloud Function (Gemini OCR, Gen2, 2048MB, asia-southeast1)
-  - Git commits 26+, Dashboards 7
+  - Git commits 40+, Dashboards 7, Development **381+ ชั่วโมง** (51 วัน)
 
 ---
 
@@ -39,7 +39,7 @@
 3. **Drive staging**
    - อัปโหลด PDF ไป Google Drive (`download_to_drive.py`, `build_drive_index.py`)
    - แยก page-level (single-page upload) เพื่อให้ ReviewCard แสดงหน้าที่ถูกต้อง
-   - `scripts/split_and_upload.py` → 5,089 single-page PDFs ครบ 100%
+   - `scripts/split_and_upload.py` → 7,975+ single-page PDFs (99.97%)
 
 4. **Multi-model extraction**
    - `ocr_multimodel.py` + `cloud/function/main.py` + `cloud/ocr_local.py`
@@ -94,7 +94,7 @@ Hooks: `useThailandMap` (d3-geo, TopoJSON, 77 จังหวัด mapping), `u
 
 ---
 
-## Current progress (สถานะปัจจุบัน — Phase 34)
+## Current progress (สถานะปัจจุบัน — Phase 46)
 
 ### OCR Completion (Phase 32)
 
@@ -111,7 +111,7 @@ Hooks: `useThailandMap` (d3-geo, TopoJSON, 77 จังหวัด mapping), `u
 - Gemini API: ~$10.88 | Cloud Functions: ~$3.25 | **รวม ~$14.14 ($0.0011/page)**
 
 ### Review App (GitHub Pages)
-- 6,111 review items (3 จังหวัด), dark mode, code splitting (bundle 234KB)
+- 9,095 review items (3 จังหวัด), dark mode, code splitting (bundle 234KB)
 - 115 unit tests passed, 10/10 error boundaries, 7/7 leaf components memoized
 - Priority queue (anomaly-first), auto-approve low-risk, bulk confirm (Ctrl+B)
 - Keyboard shortcuts: J/K navigate, 1/2/3/R status, Ctrl+A/B/P, Shift+A
@@ -124,32 +124,20 @@ Hooks: `useThailandMap` (d3-geo, TopoJSON, 77 จังหวัด mapping), `u
 
 ## Remaining open work (งานที่เหลือ)
 
-1. **64 หน้าที่ยังขาด** — หน้าที่ script นับว่าเป็น front page แต่ Gemini อ่านไม่ได้
-   - ตาก 9 หน้า (ไฟล์รวม ต.นาโบสถ์ + station p1 files)
-   - เพชรบูรณ์ 55 หน้า (compilation files — หน้าลายเซ็น/ปก)
-   - พิจารณา: manual OCR / skip / mark as non-data pages
+1. **64 หน้าที่ยังขาด** — หน้าลายเซ็น/ว่าง/ปก หรือ PDF คุณภาพต่ำ (ไม่ใช่ error)
 
-2. **station-level API & data completeness**
-   - กกต. ยังไม่มี API level-by-station; ต้องพึ่ง OCR/drive scraping
-   - ปรับปรุง crosscheck กับ ECT ultimate snapshots เมื่อมี data ใหม่
-
-3. **data quality / accuracy metric สำหรับบทความ Q1 SJR**
-   - เสริม metric pipeline: bias per candidate, outlier thresholds
-   - OCR error breakdown, cost/accuracy tradeoff analysis
-
-4. **full-province scaling** (beyond 3 provinces → 77 จังหวัด)
+2. **full-province scaling** (beyond 3 provinces → 77 จังหวัด)
    - ตรวจสอบ `postprocess.py` generalization รับ 77 provinces
    - ปรับขนาด dispatcher, GCS buckets, province mapping
    - ประมาณ OCR cost: 149,936 PDFs × $0.0011 ≈ $165
 
-5. **review throughput & crowdsourcing**
-   - ขยาย citizen review (Phase 7 UI) ให้รองรับหลายจังหวัด
-   - consensus model: 1/2/3 reviewers → low/medium/high trust
-   - Auto-approve ช่วยกรอง low-risk items ออกก่อน
+3. **data quality / accuracy metric สำหรับบทความ**
+   - เสริม metric pipeline: bias per candidate, outlier thresholds
+   - OCR error breakdown, cost/accuracy tradeoff analysis
 
-6. **maintenance & docs**
-   - Update README+SECURITY post-phase-34
-   - GitHub Issues milestones สำหรับ phase ถัดไป
+4. **review throughput & crowdsourcing**
+   - ขยาย citizen review ให้รองรับหลายจังหวัด
+   - consensus model: 1/2/3 reviewers → low/medium/high trust
 
 ---
 
@@ -169,6 +157,6 @@ Hooks: `useThailandMap` (d3-geo, TopoJSON, 77 จังหวัด mapping), `u
 
 ## Notes
 
-- อ้างอิงจาก `DEVELOPMENT_LOG.md` Phases 1–34 (อัปเดตล่าสุด 1 เม.ย. 2569)
-- โครงการพัฒนา 48 วัน (12 ก.พ. – 1 เม.ย. 2569) รวม ~316+ ชั่วโมง
+- โครงการพัฒนา 51 วัน (12 ก.พ. – 3 เม.ย. 2569) รวม ~381+ ชั่วโมง, 46 phases
 - ผู้พัฒนา: narasak poophayang
+- อัปเดตล่าสุด: 4 เมษายน 2569
