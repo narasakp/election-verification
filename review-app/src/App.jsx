@@ -3,6 +3,7 @@ import ReviewCard from './components/ReviewCard'
 import FilterBar from './components/FilterBar'
 import StatsBar from './components/StatsBar'
 import AuthGate from './components/AuthGate'
+import ToastContainer, { toast } from './components/Toast'
 
 // Lazy-loaded heavy components (code splitting)
 const DataStatsPanel = lazy(() => import('./components/DataStatsPanel'))
@@ -16,19 +17,17 @@ const AdminPanel = lazy(() => import('./components/AdminPanel'))
 const AnomalySummaryPanel = lazy(() => import('./components/AnomalySummaryPanel'))
 import useAuth from './hooks/useAuth'
 import useDarkMode from './hooks/useDarkMode'
+import useExport from './hooks/useExport'
+import useKeyboardShortcuts from './hooks/useKeyboardShortcuts'
 import { submitToGoogleForm, submitLoginEvent, submitLogoutEvent } from './utils/submitReview'
 import { getReviewLog, appendReviewLog, getAllSummaries, getUserReviewKey, checkRateLimit, recordReviewTiming, validateEditValue, getAllAnomalyScores, mergeReviewLogs, verifyLogIntegrity } from './utils/reviewLog'
 import { validateItem, getWorstSeverity, isLowRiskItem } from './utils/validation'
 import { computeItemAnomalyScore } from './utils/anomalyScore'
-import { ChevronLeft, ChevronRight, Download, Upload, FolderUp, LogOut, ShieldCheck, ChevronDown, Filter, Moon, Sun } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Download, Upload, FolderUp, LogOut, ShieldCheck, ChevronDown, Filter, Moon, Sun, Menu, X } from 'lucide-react'
 
 const DATA_URL = './data/review_data.json'
 const ANOMALY_FLAGS_URL = './data/anomaly_flags.json'
 
-const csvEsc = (v) => {
-  const s = String(v == null ? '' : v)
-  return s.includes(',') || s.includes('"') || s.includes('\n') ? '"' + s.replace(/"/g, '""') + '"' : s
-}
 
 function App() {
   const { user, loading: authLoading, signOut, renderButton } = useAuth()
@@ -57,7 +56,9 @@ function App() {
   const [bulkOperationInProgress, setBulkOperationInProgress] = useState(false)
   const [priorityQueueEnabled, setPriorityQueueEnabled] = useState(false)
   const [activeDashboard, setActiveDashboard] = useState(null)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
   const exportMenuRef = React.useRef(null)
+  const mobileMenuRef = React.useRef(null)
 
   // Close export menu on outside click
   useEffect(() => {
@@ -68,6 +69,16 @@ function App() {
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [showExportMenu])
+
+  // Close mobile menu on outside click
+  useEffect(() => {
+    if (!showMobileMenu) return
+    const handler = (e) => {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target)) setShowMobileMenu(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [showMobileMenu])
 
   // Load data
   const loadData = useCallback(() => {
@@ -347,7 +358,7 @@ function App() {
     }
     
     setBulkOperationInProgress(false)
-    alert(`✅ Auto-approved ${approvedCount} low-risk items`)
+    toast(`✅ Auto-approved ${approvedCount} low-risk items`, 'success')
   }, [sortedFilteredItems, review, user, autoApproveEnabled, setItemStatus])
 
   const bulkConfirmAll = useCallback(async () => {
@@ -366,74 +377,16 @@ function App() {
     }
     
     setBulkOperationInProgress(false)
-    alert(`✅ Confirmed ${confirmedCount} items`)
+    toast(`✅ Confirmed ${confirmedCount} items`, 'success')
   }, [sortedFilteredItems, review, setItemStatus])
 
-  // Keyboard navigation
-  useEffect(() => {
-    const handler = (e) => {
-      // Escape: blur active input so shortcuts work again
-      if (e.key === 'Escape') {
-        if (document.activeElement) document.activeElement.blur()
-        return
-      }
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return
-      if (e.key === 'ArrowRight' || e.key === 'j') goNext()
-      if (e.key === 'ArrowLeft' || e.key === 'k') goPrev()
-      // Review shortcuts: 1=confirm, 2=flag, 3=reject, r=reset
-      if (currentItem) {
-        if (e.key === '1') {
-          if (window.confirm('✅ ยืนยัน\n\nตรวจสอบตัวเลขกับภาพต้นฉบับแล้ว ถูกต้อง\nหน้านี้จะถูกนับเป็นข้อมูลที่ผ่านการตรวจสอบแล้ว\n\nยืนยันหรือไม่?')) {
-            setItemStatus(currentItem.id, 'confirmed')
-          }
-        }
-        if (e.key === '2') {
-          if (window.confirm('🔄 ตรวจอีกรอบ\n\nหน้านี้จะถูกส่งให้อาสาคนอื่นตรวจซ้ำ\nยืนยันหรือไม่?')) {
-            setItemStatus(currentItem.id, 'flagged')
-          }
-        }
-        if (e.key === '3') {
-          if (window.confirm('🚫 ใช้ไม่ได้\n\nหน้านี้จะถูกตัดออกจากชุดข้อมูลสุดท้าย\n(ถ้าข้อมูลแค่ผิด → แก้ตัวเลขแล้วกด 1 ยืนยัน แทน)\n\nยืนยันหรือไม่?')) {
-            setItemStatus(currentItem.id, 'rejected')
-          }
-        }
-        if (e.key === 'r') {
-          if (window.confirm('↩ รีเซ็ต\n\nสถานะจะกลับเป็น "รอตรวจ"\nค่าแก้ไขและหมายเหตุจะยังอยู่\n\nยืนยันหรือไม่?')) {
-            setItemStatus(currentItem.id, 'pending')
-          }
-        }
-      }
-      
-      // Bulk shortcuts (Ctrl key required for safety)
-      if (e.ctrlKey) {
-        if (e.key === 'a') {
-          e.preventDefault()
-          if (autoApproveEnabled) {
-            bulkAutoApprove()
-          } else {
-            alert('⚠️ Auto-approve is disabled. Enable it first with Ctrl+A (hold Ctrl, press A twice)')
-          }
-        }
-        if (e.key === 'b') {
-          e.preventDefault()
-          bulkConfirmAll()
-        }
-        if (e.key === 'p') {
-          e.preventDefault()
-          setPriorityQueueEnabled(v => !v)
-          alert(`🔄 Priority queue ${!priorityQueueEnabled ? 'enabled' : 'disabled'}`)
-        }
-      }
-      
-      // Toggle shortcuts (no Ctrl required)
-      if (e.key === 'A' && e.shiftKey) {
-        setAutoApproveEnabled(v => !v)
-        alert(`🤖 Auto-approve ${!autoApproveEnabled ? 'enabled' : 'disabled'}`)
-      }
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [goNext, goPrev, currentItem, setItemStatus, autoApproveEnabled, bulkAutoApprove, bulkConfirmAll, priorityQueueEnabled])
+  // Keyboard navigation (extracted to custom hook)
+  useKeyboardShortcuts({
+    goNext, goPrev, currentItem, setItemStatus,
+    autoApproveEnabled, setAutoApproveEnabled,
+    bulkAutoApprove, bulkConfirmAll,
+    priorityQueueEnabled, setPriorityQueueEnabled,
+  })
 
   const setItemNote = useCallback((itemId, note) => {
     setReview(prev => ({
@@ -470,175 +423,11 @@ function App() {
     })
   }, [])
 
-  const handleExportJSON = () => {
-    setShowExportMenu(false)
-    const summaries = getAllSummaries(reviewLog)
-    const merged = allItems.map(item => {
-      const rev = review[item.id]
-      const constKey = `${item.province || ''}__${item.constituency || ''}`
-      const shared = sharedEdits[constKey] || {}
-      const summary = summaries[item.id]
-      const base = !rev
-        ? { ...item, ...shared, _review_status: 'pending' }
-        : { ...item, ...shared, ...(rev.edits || {}), _review_status: rev.status, _review_note: rev.note }
-      // F5: Attach audit trail
-      if (summary) {
-        base._consensus_status = summary.majorityStatus || (summary.isTie ? 'disputed' : null)
-        base._consensus_ratio = summary.consensusRatio
-        base._is_tie = summary.isTie
-        if (summary.isTie) base._tied_statuses = summary.tiedStatuses
-        base._reviewer_count = summary.reviewerCount
-        base._total_reviews = summary.totalReviews
-        base._has_conflict = summary.hasConflict
-        if (Object.keys(summary.consensusEdits).length > 0) base._consensus_edits = summary.consensusEdits
-        if (Object.keys(summary.editConflicts).length > 0) base._edit_conflicts = summary.editConflicts
-        if (summary.outliers.length > 0) base._outliers = summary.outliers
-      }
-      return base
-    })
-    const blob = new Blob([JSON.stringify(merged, null, 2)], { type: 'application/json' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = `ocr_reviewed_${new Date().toISOString().slice(0, 10)}.json`
-    a.click()
-  }
-
-  // F5: Export full audit log
-  const handleExportAuditLog = () => {
-    setShowExportMenu(false)
-    const log = getReviewLog()
-    const anomalyScores = getAllAnomalyScores(log)
-    const corrupted = verifyLogIntegrity(log)
-    const exportData = {
-      exportedAt: new Date().toISOString(),
-      exportedBy: user?.email || 'anonymous',
-      logEntries: log.length,
-      corruptedEntries: corrupted,
-      anomalyScores,
-      log,
-    }
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = `audit_log_${new Date().toISOString().slice(0, 10)}.json`
-    a.click()
-  }
-
-  const handleExportCSV = () => {
-    setShowExportMenu(false)
-    const headers = ['file','page','province','constituency','station_no','sub_district','district','vote_type',
-      'registered_voters','turnout','ballots_received','valid_ballots','invalid_ballots','no_vote_ballots','remaining_ballots','total_votes',
-      'candidates_count','candidate_votes_sum','review_status','review_note']
-    const rows = [headers.join(',')]
-    allItems.forEach(d => {
-      const rev = review[d.id] || {}
-      const constKey = `${d.province || ''}__${d.constituency || ''}`
-      const shared = sharedEdits[constKey] || {}
-      const edits = rev.edits || {}
-      // Merge: item ← shared ← per-page edits (edits win over shared)
-      const merged = { ...d, ...shared, ...edits }
-      const cands = d.candidates || []
-      const candSum = cands.reduce((s, c) => s + (Number(c.votes) || 0), 0)
-      rows.push([
-        csvEsc(merged.file), merged.page, csvEsc(merged.province), merged.constituency, merged.ocr_station_no,
-        csvEsc(merged.sub_district), csvEsc(merged.district), csvEsc(merged.vote_type),
-        merged.registered_voters, merged.turnout, merged.ballots_received, merged.valid_ballots,
-        merged.invalid_ballots, merged.no_vote_ballots, merged.remaining_ballots, merged.total_votes,
-        cands.length, candSum, rev.status || 'pending', csvEsc(rev.note || '')
-      ].join(','))
-    })
-    const bom = '\uFEFF'
-    const blob = new Blob([bom + rows.join('\n')], { type: 'text/csv;charset=utf-8' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = `election_data_${new Date().toISOString().slice(0, 10)}.csv`
-    a.click()
-  }
-
-  const handleExportFilteredJSON = () => {
-    setShowExportMenu(false)
-    const summaries = getAllSummaries(reviewLog)
-    const merged = filteredItems.map(item => {
-      const rev = review[item.id]
-      const constKey = `${item.province || ''}__${item.constituency || ''}`
-      const shared = sharedEdits[constKey] || {}
-      const summary = summaries[item.id]
-      const base = !rev
-        ? { ...item, ...shared, _review_status: 'pending' }
-        : { ...item, ...shared, ...(rev.edits || {}), _review_status: rev.status, _review_note: rev.note }
-      if (summary) {
-        base._consensus_status = summary.majorityStatus || (summary.isTie ? 'disputed' : null)
-        base._reviewer_count = summary.reviewerCount
-      }
-      return base
-    })
-    const blob = new Blob([JSON.stringify(merged, null, 2)], { type: 'application/json' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = `ocr_filtered_${filteredItems.length}_${new Date().toISOString().slice(0, 10)}.json`
-    a.click()
-  }
-
-  const handleExportFilteredCSV = () => {
-    setShowExportMenu(false)
-    const headers = ['file','page','province','constituency','station_no','sub_district','district','vote_type',
-      'registered_voters','turnout','ballots_received','valid_ballots','invalid_ballots','no_vote_ballots','remaining_ballots','total_votes',
-      'candidates_count','candidate_votes_sum','review_status','review_note']
-    const rows = [headers.join(',')]
-    filteredItems.forEach(d => {
-      const rev = review[d.id] || {}
-      const constKey = `${d.province || ''}__${d.constituency || ''}`
-      const shared = sharedEdits[constKey] || {}
-      const edits = rev.edits || {}
-      const merged = { ...d, ...shared, ...edits }
-      const cands = d.candidates || []
-      const candSum = cands.reduce((s, c) => s + (Number(c.votes) || 0), 0)
-      rows.push([
-        csvEsc(merged.file), merged.page, csvEsc(merged.province), merged.constituency, merged.ocr_station_no,
-        csvEsc(merged.sub_district), csvEsc(merged.district), csvEsc(merged.vote_type),
-        merged.registered_voters, merged.turnout, merged.ballots_received, merged.valid_ballots,
-        merged.invalid_ballots, merged.no_vote_ballots, merged.remaining_ballots, merged.total_votes,
-        cands.length, candSum, rev.status || 'pending', csvEsc(rev.note || '')
-      ].join(','))
-    })
-    const bom = '\uFEFF'
-    const blob = new Blob([bom + rows.join('\n')], { type: 'text/csv;charset=utf-8' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = `election_filtered_${filteredItems.length}_${new Date().toISOString().slice(0, 10)}.csv`
-    a.click()
-  }
-
-  const handleExportFullCSV = () => {
-    setShowExportMenu(false)
-    const constItems = allItems.filter(d => d.vote_type === 'แบ่งเขต')
-    let maxCands = 0
-    constItems.forEach(d => { const c = (d.candidates || []).length; if (c > maxCands) maxCands = c })
-    const headers = ['file','page','province','constituency','station_no','sub_district','district','vote_type',
-      'registered_voters','turnout','ballots_received','valid_ballots','invalid_ballots','no_vote_ballots','remaining_ballots','total_votes']
-    for (let i = 1; i <= maxCands; i++) { headers.push(`cand${i}_no`, `cand${i}_name`, `cand${i}_party`, `cand${i}_votes`) }
-    const rows = [headers.join(',')]
-    constItems.forEach(d => {
-      const row = [
-        csvEsc(d.file), d.page, csvEsc(d.province), d.constituency, d.ocr_station_no,
-        csvEsc(d.sub_district), csvEsc(d.district), csvEsc(d.vote_type),
-        d.registered_voters, d.turnout, d.ballots_received, d.valid_ballots,
-        d.invalid_ballots, d.no_vote_ballots, d.remaining_ballots, d.total_votes
-      ]
-      const cands = d.candidates || []
-      for (let i = 0; i < maxCands; i++) {
-        const c = cands[i]
-        row.push(c ? c.number : '', c ? csvEsc(c.name) : '', c ? csvEsc(c.party) : '', c ? c.votes : '')
-      }
-      rows.push(row.join(','))
-    })
-    const bom = '\uFEFF'
-    const blob = new Blob([bom + rows.join('\n')], { type: 'text/csv;charset=utf-8' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = `election_constituency_${new Date().toISOString().slice(0, 10)}.csv`
-    a.click()
-  }
+  // Export handlers (extracted to custom hook)
+  const {
+    handleExportJSON, handleExportCSV, handleExportFullCSV,
+    handleExportFilteredJSON, handleExportFilteredCSV, handleExportAuditLog,
+  } = useExport({ allItems, review, sharedEdits, filteredItems, reviewLog, user })
 
   const handleImport = (e) => {
     const file = e.target.files[0]
@@ -725,9 +514,9 @@ function App() {
                   setAllItems(items)
                   setError(null)
                 } else {
-                  alert('ไม่พบข้อมูลในไฟล์')
+                  toast('ไม่พบข้อมูลในไฟล์', 'warning')
                 }
-              } catch { alert('ไฟล์ JSON ไม่ถูกต้อง') }
+              } catch { toast('ไฟล์ JSON ไม่ถูกต้อง', 'error') }
             }
             reader.readAsText(file)
           }} />
@@ -778,108 +567,147 @@ function App() {
             </div>
           )}
 
-          {/* Action buttons */}
+          {/* Action buttons — Desktop: all visible, Mobile: overflow menu */}
           <div className="flex items-center gap-1.5 pl-3 border-l border-white/20">
             <button onClick={toggleDark} className="flex items-center gap-1 p-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs transition" title={dark ? 'Light mode' : 'Dark mode'} aria-label={dark ? 'เปลี่ยนเป็นโหมดสว่าง' : 'เปลี่ยนเป็นโหมดมืด'}>
               {dark ? <Sun size={14} /> : <Moon size={14} />}
             </button>
-            <button onClick={() => setShowAdminPanel(v => !v)} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-amber-500/80 hover:bg-amber-500 rounded-lg text-xs font-medium transition" title="Admin Panel" aria-label="เปิดแผงผู้ดูแลระบบ">
-              🛡️ Admin
-            </button>
-            
-            {/* Phase 34: Review Throughput Controls */}
-            <button 
-              onClick={() => setAutoApproveEnabled(v => !v)} 
-              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition ${
-                autoApproveEnabled ? 'bg-green-500/80 hover:bg-green-500 text-white' : 'bg-white/15 hover:bg-white/25 text-white'
-              }`} 
-              title="Auto-approve low-risk items (Shift+A to toggle)"
-              aria-label="เปิด/ปิด auto-approve"
-              disabled={bulkOperationInProgress}
-            >
-              🤖 Auto-approve {autoApproveEnabled ? 'ON' : 'OFF'}
-            </button>
-            
-            <button 
-              onClick={() => setPriorityQueueEnabled(v => !v)} 
-              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition ${
-                priorityQueueEnabled ? 'bg-orange-500/80 hover:bg-orange-500 text-white' : 'bg-white/15 hover:bg-white/25 text-white'
-              }`} 
-              title="Priority queue for high-anomaly items (Ctrl+P to toggle)"
-              aria-label="เปิด/ปิด priority queue"
-            >
-              🔄 Priority {priorityQueueEnabled ? 'ON' : 'OFF'}
-            </button>
-            
-            <button onClick={() => setShowUpload(true)} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-emerald-500/80 hover:bg-emerald-500 rounded-lg text-xs font-medium transition" aria-label="อัปโหลดไฟล์">
-              <FolderUp size={13} /> อัปโหลด
-            </button>
-            <div className="relative" ref={exportMenuRef}>
-              <button onClick={() => setShowExportMenu(v => !v)} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white/15 hover:bg-white/25 rounded-lg text-xs font-medium transition" aria-expanded={showExportMenu} aria-haspopup="true" aria-label="เมนูส่งออกข้อมูล">
-                <Download size={13} /> Export <ChevronDown size={11} />
+
+            {/* Desktop buttons (hidden on mobile) */}
+            <div className="hidden md:flex items-center gap-1.5">
+              <button onClick={() => setShowAdminPanel(v => !v)} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-amber-500/80 hover:bg-amber-500 rounded-lg text-xs font-medium transition" title="Admin Panel" aria-label="เปิดแผงผู้ดูแลระบบ">
+                🛡️ Admin
               </button>
-              {showExportMenu && (
-                <div className="absolute right-0 top-full mt-1.5 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 min-w-[300px] overflow-hidden">
-                  <div className="px-4 py-2.5 bg-indigo-50 border-b border-indigo-100">
-                    <p className="text-xs font-bold text-indigo-800">📤 Export — ส่งออกข้อมูล</p>
-                    <p className="text-[10px] text-indigo-600 mt-0.5">ดาวน์โหลดข้อมูล OCR + ผลการตรวจสอบ เพื่อนำไปวิเคราะห์ต่อ หรือสำรองข้อมูล</p>
+              
+              {/* Phase 34: Review Throughput Controls */}
+              <button 
+                onClick={() => setAutoApproveEnabled(v => !v)} 
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition ${
+                  autoApproveEnabled ? 'bg-green-500/80 hover:bg-green-500 text-white' : 'bg-white/15 hover:bg-white/25 text-white'
+                }`} 
+                title="Auto-approve low-risk items (Shift+A to toggle)"
+                aria-label="เปิด/ปิด auto-approve"
+                disabled={bulkOperationInProgress}
+              >
+                🤖 Auto-approve {autoApproveEnabled ? 'ON' : 'OFF'}
+              </button>
+              
+              <button 
+                onClick={() => setPriorityQueueEnabled(v => !v)} 
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition ${
+                  priorityQueueEnabled ? 'bg-orange-500/80 hover:bg-orange-500 text-white' : 'bg-white/15 hover:bg-white/25 text-white'
+                }`} 
+                title="Priority queue for high-anomaly items (Ctrl+P to toggle)"
+                aria-label="เปิด/ปิด priority queue"
+              >
+                🔄 Priority {priorityQueueEnabled ? 'ON' : 'OFF'}
+              </button>
+              
+              <button onClick={() => setShowUpload(true)} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-emerald-500/80 hover:bg-emerald-500 rounded-lg text-xs font-medium transition" aria-label="อัปโหลดไฟล์">
+                <FolderUp size={13} /> อัปโหลด
+              </button>
+              <div className="relative" ref={exportMenuRef}>
+                <button onClick={() => setShowExportMenu(v => !v)} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white/15 hover:bg-white/25 rounded-lg text-xs font-medium transition" aria-expanded={showExportMenu} aria-haspopup="true" aria-label="เมนูส่งออกข้อมูล">
+                  <Download size={13} /> Export <ChevronDown size={11} />
+                </button>
+                {showExportMenu && (
+                  <div className="absolute right-0 top-full mt-1.5 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 min-w-[300px] overflow-hidden">
+                    <div className="px-4 py-2.5 bg-indigo-50 border-b border-indigo-100">
+                      <p className="text-xs font-bold text-indigo-800">📤 Export — ส่งออกข้อมูล</p>
+                      <p className="text-[10px] text-indigo-600 mt-0.5">ดาวน์โหลดข้อมูล OCR + ผลการตรวจสอบ เพื่อนำไปวิเคราะห์ต่อ หรือสำรองข้อมูล</p>
+                    </div>
+                    <div className="px-4 py-1.5 text-[10px] text-gray-400 uppercase bg-gray-50 font-semibold">ข้อมูลทั้งหมด ({allItems.length} รายการ)</div>
+                    <button onClick={() => { setShowExportMenu(false); handleExportJSON() }} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition border-b border-gray-100">
+                      <div className="font-medium">📄 JSON (ข้อมูล + review)</div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">ข้อมูล OCR ทุกหน้า + สถานะ/ค่าแก้ไข/consensus — ใช้ Import กลับเข้าระบบได้</div>
+                    </button>
+                    <button onClick={() => { setShowExportMenu(false); handleExportCSV() }} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition border-b border-gray-100">
+                      <div className="font-medium">📊 CSV สรุปทั้งหมด</div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">ตารางสรุปสถิติ 1 แถว = 1 หน้า — เปิดใน Excel/Google Sheets ได้ทันที</div>
+                    </button>
+                    <button onClick={() => { setShowExportMenu(false); handleExportFullCSV() }} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition border-b border-gray-100">
+                      <div className="font-medium">📋 CSV แบ่งเขต + ผู้สมัคร</div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">CSV เฉพาะแบ่งเขต มีคอลัมน์ผู้สมัครแต่ละคน — สำหรับวิเคราะห์เชิงลึก</div>
+                    </button>
+                    <button onClick={() => { setShowExportMenu(false); handleExportAuditLog() }} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-700 transition border-b border-gray-100">
+                      <div className="font-medium">🔒 Audit Log (ประวัติการตรวจ)</div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">ประวัติการตรวจทุกครั้ง ทุกคน + ค่า anomaly — สำหรับ Admin ตรวจสอบย้อนหลัง</div>
+                    </button>
+                    <div className="px-4 py-1.5 text-[10px] text-gray-400 uppercase bg-gray-50 font-semibold">เฉพาะที่กรอง ({filteredItems.length} รายการ)</div>
+                    <button onClick={() => { setShowExportMenu(false); handleExportFilteredJSON() }} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition border-b border-gray-100">
+                      <div className="font-medium"><Filter size={12} className="inline mr-1" /> JSON (เฉพาะที่กรอง)</div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">เหมือน JSON ด้านบน แต่เฉพาะรายการที่ตรงกับ filter ที่เลือกอยู่</div>
+                    </button>
+                    <button onClick={() => { setShowExportMenu(false); handleExportFilteredCSV() }} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition">
+                      <div className="font-medium"><Filter size={12} className="inline mr-1" /> CSV (เฉพาะที่กรอง)</div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">เหมือน CSV ด้านบน แต่เฉพาะรายการที่ตรงกับ filter ที่เลือกอยู่</div>
+                    </button>
+                    
+                    {/* Phase 34: Bulk Operations */}
+                    <div className="px-4 py-1.5 text-[10px] text-gray-400 uppercase bg-amber-50 font-semibold border-t border-gray-200">⚡ Bulk Operations</div>
+                    <button 
+                      onClick={bulkAutoApprove} 
+                      disabled={!autoApproveEnabled || bulkOperationInProgress} 
+                      className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition border-b border-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <div className="font-medium">🤖 Auto-approve Low-risk ({sortedFilteredItems.filter(item => (review[item.id]?.status || 'pending') === 'pending' && isLowRiskItem(item)).length} รายการ)</div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">ยืนยันอัตโนมัติสำหรับรายการที่ไม่มี error/warning — ใช้ Ctrl+A</div>
+                    </button>
+                    <button 
+                      onClick={bulkConfirmAll} 
+                      disabled={bulkOperationInProgress} 
+                      className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <div className="font-medium">✅ Bulk Confirm All ({sortedFilteredItems.filter(item => (review[item.id]?.status || 'pending') === 'pending').length} รายการ)</div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">ยืนยันทั้งหมดในหน้าจอนี้ — ใช้ Ctrl+B</div>
+                    </button>
                   </div>
-                  <div className="px-4 py-1.5 text-[10px] text-gray-400 uppercase bg-gray-50 font-semibold">ข้อมูลทั้งหมด ({allItems.length} รายการ)</div>
-                  <button onClick={handleExportJSON} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition border-b border-gray-100">
-                    <div className="font-medium">📄 JSON (ข้อมูล + review)</div>
-                    <div className="text-[10px] text-gray-400 mt-0.5">ข้อมูล OCR ทุกหน้า + สถานะ/ค่าแก้ไข/consensus — ใช้ Import กลับเข้าระบบได้</div>
+                )}
+              </div>
+              <button onClick={() => setShowImportInfo(true)} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-medium transition">
+                <Upload size={13} /> Import
+              </button>
+              {user && (
+                <button onClick={signOut} className="flex items-center gap-1 p-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs transition" title="ออกจากระบบ">
+                  <LogOut size={13} />
+                </button>
+              )}
+            </div>
+
+            {/* Mobile hamburger menu (visible only on mobile) */}
+            <div className="relative md:hidden" ref={mobileMenuRef}>
+              <button onClick={() => setShowMobileMenu(v => !v)} className="flex items-center gap-1 p-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs transition" aria-label="เมนูเพิ่มเติม" aria-expanded={showMobileMenu}>
+                {showMobileMenu ? <X size={16} /> : <Menu size={16} />}
+              </button>
+              {showMobileMenu && (
+                <div className="absolute right-0 top-full mt-1.5 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 min-w-[220px] overflow-hidden text-gray-800">
+                  <div className="px-3 py-2 bg-indigo-50 border-b border-indigo-100 text-xs font-bold text-indigo-800">⚙️ เมนู</div>
+                  <button onClick={() => { setShowAdminPanel(v => !v); setShowMobileMenu(false) }} className="w-full text-left px-3 py-2.5 text-sm hover:bg-gray-50 transition border-b border-gray-100 flex items-center gap-2">
+                    🛡️ Admin Panel
                   </button>
-                  <button onClick={handleExportCSV} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition border-b border-gray-100">
-                    <div className="font-medium">📊 CSV สรุปทั้งหมด</div>
-                    <div className="text-[10px] text-gray-400 mt-0.5">ตารางสรุปสถิติ 1 แถว = 1 หน้า — เปิดใน Excel/Google Sheets ได้ทันที</div>
+                  <button onClick={() => { setAutoApproveEnabled(v => !v); setShowMobileMenu(false) }} className="w-full text-left px-3 py-2.5 text-sm hover:bg-gray-50 transition border-b border-gray-100 flex items-center gap-2">
+                    🤖 Auto-approve {autoApproveEnabled ? <span className="text-[10px] px-1.5 py-0.5 rounded bg-green-100 text-green-700 font-bold">ON</span> : <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 font-bold">OFF</span>}
                   </button>
-                  <button onClick={handleExportFullCSV} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition border-b border-gray-100">
-                    <div className="font-medium">📋 CSV แบ่งเขต + ผู้สมัคร</div>
-                    <div className="text-[10px] text-gray-400 mt-0.5">CSV เฉพาะแบ่งเขต มีคอลัมน์ผู้สมัครแต่ละคน — สำหรับวิเคราะห์เชิงลึก</div>
+                  <button onClick={() => { setPriorityQueueEnabled(v => !v); setShowMobileMenu(false) }} className="w-full text-left px-3 py-2.5 text-sm hover:bg-gray-50 transition border-b border-gray-100 flex items-center gap-2">
+                    🔄 Priority Queue {priorityQueueEnabled ? <span className="text-[10px] px-1.5 py-0.5 rounded bg-orange-100 text-orange-700 font-bold">ON</span> : <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 font-bold">OFF</span>}
                   </button>
-                  <button onClick={handleExportAuditLog} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-700 transition border-b border-gray-100">
-                    <div className="font-medium">🔒 Audit Log (ประวัติการตรวจ)</div>
-                    <div className="text-[10px] text-gray-400 mt-0.5">ประวัติการตรวจทุกครั้ง ทุกคน + ค่า anomaly — สำหรับ Admin ตรวจสอบย้อนหลัง</div>
+                  <button onClick={() => { setShowUpload(true); setShowMobileMenu(false) }} className="w-full text-left px-3 py-2.5 text-sm hover:bg-gray-50 transition border-b border-gray-100 flex items-center gap-2">
+                    <FolderUp size={14} /> อัปโหลด
                   </button>
-                  <div className="px-4 py-1.5 text-[10px] text-gray-400 uppercase bg-gray-50 font-semibold">เฉพาะที่กรอง ({filteredItems.length} รายการ)</div>
-                  <button onClick={handleExportFilteredJSON} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition border-b border-gray-100">
-                    <div className="font-medium"><Filter size={12} className="inline mr-1" /> JSON (เฉพาะที่กรอง)</div>
-                    <div className="text-[10px] text-gray-400 mt-0.5">เหมือน JSON ด้านบน แต่เฉพาะรายการที่ตรงกับ filter ที่เลือกอยู่</div>
+                  <button onClick={() => { setShowExportMenu(v => !v); setShowMobileMenu(false) }} className="w-full text-left px-3 py-2.5 text-sm hover:bg-gray-50 transition border-b border-gray-100 flex items-center gap-2">
+                    <Download size={14} /> Export
                   </button>
-                  <button onClick={handleExportFilteredCSV} className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition">
-                    <div className="font-medium"><Filter size={12} className="inline mr-1" /> CSV (เฉพาะที่กรอง)</div>
-                    <div className="text-[10px] text-gray-400 mt-0.5">เหมือน CSV ด้านบน แต่เฉพาะรายการที่ตรงกับ filter ที่เลือกอยู่</div>
+                  <button onClick={() => { setShowImportInfo(true); setShowMobileMenu(false) }} className="w-full text-left px-3 py-2.5 text-sm hover:bg-gray-50 transition border-b border-gray-100 flex items-center gap-2">
+                    <Upload size={14} /> Import
                   </button>
-                  
-                  {/* Phase 34: Bulk Operations */}
-                  <div className="px-4 py-1.5 text-[10px] text-gray-400 uppercase bg-amber-50 font-semibold border-t border-gray-200">⚡ Bulk Operations</div>
-                  <button 
-                    onClick={bulkAutoApprove} 
-                    disabled={!autoApproveEnabled || bulkOperationInProgress} 
-                    className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition border-b border-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <div className="font-medium">🤖 Auto-approve Low-risk ({sortedFilteredItems.filter(item => (review[item.id]?.status || 'pending') === 'pending' && isLowRiskItem(item)).length} รายการ)</div>
-                    <div className="text-[10px] text-gray-400 mt-0.5">ยืนยันอัตโนมัติสำหรับรายการที่ไม่มี error/warning — ใช้ Ctrl+A</div>
-                  </button>
-                  <button 
-                    onClick={bulkConfirmAll} 
-                    disabled={bulkOperationInProgress} 
-                    className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <div className="font-medium">✅ Bulk Confirm All ({sortedFilteredItems.filter(item => (review[item.id]?.status || 'pending') === 'pending').length} รายการ)</div>
-                    <div className="text-[10px] text-gray-400 mt-0.5">ยืนยันทั้งหมดในหน้าจอนี้ — ใช้ Ctrl+B</div>
-                  </button>
+                  {user && (
+                    <button onClick={() => { signOut(); setShowMobileMenu(false) }} className="w-full text-left px-3 py-2.5 text-sm hover:bg-red-50 text-red-600 transition flex items-center gap-2">
+                      <LogOut size={14} /> ออกจากระบบ
+                    </button>
+                  )}
                 </div>
               )}
             </div>
-            <button onClick={() => setShowImportInfo(true)} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-medium transition">
-              <Upload size={13} /> Import
-            </button>
-            {user && (
-              <button onClick={signOut} className="flex items-center gap-1 p-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs transition" title="ออกจากระบบ">
-                <LogOut size={13} />
-              </button>
-            )}
           </div>
         </div>
       </header>
@@ -1056,7 +884,7 @@ function App() {
             onImportLog={(extLog) => {
               const result = mergeReviewLogs(extLog)
               setReviewLog(result.merged)
-              alert(`นำเข้าสำเร็จ: เพิ่ม ${result.added} รายการใหม่`)
+              toast(`นำเข้าสำเร็จ: เพิ่ม ${result.added} รายการใหม่`, 'success')
             }}
           />
         </Suspense>
@@ -1114,6 +942,7 @@ function App() {
           />
         </Suspense>
       )}
+      <ToastContainer />
     </div>
   )
 }
