@@ -942,6 +942,15 @@ function App() {
           />
         </Suspense>
       )}
+      {/* Floating feedback button */}
+      <a
+        href="mailto:narasakp@gmail.com?subject=%E0%B8%84%E0%B8%B3%E0%B8%96%E0%B8%B2%E0%B8%A1%20/%20%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B9%80%E0%B8%AA%E0%B8%99%E0%B8%AD%E0%B9%81%E0%B8%99%E0%B8%B0%20%E2%80%93%20Election%20Verification"
+        className="fixed bottom-5 right-5 z-50 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg hover:shadow-xl transition-all group"
+        title="ส่งคำถามหรือข้อเสนอแนะทางอีเมล"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span className="text-sm font-medium leading-tight">คำถาม<br/>ข้อเสนอแนะ</span>
+      </a>
       <ToastContainer />
     </div>
   )
