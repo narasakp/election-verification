@@ -13,8 +13,9 @@ export default function useAuth() {
       const payload = JSON.parse(atob(response.credential.split('.')[1]))
       // Normalize picture URL: remove size restriction for better quality
       let pic = payload.picture || ''
-      if (pic && pic.includes('=s')) {
-        pic = pic.replace(/=s\d+-c/, '=s200-c')
+      if (pic) {
+        // Handle both =s96-c and =s96 (no -c) patterns
+        pic = pic.replace(/=s\d+(-c)?/, '=s200-c')
       }
       const u = {
         email: payload.email,
