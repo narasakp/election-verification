@@ -13,7 +13,7 @@ const SOURCE_COLORS = {
 }
 
 const SEVERITY_CRITERIA = {
-  error: 'Max Diff > 10% ระหว่างแหล่งทางการ (กกต./Killernay/Luengnat)',
+  error: 'Max Diff > 10% ระหว่างแหล่งทางการ (เทียบ valid_votes · ข้าม กกต. ที่นับไม่ครบ)',
   warning: 'Max Diff > 3% ระหว่างแหล่งทางการ',
   mismatch: 'Max Diff > 0.5% ระหว่างแหล่งทางการ',
   ok: 'แหล่งทางการตรงกัน (diff ≤ 0.5%)',
@@ -128,17 +128,19 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
       const kn = c.killernay || null
       const ln = c.luengnat || null
 
-      // Determine severity by comparing FULL-CONSTITUENCY sources only
-      // (ECT / Killernay / Luengnat). OCR is partial station data — not used for diff severity.
+      // Determine severity by comparing FULL-CONSTITUENCY sources only.
+      // OCR is partial station data — not used for diff severity.
+      // ECT is excluded when percent_count < 99% (partial counting → misleading diffs).
       let severity = 'ok'
       const officialDiffs = []
-      // ECT vs Killernay
-      if (ect && kn) {
+      const ectReady = ect && (ect.percent_count >= 99)
+      // ECT vs Killernay (only if ECT nearly fully counted)
+      if (ectReady && kn) {
         const vDiff = kn.valid_votes > 0 ? Math.abs(ect.valid_votes - kn.valid_votes) / kn.valid_votes * 100 : 0
         officialDiffs.push(vDiff)
       }
-      // ECT vs Luengnat
-      if (ect && ln) {
+      // ECT vs Luengnat (only if ECT nearly fully counted)
+      if (ectReady && ln) {
         const vDiff = ln.valid_votes > 0 ? Math.abs(ect.valid_votes - ln.valid_votes) / ln.valid_votes * 100 : 0
         officialDiffs.push(vDiff)
       }
@@ -362,7 +364,7 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                     </thead>
                     <tbody>
                       {paged.map((row) => {
-                        const maxTurnout = Math.max(row.ocr?.turnout || 0, row.ect?.turnout || 0, row.kn?.turnout || 0, row.ln?.turnout || 0, 1)
+                        const maxTurnout = Math.max(row.ocr?.turnout || 0, row.ect?.turnout || 0, row.kn?.valid_votes || 0, row.ln?.valid_votes || 0, 1)
                         return (
                           <tr key={row.key}
                             className={`border-b border-gray-50 hover:bg-gray-50 transition cursor-pointer ${selectedRow === row.key ? 'bg-indigo-50' : ''}`}
@@ -396,7 +398,7 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                             <td className="px-2 py-2">
                               {row.kn ? (
                                 <div className="text-right font-mono text-[10px]">
-                                  <span className="text-emerald-600">{fmtNum(row.kn.turnout)}</span>
+                                  <span className="text-emerald-600">{fmtNum(row.kn.valid_votes)}</span>
                                 </div>
                               ) : <span className="text-gray-300 text-[10px]">—</span>}
                             </td>
@@ -437,7 +439,7 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
               {viewMode === 'cards' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {paged.map(row => {
-                    const maxTurnout = Math.max(row.ocr?.turnout || 0, row.ect?.turnout || 0, row.kn?.turnout || 0, row.ln?.turnout || 0, 1)
+                    const maxTurnout = Math.max(row.ocr?.turnout || 0, row.ect?.turnout || 0, row.kn?.valid_votes || 0, row.ln?.valid_votes || 0, 1)
                     const maxValid = Math.max(row.ocr?.valid || 0, row.ect?.valid_votes || 0, row.kn?.valid_votes || 0, row.ln?.valid_votes || 0, 1)
                     return (
                       <div key={row.key} className={`rounded-lg border p-3 space-y-2 ${
@@ -457,13 +459,13 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                             </span>
                           )}
                         </div>
-                        {/* Turnout comparison bars */}
+                        {/* Valid votes comparison bars */}
                         <div className="space-y-1">
-                          <div className="text-[9px] text-gray-500 uppercase font-medium">ผู้มาใช้สิทธิ (Turnout)</div>
-                          {row.ocr && <DiffBar val={row.ocr.turnout} refVal={row.ect?.turnout || row.kn?.turnout} maxVal={maxTurnout} color="bg-indigo-400" />}
-                          {row.ect && <DiffBar val={row.ect.turnout} refVal={row.kn?.turnout || row.ln?.turnout} maxVal={maxTurnout} color="bg-blue-400" />}
-                          {row.kn && <DiffBar val={row.kn.turnout} refVal={row.ect?.turnout || row.ln?.turnout} maxVal={maxTurnout} color="bg-emerald-400" />}
-                          {row.ln && <DiffBar val={row.ln.turnout} refVal={row.ect?.turnout || row.kn?.turnout} maxVal={maxTurnout} color="bg-purple-400" />}
+                          <div className="text-[9px] text-gray-500 uppercase font-medium">คะแนนดี / ผู้มาใช้สิทธิ</div>
+                          {row.ocr && <DiffBar val={row.ocr.turnout} refVal={row.kn?.valid_votes || row.ln?.valid_votes} maxVal={maxTurnout} color="bg-indigo-400" />}
+                          {row.ect && <DiffBar val={row.ect.turnout} refVal={row.kn?.valid_votes || row.ln?.valid_votes} maxVal={maxTurnout} color="bg-blue-400" />}
+                          {row.kn && <DiffBar val={row.kn.valid_votes} refVal={row.ln?.valid_votes || row.ect?.valid_votes} maxVal={maxTurnout} color="bg-emerald-400" />}
+                          {row.ln && <DiffBar val={row.ln.valid_votes} refVal={row.kn?.valid_votes || row.ect?.valid_votes} maxVal={maxTurnout} color="bg-purple-400" />}
                         </div>
                         {/* Valid votes */}
                         <div className="space-y-1">
@@ -490,7 +492,7 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
               {selectedRow && viewMode === 'table' && (() => {
                 const row = comparisonData.find(r => r.key === selectedRow)
                 if (!row) return null
-                const maxTurnout = Math.max(row.ocr?.turnout || 0, row.ect?.turnout || 0, row.kn?.turnout || 0, row.ln?.turnout || 0, 1)
+                const maxTurnout = Math.max(row.ocr?.turnout || 0, row.ect?.turnout || 0, row.kn?.valid_votes || 0, row.ln?.valid_votes || 0, 1)
                 const maxValid = Math.max(row.ocr?.valid || 0, row.ect?.valid_votes || 0, row.kn?.valid_votes || 0, row.ln?.valid_votes || 0, 1)
                 return (
                   <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 space-y-3">
@@ -499,14 +501,14 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                       <button onClick={() => setSelectedRow(null)} className="text-gray-400 hover:text-gray-600 text-xs">✕ ปิด</button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Turnout comparison */}
+                      {/* Turnout / Valid votes comparison */}
                       <div className="space-y-1.5">
-                        <div className="text-[10px] text-gray-500 uppercase font-semibold">ผู้มาใช้สิทธิ (Turnout)</div>
+                        <div className="text-[10px] text-gray-500 uppercase font-semibold">คะแนนดี / ผู้มาใช้สิทธิ</div>
                         {[
                           { key: 'ocr', icon: '🔬', label: 'OCR', val: row.ocr?.turnout, color: 'bg-indigo-500' },
                           { key: 'ect', icon: '🏛️', label: 'กกต.', val: row.ect?.turnout, color: 'bg-blue-500' },
-                          { key: 'kn', icon: '📊', label: 'Killernay', val: row.kn?.turnout, color: 'bg-emerald-500' },
-                          { key: 'ln', icon: '📈', label: 'Luengnat', val: row.ln?.turnout, color: 'bg-purple-500' },
+                          { key: 'kn', icon: '📊', label: 'Killernay', val: row.kn?.valid_votes, color: 'bg-emerald-500' },
+                          { key: 'ln', icon: '📈', label: 'Luengnat', val: row.ln?.valid_votes, color: 'bg-purple-500' },
                         ].map(s => (
                           <div key={s.key} className="flex items-center gap-2">
                             <span className="w-20 text-[10px] text-gray-600">{s.icon} {s.label}</span>
