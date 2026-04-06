@@ -88,9 +88,13 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
   }, [expanded, crossRefData, loading])
 
   // Build OCR aggregates per constituency
+  // Filter to แบ่งเขต only — other sources (ECT/Killernay/Luengnat) report constituency data,
+  // so including บัญชีรายชื่อ would double-count turnout/valid/invalid.
   const ocrByConst = useMemo(() => {
     const groups = {}
     allItems.forEach(item => {
+      const vt = item.vote_type || ''
+      if (vt && vt !== 'แบ่งเขต') return
       const key = `${item.province || '?'}_${item.constituency || '?'}`
       if (!groups[key]) groups[key] = { items: [], turnout: 0, valid: 0, invalid: 0, stations: new Set(), files: new Set(), errors: 0, warnings: 0, reviewed: 0, total: 0 }
       const g = groups[key]
