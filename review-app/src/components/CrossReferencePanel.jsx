@@ -13,10 +13,10 @@ const SOURCE_COLORS = {
 }
 
 const SEVERITY_CRITERIA = {
-  error: 'Max Diff > 10% ระหว่างแหล่งทางการ (เทียบ valid_votes · ข้าม กกต. ที่นับไม่ครบ)',
-  warning: 'Max Diff > 3% ระหว่างแหล่งทางการ',
-  mismatch: 'Max Diff > 0.5% ระหว่างแหล่งทางการ',
-  ok: 'แหล่งทางการตรงกัน (diff ≤ 0.5%)',
+  error: '|max(กกต.,KN,LN) − OCR| / MAX > 25%',
+  warning: '|MAX − OCR| / MAX > 10%',
+  mismatch: '|MAX − OCR| / MAX > 3%',
+  ok: 'OCR ใกล้เคียงแหล่งอ้างอิง (diff ≤ 3%) หรือยังไม่มีข้อมูล OCR',
 }
 
 function SeverityBadge({ severity }) {
@@ -128,32 +128,26 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
       const kn = c.killernay || null
       const ln = c.luengnat || null
 
-      // Determine severity by comparing FULL-CONSTITUENCY sources only.
-      // OCR is partial station data — not used for diff severity.
-      // ECT is excluded when percent_count < 99% (partial counting → misleading diffs).
+      // MAX = max(ECT.valid_votes, KN.valid_votes, LN.valid_votes)
+      // Diff = |MAX − OCR.turnout| / MAX × 100
+      // Coverage = OCR.turnout / MAX × 100
+      const refVals = [
+        ect?.valid_votes || 0,
+        kn?.valid_votes || 0,
+        ln?.valid_votes || 0,
+      ]
+      const refMax = Math.max(...refVals)
+      const ocrVal = ocr?.turnout || 0
+      const maxDiff = (ocr && refMax > 0) ? Math.abs(refMax - ocrVal) / refMax * 100 : 0
+      const ocrCoverage = (ocr && refMax > 0) ? (ocrVal / refMax * 100) : 0
+
+      // Severity based on OCR vs reference diff
       let severity = 'ok'
-      const officialDiffs = []
-      const ectReady = ect && (ect.percent_count >= 99)
-      // ECT vs Killernay (only if ECT nearly fully counted)
-      if (ectReady && kn) {
-        const vDiff = kn.valid_votes > 0 ? Math.abs(ect.valid_votes - kn.valid_votes) / kn.valid_votes * 100 : 0
-        officialDiffs.push(vDiff)
+      if (ocr && refMax > 0) {
+        if (maxDiff > 25) severity = 'error'
+        else if (maxDiff > 10) severity = 'warning'
+        else if (maxDiff > 3) severity = 'mismatch'
       }
-      // ECT vs Luengnat (only if ECT nearly fully counted)
-      if (ectReady && ln) {
-        const vDiff = ln.valid_votes > 0 ? Math.abs(ect.valid_votes - ln.valid_votes) / ln.valid_votes * 100 : 0
-        officialDiffs.push(vDiff)
-      }
-      // Killernay vs Luengnat
-      if (kn && ln) {
-        const vDiff = ln.valid_votes > 0 ? Math.abs(kn.valid_votes - ln.valid_votes) / ln.valid_votes * 100 : 0
-        officialDiffs.push(vDiff)
-      }
-      const maxDiff = officialDiffs.length > 0 ? Math.max(...officialDiffs) : 0
-      // Severity based ONLY on official source diffs
-      if (maxDiff > 10) severity = 'error'
-      else if (maxDiff > 3) severity = 'warning'
-      else if (maxDiff > 0.5) severity = 'mismatch'
       // OCR quality is tracked separately (not mixed into severity)
       const ocrQuality = !ocr ? null : ocr.errors > 0 ? 'error' : ocr.warnings > 0 ? 'warning' : 'ok'
 
@@ -171,6 +165,8 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
         severity,
         ocrQuality,
         maxDiff: Math.round(maxDiff * 10) / 10,
+        refMax,
+        ocrCoverage: Math.round(ocrCoverage * 10) / 10,
         sourceCount,
         reviewPct: ocr ? (ocr.total > 0 ? ocr.reviewed / ocr.total * 100 : 0) : 0,
         sortPriority: c.sort_priority != null ? c.sort_priority : 1000,
@@ -380,9 +376,9 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                                   {row.ocrQuality === 'warning' && <span className="text-amber-400" title={`OCR: ${row.ocr.warnings} warnings`}>⚠</span>}
                                   <span className="text-indigo-600">{fmtNum(row.ocr.turnout)}</span>
                                   {row.driveFolder ? (
-                                    <a href={row.driveFolder} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-indigo-600 hover:underline" title={`${row.ocr.stationCount} หน่วย / ${row.ocr.fileCount} ไฟล์ · เปิดใน Drive`} onClick={e => e.stopPropagation()}>({row.ocr.fileCount} ไฟล์)</a>
+                                    <a href={row.driveFolder} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-indigo-600 hover:underline" title={`${row.ocr.stationCount} หน่วย / ${row.ocr.fileCount} ไฟล์ · เปิดใน Drive`} onClick={e => e.stopPropagation()}>({row.ocr.fileCount} ไฟล์{row.ocrCoverage > 0 ? ` · ${row.ocrCoverage}%` : ''})</a>
                                   ) : (
-                                    <span className="text-gray-400" title={`${row.ocr.stationCount} หน่วย / ${row.ocr.fileCount} ไฟล์`}>({row.ocr.fileCount} ไฟล์)</span>
+                                    <span className="text-gray-400" title={`${row.ocr.stationCount} หน่วย / ${row.ocr.fileCount} ไฟล์`}>({row.ocr.fileCount} ไฟล์{row.ocrCoverage > 0 ? ` · ${row.ocrCoverage}%` : ''})</span>
                                   )}
                                 </div>
                               ) : <span className="text-gray-300 text-[10px]">—</span>}
@@ -411,12 +407,15 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                               ) : <span className="text-gray-300 text-[10px]">—</span>}
                             </td>
                             <td className="px-2 py-2 text-center">
-                              {row.maxDiff > 0 ? (
-                                <span className={`font-mono text-[10px] px-1 py-0.5 rounded ${
-                                  row.maxDiff > 10 ? 'bg-red-100 text-red-700 font-semibold' :
-                                  row.maxDiff > 3 ? 'bg-amber-100 text-amber-700' : 'text-gray-500'
-                                }`}>{row.maxDiff}%</span>
-                              ) : <span className="text-emerald-500 text-[10px]">✓</span>}
+                              {row.ocr ? (
+                                row.maxDiff > 0 ? (
+                                  <span className={`font-mono text-[10px] px-1 py-0.5 rounded ${
+                                    row.maxDiff > 25 ? 'bg-red-100 text-red-700 font-semibold' :
+                                    row.maxDiff > 10 ? 'bg-amber-100 text-amber-700' :
+                                    row.maxDiff > 3 ? 'bg-orange-100 text-orange-700' : 'text-gray-500'
+                                  }`}>{row.maxDiff}%</span>
+                                ) : <span className="text-emerald-500 text-[10px]">✓</span>
+                              ) : <span className="text-gray-300 text-[10px]">—</span>}
                             </td>
                             <td className="px-2 py-2">
                               <div className="flex items-center gap-1">
@@ -453,8 +452,8 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                             <span className="font-semibold text-sm">{row.province}</span>
                             <span className="text-xs text-gray-500">เขต {row.zone}</span>
                           </div>
-                          {row.maxDiff > 0 && (
-                            <span className={`text-[10px] font-mono ${row.maxDiff > 10 ? 'text-red-600' : row.maxDiff > 3 ? 'text-amber-600' : 'text-gray-400'}`}>
+                          {row.ocr && row.maxDiff > 0 && (
+                            <span className={`text-[10px] font-mono ${row.maxDiff > 25 ? 'text-red-600' : row.maxDiff > 10 ? 'text-amber-600' : row.maxDiff > 3 ? 'text-orange-500' : 'text-gray-400'}`}>
                               Δ {row.maxDiff}%
                             </span>
                           )}
@@ -477,7 +476,7 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                         </div>
                         {/* Source legend */}
                         <div className="flex items-center gap-3 text-[9px] text-gray-400 pt-1 border-t border-gray-100">
-                          {row.ocr && <span>🔬 OCR ({row.ocr.stationCount} หน่วย · {row.ocr.fileCount} ไฟล์)</span>}
+                          {row.ocr && <span>🔬 OCR ({row.ocr.stationCount} หน่วย · {row.ocr.fileCount} ไฟล์{row.ocrCoverage > 0 ? ` · ${row.ocrCoverage}%` : ''})</span>}
                           {row.ect && <span>🏛️ กกต. ({row.ect.percent_count}% นับ)</span>}
                           {row.kn && <span>📊 Killernay</span>}
                           {row.ln && <span>📈 Luengnat</span>}
@@ -561,10 +560,15 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                         {row.ln.drive_url && <a href={row.ln.drive_url} target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline ml-2 inline-flex items-center gap-0.5"><ExternalLink size={9} /> ดูเอกสาร</a>}
                       </div>
                     )}
-                    {/* OCR errors */}
-                    {row.ocr && (row.ocr.errors > 0 || row.ocr.warnings > 0) && (
+                    {/* OCR summary */}
+                    {row.ocr && (
                       <div className="text-[10px] text-gray-600 bg-white rounded p-2 border border-gray-100">
-                        🔬 <strong>OCR:</strong> {row.ocr.errors} errors, {row.ocr.warnings} warnings · {row.ocr.stationCount} หน่วย · {row.ocr.fileCount} ไฟล์ · ตรวจแล้ว {row.ocr.reviewed}/{row.ocr.total}
+                        🔬 <strong>OCR:</strong> {row.ocr.stationCount} หน่วย · {row.ocr.fileCount} ไฟล์ · ตรวจแล้ว {row.ocr.reviewed}/{row.ocr.total}
+                        {(row.ocr.errors > 0 || row.ocr.warnings > 0) && <> · <span className="text-red-500">{row.ocr.errors} errors</span>, <span className="text-amber-500">{row.ocr.warnings} warnings</span></>}
+                        {row.refMax > 0 && <>
+                          <br />📐 <strong>Diff:</strong> |{row.refMax.toLocaleString()} − {row.ocr.turnout.toLocaleString()}| / {row.refMax.toLocaleString()} = <strong>{row.maxDiff}%</strong>
+                          {' · '}Coverage: {row.ocrCoverage}%
+                        </>}
                       </div>
                     )}
                   </div>
