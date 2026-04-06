@@ -554,10 +554,10 @@ function App() {
           {user && (
             <div className="flex items-center gap-2 pl-3 border-l border-white/20">
               {user.picture ? (
-                <img src={user.picture} alt={`${user.name} avatar`} className="w-7 h-7 rounded-full ring-2 ring-white/30 object-cover" referrerPolicy="no-referrer" crossOrigin="anonymous"
+                <img src={user.picture} alt={`${user.name} avatar`} className="w-7 h-7 shrink-0 aspect-square rounded-full ring-2 ring-white/30 object-cover" referrerPolicy="no-referrer" crossOrigin="anonymous"
                   onError={e => { e.target.style.display = 'none'; e.target.nextElementSibling && (e.target.nextElementSibling.style.display = 'flex') }} />
               ) : null}
-              <div className="w-7 h-7 rounded-full ring-2 ring-white/30 bg-indigo-500 items-center justify-center text-[11px] font-bold text-white" style={{ display: user.picture ? 'none' : 'flex' }}>
+              <div className="w-7 h-7 shrink-0 rounded-full ring-2 ring-white/30 bg-indigo-500 items-center justify-center text-[11px] font-bold text-white" style={{ display: user.picture ? 'none' : 'flex' }}>
                 {(user.name || '?').charAt(0).toUpperCase()}
               </div>
               <div className="hidden sm:block">
