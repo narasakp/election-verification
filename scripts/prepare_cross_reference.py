@@ -337,7 +337,7 @@ def main():
         "generated": __import__("datetime").datetime.now().isoformat(),
         "ocr_provinces": OCR_PROVINCES,
         "sources": {
-            "ect": {"name": "กกต. (ECT Official)", "records": len(ect_data), "status": "available", "url": "https://www.ect.go.th/ect_th/th/election-2026"},
+            "ect": {"name": "กกต. (ECT Official)", "records": len(ect_data), "status": "available", "url": "https://ectreport69.ect.go.th"},
             "killernay": {"name": "Killernay (OCR Ground Truth)", "records": len(killernay_data), "status": "available", "url": "https://github.com/killernay/election-69-OCR-result"},
             "luengnat": {"name": "Luengnat Dashboard", "records": len(luengnat_data), "status": "available" if luengnat_data else "pending", "url": "https://luengnat.github.io/election-69-dashboard/"},
             "ocr": {"name": "ระบบ OCR ของเรา", "records": 0, "status": "live"},
