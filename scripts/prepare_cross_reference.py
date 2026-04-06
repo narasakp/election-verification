@@ -43,6 +43,26 @@ def load_ect_provinces():
     return mapping
 
 
+def load_ect_constituencies(prov_map):
+    """Load ECT constituency reference → {province_zone: total_vote_stations}"""
+    path = DATA / "ect_constituencies.json"
+    if not path.exists():
+        print(f"\u26a0\ufe0f  {path.name} not found")
+        return {}
+    raw = json.loads(path.read_text("utf-8"))
+    result = {}
+    for c in raw:
+        pid = c.get("prov_id", "")
+        cons_no = c.get("cons_no", 0)
+        if cons_no == 0:
+            continue  # skip province-level aggregate
+        pinfo = prov_map.get(pid, {})
+        prov_name = pinfo.get("province", pid)
+        key = f"{prov_name}_{cons_no}"
+        result[key] = c.get("total_vote_stations", 0)
+    return result
+
+
 def load_ect_stats(prov_map):
     """Load ECT constituency stats → dict keyed by 'province_zone'"""
     path = DATA / "ect_stats_cons.json"
@@ -204,6 +224,9 @@ def main():
     prov_map = load_ect_provinces()
     print(f"   ECT provinces: {len(prov_map)}")
 
+    ect_cons = load_ect_constituencies(prov_map)
+    print(f"   ECT constituency stations: {len(ect_cons)}")
+
     ect_data = load_ect_stats(prov_map)
     print(f"   ECT constituencies: {len(ect_data)}")
 
@@ -264,6 +287,7 @@ def main():
                 "invalid_votes": ect["invalid_votes"],
                 "blank_votes": ect["blank_votes"],
                 "counted_stations": ect["counted_stations"],
+                "total_stations": ect_cons.get(key, 0),
                 "percent_count": ect["percent_count"],
                 "top_candidate": ect.get("top_candidate"),
                 "candidate_count": ect["candidate_count"],

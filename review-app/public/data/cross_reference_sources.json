@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-02T22:24:42.967561",
+  "generated": "2026-04-06T21:55:43.310360",
   "ocr_provinces": [
     "ชัยภูมิ",
     "ตาก",
@@ -353,6 +353,7 @@
         "invalid_votes": 514,
         "blank_votes": 563,
         "counted_stations": 56,
+        "total_stations": 263,
         "percent_count": 21.29,
         "top_candidate": {
           "id": "CPM_1_2",
@@ -408,6 +409,7 @@
         "invalid_votes": 4233,
         "blank_votes": 3178,
         "counted_stations": 327,
+        "total_stations": 345,
         "percent_count": 94.78,
         "top_candidate": {
           "id": "CPM_2_3",
@@ -463,6 +465,7 @@
         "invalid_votes": 3486,
         "blank_votes": 1644,
         "counted_stations": 292,
+        "total_stations": 308,
         "percent_count": 94.81,
         "top_candidate": {
           "id": "CPM_3_1",
@@ -518,6 +521,7 @@
         "invalid_votes": 1940,
         "blank_votes": 548,
         "counted_stations": 176,
+        "total_stations": 232,
         "percent_count": 75.86,
         "top_candidate": {
           "id": "CPM_4_5",
@@ -573,6 +577,7 @@
         "invalid_votes": 2358,
         "blank_votes": 981,
         "counted_stations": 254,
+        "total_stations": 268,
         "percent_count": 94.78,
         "top_candidate": {
           "id": "CPM_5_5",
@@ -628,6 +633,7 @@
         "invalid_votes": 3633,
         "blank_votes": 1945,
         "counted_stations": 258,
+        "total_stations": 272,
         "percent_count": 94.85,
         "top_candidate": {
           "id": "CPM_6_5",
@@ -683,6 +689,7 @@
         "invalid_votes": 1916,
         "blank_votes": 785,
         "counted_stations": 272,
+        "total_stations": 287,
         "percent_count": 94.77,
         "top_candidate": {
           "id": "CPM_7_4",
@@ -738,6 +745,7 @@
         "invalid_votes": 3426,
         "blank_votes": 4277,
         "counted_stations": 260,
+        "total_stations": 274,
         "percent_count": 94.89,
         "top_candidate": {
           "id": "TAK_1_1",
@@ -793,6 +801,7 @@
         "invalid_votes": 9037,
         "blank_votes": 17504,
         "counted_stations": 191,
+        "total_stations": 202,
         "percent_count": 94.55,
         "top_candidate": {
           "id": "TAK_2_2",
@@ -848,6 +857,7 @@
         "invalid_votes": 6870,
         "blank_votes": 2447,
         "counted_stations": 222,
+        "total_stations": 234,
         "percent_count": 94.87,
         "top_candidate": {
           "id": "TAK_3_6",
@@ -903,6 +913,7 @@
         "invalid_votes": 3480,
         "blank_votes": 4276,
         "counted_stations": 229,
+        "total_stations": 242,
         "percent_count": 94.63,
         "top_candidate": {
           "id": "PNB_1_1",
@@ -958,6 +969,7 @@
         "invalid_votes": 2383,
         "blank_votes": 1554,
         "counted_stations": 276,
+        "total_stations": 291,
         "percent_count": 94.85,
         "top_candidate": {
           "id": "PNB_2_4",
@@ -1013,6 +1025,7 @@
         "invalid_votes": 3469,
         "blank_votes": 2971,
         "counted_stations": 284,
+        "total_stations": 299,
         "percent_count": 94.98,
         "top_candidate": {
           "id": "PNB_3_2",
@@ -1068,6 +1081,7 @@
         "invalid_votes": 2769,
         "blank_votes": 2098,
         "counted_stations": 281,
+        "total_stations": 296,
         "percent_count": 94.93,
         "top_candidate": {
           "id": "PNB_4_7",
@@ -1123,6 +1137,7 @@
         "invalid_votes": 4831,
         "blank_votes": 2977,
         "counted_stations": 272,
+        "total_stations": 287,
         "percent_count": 94.77,
         "top_candidate": {
           "id": "PNB_5_2",
@@ -1178,6 +1193,7 @@
         "invalid_votes": 3684,
         "blank_votes": 2554,
         "counted_stations": 279,
+        "total_stations": 316,
         "percent_count": 88.29,
         "top_candidate": {
           "id": "PNB_6_3",
@@ -1251,6 +1267,7 @@
         "invalid_votes": 2599,
         "blank_votes": 4407,
         "counted_stations": 204,
+        "total_stations": 215,
         "percent_count": 94.88,
         "top_candidate": {
           "id": "KBI_1_2",
@@ -1306,6 +1323,7 @@
         "invalid_votes": 2435,
         "blank_votes": 4055,
         "counted_stations": 198,
+        "total_stations": 209,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "KBI_2_2",
@@ -1361,6 +1379,7 @@
         "invalid_votes": 2749,
         "blank_votes": 3715,
         "counted_stations": 220,
+        "total_stations": 232,
         "percent_count": 94.83,
         "top_candidate": {
           "id": "KBI_3_5",
@@ -1416,6 +1435,7 @@
         "invalid_votes": 1083,
         "blank_votes": 4012,
         "counted_stations": 227,
+        "total_stations": 239,
         "percent_count": 94.98,
         "top_candidate": {
           "id": "BKK_1_5",
@@ -1471,6 +1491,7 @@
         "invalid_votes": 1319,
         "blank_votes": 4640,
         "counted_stations": 220,
+        "total_stations": 232,
         "percent_count": 94.83,
         "top_candidate": {
           "id": "BKK_2_2",
@@ -1526,6 +1547,7 @@
         "invalid_votes": 1353,
         "blank_votes": 3975,
         "counted_stations": 206,
+        "total_stations": 217,
         "percent_count": 94.93,
         "top_candidate": {
           "id": "BKK_3_9",
@@ -1581,6 +1603,7 @@
         "invalid_votes": 1370,
         "blank_votes": 3052,
         "counted_stations": 187,
+        "total_stations": 197,
         "percent_count": 94.92,
         "top_candidate": {
           "id": "BKK_4_2",
@@ -1636,6 +1659,7 @@
         "invalid_votes": 1223,
         "blank_votes": 4298,
         "counted_stations": 206,
+        "total_stations": 217,
         "percent_count": 94.93,
         "top_candidate": {
           "id": "BKK_5_6",
@@ -1691,6 +1715,7 @@
         "invalid_votes": 1327,
         "blank_votes": 4865,
         "counted_stations": 209,
+        "total_stations": 220,
         "percent_count": 95,
         "top_candidate": {
           "id": "BKK_6_7",
@@ -1746,6 +1771,7 @@
         "invalid_votes": 1556,
         "blank_votes": 5317,
         "counted_stations": 201,
+        "total_stations": 212,
         "percent_count": 94.81,
         "top_candidate": {
           "id": "BKK_7_8",
@@ -1801,6 +1827,7 @@
         "invalid_votes": 1530,
         "blank_votes": 5452,
         "counted_stations": 193,
+        "total_stations": 204,
         "percent_count": 94.61,
         "top_candidate": {
           "id": "BKK_8_1",
@@ -1856,6 +1883,7 @@
         "invalid_votes": 1523,
         "blank_votes": 5773,
         "counted_stations": 189,
+        "total_stations": 199,
         "percent_count": 94.97,
         "top_candidate": {
           "id": "BKK_9_5",
@@ -1911,6 +1939,7 @@
         "invalid_votes": 1415,
         "blank_votes": 5428,
         "counted_stations": 178,
+        "total_stations": 188,
         "percent_count": 94.68,
         "top_candidate": {
           "id": "BKK_10_6",
@@ -1966,6 +1995,7 @@
         "invalid_votes": 1171,
         "blank_votes": 4000,
         "counted_stations": 185,
+        "total_stations": 195,
         "percent_count": 94.87,
         "top_candidate": {
           "id": "BKK_11_15",
@@ -2021,6 +2051,7 @@
         "invalid_votes": 1483,
         "blank_votes": 5251,
         "counted_stations": 181,
+        "total_stations": 191,
         "percent_count": 94.76,
         "top_candidate": {
           "id": "BKK_12_15",
@@ -2076,6 +2107,7 @@
         "invalid_votes": 1185,
         "blank_votes": 4731,
         "counted_stations": 183,
+        "total_stations": 193,
         "percent_count": 94.82,
         "top_candidate": {
           "id": "BKK_13_7",
@@ -2131,6 +2163,7 @@
         "invalid_votes": 1306,
         "blank_votes": 3752,
         "counted_stations": 187,
+        "total_stations": 197,
         "percent_count": 94.92,
         "top_candidate": {
           "id": "BKK_14_14",
@@ -2186,6 +2219,7 @@
         "invalid_votes": 1269,
         "blank_votes": 4668,
         "counted_stations": 175,
+        "total_stations": 185,
         "percent_count": 94.59,
         "top_candidate": {
           "id": "BKK_15_8",
@@ -2221,6 +2255,7 @@
         "invalid_votes": 1310,
         "blank_votes": 4277,
         "counted_stations": 170,
+        "total_stations": 179,
         "percent_count": 94.97,
         "top_candidate": {
           "id": "BKK_16_10",
@@ -2276,6 +2311,7 @@
         "invalid_votes": 1844,
         "blank_votes": 5144,
         "counted_stations": 168,
+        "total_stations": 177,
         "percent_count": 94.92,
         "top_candidate": {
           "id": "BKK_17_10",
@@ -2331,6 +2367,7 @@
         "invalid_votes": 1334,
         "blank_votes": 4869,
         "counted_stations": 161,
+        "total_stations": 170,
         "percent_count": 94.71,
         "top_candidate": {
           "id": "BKK_18_10",
@@ -2386,6 +2423,7 @@
         "invalid_votes": 1517,
         "blank_votes": 4493,
         "counted_stations": 179,
+        "total_stations": 189,
         "percent_count": 94.71,
         "top_candidate": {
           "id": "BKK_19_6",
@@ -2441,6 +2479,7 @@
         "invalid_votes": 1611,
         "blank_votes": 3289,
         "counted_stations": 161,
+        "total_stations": 170,
         "percent_count": 94.71,
         "top_candidate": {
           "id": "BKK_20_7",
@@ -2496,6 +2535,7 @@
         "invalid_votes": 1387,
         "blank_votes": 3571,
         "counted_stations": 173,
+        "total_stations": 183,
         "percent_count": 94.54,
         "top_candidate": {
           "id": "BKK_21_8",
@@ -2551,6 +2591,7 @@
         "invalid_votes": 1419,
         "blank_votes": 4925,
         "counted_stations": 192,
+        "total_stations": 203,
         "percent_count": 94.58,
         "top_candidate": {
           "id": "BKK_22_6",
@@ -2606,6 +2647,7 @@
         "invalid_votes": 1016,
         "blank_votes": 4892,
         "counted_stations": 220,
+        "total_stations": 232,
         "percent_count": 94.83,
         "top_candidate": {
           "id": "BKK_23_15",
@@ -2661,6 +2703,7 @@
         "invalid_votes": 1800,
         "blank_votes": 5381,
         "counted_stations": 221,
+        "total_stations": 233,
         "percent_count": 94.85,
         "top_candidate": {
           "id": "BKK_24_6",
@@ -2716,6 +2759,7 @@
         "invalid_votes": 1348,
         "blank_votes": 3650,
         "counted_stations": 165,
+        "total_stations": 174,
         "percent_count": 94.83,
         "top_candidate": {
           "id": "BKK_25_7",
@@ -2771,6 +2815,7 @@
         "invalid_votes": 1707,
         "blank_votes": 4730,
         "counted_stations": 197,
+        "total_stations": 208,
         "percent_count": 94.71,
         "top_candidate": {
           "id": "BKK_26_1",
@@ -2826,6 +2871,7 @@
         "invalid_votes": 1503,
         "blank_votes": 4096,
         "counted_stations": 167,
+        "total_stations": 176,
         "percent_count": 94.89,
         "top_candidate": {
           "id": "BKK_27_7",
@@ -2881,6 +2927,7 @@
         "invalid_votes": 1534,
         "blank_votes": 4464,
         "counted_stations": 150,
+        "total_stations": 191,
         "percent_count": 78.53,
         "top_candidate": {
           "id": "BKK_28_3",
@@ -2936,6 +2983,7 @@
         "invalid_votes": 1762,
         "blank_votes": 5245,
         "counted_stations": 189,
+        "total_stations": 199,
         "percent_count": 94.97,
         "top_candidate": {
           "id": "BKK_29_3",
@@ -2991,6 +3039,7 @@
         "invalid_votes": 1438,
         "blank_votes": 5356,
         "counted_stations": 184,
+        "total_stations": 194,
         "percent_count": 94.85,
         "top_candidate": {
           "id": "BKK_30_15",
@@ -3046,6 +3095,7 @@
         "invalid_votes": 1887,
         "blank_votes": 6684,
         "counted_stations": 228,
+        "total_stations": 241,
         "percent_count": 94.61,
         "top_candidate": {
           "id": "BKK_31_12",
@@ -3101,6 +3151,7 @@
         "invalid_votes": 2145,
         "blank_votes": 5729,
         "counted_stations": 216,
+        "total_stations": 228,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "BKK_32_15",
@@ -3156,6 +3207,7 @@
         "invalid_votes": 1884,
         "blank_votes": 5347,
         "counted_stations": 205,
+        "total_stations": 229,
         "percent_count": 89.52,
         "top_candidate": {
           "id": "BKK_33_11",
@@ -3211,6 +3263,7 @@
         "invalid_votes": 3275,
         "blank_votes": 6060,
         "counted_stations": 180,
+        "total_stations": 190,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "KRI_1_5",
@@ -3266,6 +3319,7 @@
         "invalid_votes": 2700,
         "blank_votes": 2693,
         "counted_stations": 201,
+        "total_stations": 212,
         "percent_count": 94.81,
         "top_candidate": {
           "id": "KRI_2_2",
@@ -3321,6 +3375,7 @@
         "invalid_votes": 3334,
         "blank_votes": 2002,
         "counted_stations": 217,
+        "total_stations": 229,
         "percent_count": 94.76,
         "top_candidate": {
           "id": "KRI_3_5",
@@ -3376,6 +3431,7 @@
         "invalid_votes": 5324,
         "blank_votes": 4736,
         "counted_stations": 256,
+        "total_stations": 270,
         "percent_count": 94.81,
         "top_candidate": {
           "id": "KRI_4_1",
@@ -3431,6 +3487,7 @@
         "invalid_votes": 3951,
         "blank_votes": 1864,
         "counted_stations": 187,
+        "total_stations": 197,
         "percent_count": 94.92,
         "top_candidate": {
           "id": "KRI_5_2",
@@ -3486,6 +3543,7 @@
         "invalid_votes": 2392,
         "blank_votes": 2917,
         "counted_stations": 269,
+        "total_stations": 284,
         "percent_count": 94.72,
         "top_candidate": {
           "id": "KSN_1_6",
@@ -3541,6 +3599,7 @@
         "invalid_votes": 2805,
         "blank_votes": 3140,
         "counted_stations": 251,
+        "total_stations": 265,
         "percent_count": 94.72,
         "top_candidate": {
           "id": "KSN_2_5",
@@ -3596,6 +3655,7 @@
         "invalid_votes": 2349,
         "blank_votes": 1771,
         "counted_stations": 253,
+        "total_stations": 267,
         "percent_count": 94.76,
         "top_candidate": {
           "id": "KSN_3_4",
@@ -3651,6 +3711,7 @@
         "invalid_votes": 2368,
         "blank_votes": 1522,
         "counted_stations": 294,
+        "total_stations": 310,
         "percent_count": 94.84,
         "top_candidate": {
           "id": "KSN_4_4",
@@ -3706,6 +3767,7 @@
         "invalid_votes": 2137,
         "blank_votes": 1497,
         "counted_stations": 276,
+        "total_stations": 291,
         "percent_count": 94.85,
         "top_candidate": {
           "id": "KSN_5_5",
@@ -3761,6 +3823,7 @@
         "invalid_votes": 2260,
         "blank_votes": 1428,
         "counted_stations": 279,
+        "total_stations": 294,
         "percent_count": 94.9,
         "top_candidate": {
           "id": "KSN_6_3",
@@ -3816,6 +3879,7 @@
         "invalid_votes": 4771,
         "blank_votes": 4683,
         "counted_stations": 264,
+        "total_stations": 278,
         "percent_count": 94.96,
         "top_candidate": {
           "id": "KPT_1_2",
@@ -3871,6 +3935,7 @@
         "invalid_votes": 4344,
         "blank_votes": 2522,
         "counted_stations": 305,
+        "total_stations": 322,
         "percent_count": 94.72,
         "top_candidate": {
           "id": "KPT_2_3",
@@ -3926,6 +3991,7 @@
         "invalid_votes": 3808,
         "blank_votes": 2323,
         "counted_stations": 270,
+        "total_stations": 285,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "KPT_3_4",
@@ -3981,6 +4047,7 @@
         "invalid_votes": 4008,
         "blank_votes": 2342,
         "counted_stations": 287,
+        "total_stations": 303,
         "percent_count": 94.72,
         "top_candidate": {
           "id": "KPT_4_7",
@@ -4036,6 +4103,7 @@
         "invalid_votes": 2510,
         "blank_votes": 5219,
         "counted_stations": 170,
+        "total_stations": 179,
         "percent_count": 94.97,
         "top_candidate": {
           "id": "KKN_1_3",
@@ -4091,6 +4159,7 @@
         "invalid_votes": 2640,
         "blank_votes": 6032,
         "counted_stations": 170,
+        "total_stations": 179,
         "percent_count": 94.97,
         "top_candidate": {
           "id": "KKN_2_5",
@@ -4146,6 +4215,7 @@
         "invalid_votes": 3714,
         "blank_votes": 1822,
         "counted_stations": 252,
+        "total_stations": 266,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "KKN_3_1",
@@ -4201,6 +4271,7 @@
         "invalid_votes": 2664,
         "blank_votes": 2169,
         "counted_stations": 243,
+        "total_stations": 256,
         "percent_count": 94.92,
         "top_candidate": {
           "id": "KKN_4_5",
@@ -4256,6 +4327,7 @@
         "invalid_votes": 2459,
         "blank_votes": 1390,
         "counted_stations": 252,
+        "total_stations": 266,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "KKN_5_3",
@@ -4311,6 +4383,7 @@
         "invalid_votes": 3809,
         "blank_votes": 2451,
         "counted_stations": 244,
+        "total_stations": 257,
         "percent_count": 94.94,
         "top_candidate": {
           "id": "KKN_6_4",
@@ -4366,6 +4439,7 @@
         "invalid_votes": 4330,
         "blank_votes": 2608,
         "counted_stations": 263,
+        "total_stations": 277,
         "percent_count": 94.95,
         "top_candidate": {
           "id": "KKN_7_4",
@@ -4421,6 +4495,7 @@
         "invalid_votes": 3417,
         "blank_votes": 2982,
         "counted_stations": 244,
+        "total_stations": 257,
         "percent_count": 94.94,
         "top_candidate": {
           "id": "KKN_8_3",
@@ -4476,6 +4551,7 @@
         "invalid_votes": 2267,
         "blank_votes": 1039,
         "counted_stations": 270,
+        "total_stations": 285,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "KKN_9_2",
@@ -4531,6 +4607,7 @@
         "invalid_votes": 3746,
         "blank_votes": 1297,
         "counted_stations": 292,
+        "total_stations": 309,
         "percent_count": 94.5,
         "top_candidate": {
           "id": "KKN_10_5",
@@ -4586,6 +4663,7 @@
         "invalid_votes": 4043,
         "blank_votes": 2059,
         "counted_stations": 253,
+        "total_stations": 267,
         "percent_count": 94.76,
         "top_candidate": {
           "id": "KKN_11_6",
@@ -4641,6 +4719,7 @@
         "invalid_votes": 3058,
         "blank_votes": 6128,
         "counted_stations": 280,
+        "total_stations": 295,
         "percent_count": 94.92,
         "top_candidate": {
           "id": "CTI_1_1",
@@ -4696,6 +4775,7 @@
         "invalid_votes": 4595,
         "blank_votes": 5401,
         "counted_stations": 273,
+        "total_stations": 288,
         "percent_count": 94.79,
         "top_candidate": {
           "id": "CTI_2_3",
@@ -4751,6 +4831,7 @@
         "invalid_votes": 4032,
         "blank_votes": 5344,
         "counted_stations": 281,
+        "total_stations": 296,
         "percent_count": 94.93,
         "top_candidate": {
           "id": "CTI_3_3",
@@ -4806,6 +4887,7 @@
         "invalid_votes": 4789,
         "blank_votes": 8615,
         "counted_stations": 244,
+        "total_stations": 257,
         "percent_count": 94.94,
         "top_candidate": {
           "id": "CCO_1_2",
@@ -4861,6 +4943,7 @@
         "invalid_votes": 4230,
         "blank_votes": 4105,
         "counted_stations": 264,
+        "total_stations": 278,
         "percent_count": 94.96,
         "top_candidate": {
           "id": "CCO_2_4",
@@ -4916,6 +4999,7 @@
         "invalid_votes": 5117,
         "blank_votes": 5096,
         "counted_stations": 246,
+        "total_stations": 259,
         "percent_count": 94.98,
         "top_candidate": {
           "id": "CCO_3_4",
@@ -4971,6 +5055,7 @@
         "invalid_votes": 4360,
         "blank_votes": 5465,
         "counted_stations": 244,
+        "total_stations": 257,
         "percent_count": 94.94,
         "top_candidate": {
           "id": "CCO_4_4",
@@ -5026,6 +5111,7 @@
         "invalid_votes": 2127,
         "blank_votes": 4328,
         "counted_stations": 163,
+        "total_stations": 172,
         "percent_count": 94.77,
         "top_candidate": {
           "id": "CBI_1_1",
@@ -5081,6 +5167,7 @@
         "invalid_votes": 1776,
         "blank_votes": 3140,
         "counted_stations": 126,
+        "total_stations": 133,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "CBI_2_1",
@@ -5136,6 +5223,7 @@
         "invalid_votes": 3120,
         "blank_votes": 4649,
         "counted_stations": 170,
+        "total_stations": 179,
         "percent_count": 94.97,
         "top_candidate": {
           "id": "CBI_3_2",
@@ -5191,6 +5279,7 @@
         "invalid_votes": 3736,
         "blank_votes": 3895,
         "counted_stations": 173,
+        "total_stations": 183,
         "percent_count": 94.54,
         "top_candidate": {
           "id": "CBI_4_5",
@@ -5246,6 +5335,7 @@
         "invalid_votes": 3471,
         "blank_votes": 4533,
         "counted_stations": 206,
+        "total_stations": 217,
         "percent_count": 94.93,
         "top_candidate": {
           "id": "CBI_5_3",
@@ -5301,6 +5391,7 @@
         "invalid_votes": 2068,
         "blank_votes": 4349,
         "counted_stations": 168,
+        "total_stations": 177,
         "percent_count": 94.92,
         "top_candidate": {
           "id": "CBI_6_7",
@@ -5356,6 +5447,7 @@
         "invalid_votes": 1993,
         "blank_votes": 3722,
         "counted_stations": 154,
+        "total_stations": 163,
         "percent_count": 94.48,
         "top_candidate": {
           "id": "CBI_7_1",
@@ -5411,6 +5503,7 @@
         "invalid_votes": 2844,
         "blank_votes": 3807,
         "counted_stations": 171,
+        "total_stations": 181,
         "percent_count": 94.48,
         "top_candidate": {
           "id": "CBI_8_5",
@@ -5466,6 +5559,7 @@
         "invalid_votes": 2878,
         "blank_votes": 3231,
         "counted_stations": 156,
+        "total_stations": 165,
         "percent_count": 94.55,
         "top_candidate": {
           "id": "CBI_9_5",
@@ -5521,6 +5615,7 @@
         "invalid_votes": 1900,
         "blank_votes": 4465,
         "counted_stations": 168,
+        "total_stations": 177,
         "percent_count": 94.92,
         "top_candidate": {
           "id": "CBI_10_5",
@@ -5576,6 +5671,7 @@
         "invalid_votes": 5224,
         "blank_votes": 7148,
         "counted_stations": 241,
+        "total_stations": 254,
         "percent_count": 94.88,
         "top_candidate": {
           "id": "CNT_1_3",
@@ -5631,6 +5727,7 @@
         "invalid_votes": 4664,
         "blank_votes": 5377,
         "counted_stations": 248,
+        "total_stations": 262,
         "percent_count": 94.66,
         "top_candidate": {
           "id": "CNT_2_1",
@@ -5686,6 +5783,7 @@
         "invalid_votes": 2321,
         "blank_votes": 5040,
         "counted_stations": 249,
+        "total_stations": 263,
         "percent_count": 94.68,
         "top_candidate": {
           "id": "CPN_1_4",
@@ -5741,6 +5839,7 @@
         "invalid_votes": 2554,
         "blank_votes": 3582,
         "counted_stations": 259,
+        "total_stations": 273,
         "percent_count": 94.87,
         "top_candidate": {
           "id": "CPN_2_4",
@@ -5796,6 +5895,7 @@
         "invalid_votes": 2453,
         "blank_votes": 3427,
         "counted_stations": 272,
+        "total_stations": 287,
         "percent_count": 94.77,
         "top_candidate": {
           "id": "CPN_3_4",
@@ -5851,6 +5951,7 @@
         "invalid_votes": 2037,
         "blank_votes": 6184,
         "counted_stations": 217,
+        "total_stations": 229,
         "percent_count": 94.76,
         "top_candidate": {
           "id": "TRG_1_1",
@@ -5906,6 +6007,7 @@
         "invalid_votes": 2031,
         "blank_votes": 3085,
         "counted_stations": 260,
+        "total_stations": 274,
         "percent_count": 94.89,
         "top_candidate": {
           "id": "TRG_2_4",
@@ -5961,6 +6063,7 @@
         "invalid_votes": 2211,
         "blank_votes": 3872,
         "counted_stations": 214,
+        "total_stations": 226,
         "percent_count": 94.69,
         "top_candidate": {
           "id": "TRG_3_5",
@@ -6016,6 +6119,7 @@
         "invalid_votes": 2009,
         "blank_votes": 3582,
         "counted_stations": 203,
+        "total_stations": 214,
         "percent_count": 94.86,
         "top_candidate": {
           "id": "TRG_4_2",
@@ -6071,6 +6175,7 @@
         "invalid_votes": 4161,
         "blank_votes": 4345,
         "counted_stations": 329,
+        "total_stations": 347,
         "percent_count": 94.81,
         "top_candidate": {
           "id": "TRT_1_1",
@@ -6126,6 +6231,7 @@
         "invalid_votes": 2365,
         "blank_votes": 2693,
         "counted_stations": 199,
+        "total_stations": 210,
         "percent_count": 94.76,
         "top_candidate": {
           "id": "NYK_1_2",
@@ -6181,6 +6287,7 @@
         "invalid_votes": 3041,
         "blank_votes": 3358,
         "counted_stations": 242,
+        "total_stations": 255,
         "percent_count": 94.9,
         "top_candidate": {
           "id": "NYK_2_6",
@@ -6236,6 +6343,7 @@
         "invalid_votes": 3320,
         "blank_votes": 4384,
         "counted_stations": 206,
+        "total_stations": 217,
         "percent_count": 94.93,
         "top_candidate": {
           "id": "NPT_1_8",
@@ -6291,6 +6399,7 @@
         "invalid_votes": 2337,
         "blank_votes": 4753,
         "counted_stations": 198,
+        "total_stations": 209,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "NPT_2_3",
@@ -6346,6 +6455,7 @@
         "invalid_votes": 3012,
         "blank_votes": 4418,
         "counted_stations": 221,
+        "total_stations": 233,
         "percent_count": 94.85,
         "top_candidate": {
           "id": "NPT_3_6",
@@ -6401,6 +6511,7 @@
         "invalid_votes": 3415,
         "blank_votes": 3190,
         "counted_stations": 237,
+        "total_stations": 250,
         "percent_count": 94.8,
         "top_candidate": {
           "id": "NPT_4_8",
@@ -6456,6 +6567,7 @@
         "invalid_votes": 2765,
         "blank_votes": 4262,
         "counted_stations": 190,
+        "total_stations": 200,
         "percent_count": 95,
         "top_candidate": {
           "id": "NPT_5_7",
@@ -6511,6 +6623,7 @@
         "invalid_votes": 2268,
         "blank_votes": 4909,
         "counted_stations": 180,
+        "total_stations": 190,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "NPT_6_1",
@@ -6566,6 +6679,7 @@
         "invalid_votes": 2419,
         "blank_votes": 1013,
         "counted_stations": 274,
+        "total_stations": 289,
         "percent_count": 94.81,
         "top_candidate": {
           "id": "NPM_1_1",
@@ -6621,6 +6735,7 @@
         "invalid_votes": 3743,
         "blank_votes": 4086,
         "counted_stations": 281,
+        "total_stations": 296,
         "percent_count": 94.93,
         "top_candidate": {
           "id": "NPM_2_1",
@@ -6676,6 +6791,7 @@
         "invalid_votes": 2797,
         "blank_votes": 2071,
         "counted_stations": 278,
+        "total_stations": 293,
         "percent_count": 94.88,
         "top_candidate": {
           "id": "NPM_3_4",
@@ -6731,6 +6847,7 @@
         "invalid_votes": 2228,
         "blank_votes": 1631,
         "counted_stations": 301,
+        "total_stations": 317,
         "percent_count": 94.95,
         "top_candidate": {
           "id": "NPM_4_1",
@@ -6786,6 +6903,7 @@
         "invalid_votes": 2167,
         "blank_votes": 6831,
         "counted_stations": 228,
+        "total_stations": 240,
         "percent_count": 95,
         "top_candidate": {
           "id": "NMA_1_7",
@@ -6841,6 +6959,7 @@
         "invalid_votes": 2931,
         "blank_votes": 5103,
         "counted_stations": 206,
+        "total_stations": 217,
         "percent_count": 94.93,
         "top_candidate": {
           "id": "NMA_2_8",
@@ -6896,6 +7015,7 @@
         "invalid_votes": 3425,
         "blank_votes": 6001,
         "counted_stations": 222,
+        "total_stations": 234,
         "percent_count": 94.87,
         "top_candidate": {
           "id": "NMA_3_5",
@@ -6951,6 +7071,7 @@
         "invalid_votes": 3412,
         "blank_votes": 4885,
         "counted_stations": 290,
+        "total_stations": 306,
         "percent_count": 94.77,
         "top_candidate": {
           "id": "NMA_4_4",
@@ -7006,6 +7127,7 @@
         "invalid_votes": 3689,
         "blank_votes": 3495,
         "counted_stations": 281,
+        "total_stations": 296,
         "percent_count": 94.93,
         "top_candidate": {
           "id": "NMA_5_1",
@@ -7061,6 +7183,7 @@
         "invalid_votes": 2021,
         "blank_votes": 1773,
         "counted_stations": 291,
+        "total_stations": 307,
         "percent_count": 94.79,
         "top_candidate": {
           "id": "NMA_6_1",
@@ -7116,6 +7239,7 @@
         "invalid_votes": 2474,
         "blank_votes": 1847,
         "counted_stations": 314,
+        "total_stations": 331,
         "percent_count": 94.86,
         "top_candidate": {
           "id": "NMA_7_2",
@@ -7171,6 +7295,7 @@
         "invalid_votes": 4488,
         "blank_votes": 2964,
         "counted_stations": 278,
+        "total_stations": 293,
         "percent_count": 94.88,
         "top_candidate": {
           "id": "NMA_8_1",
@@ -7226,6 +7351,7 @@
         "invalid_votes": 2651,
         "blank_votes": 1552,
         "counted_stations": 285,
+        "total_stations": 300,
         "percent_count": 95,
         "top_candidate": {
           "id": "NMA_9_3",
@@ -7281,6 +7407,7 @@
         "invalid_votes": 3772,
         "blank_votes": 3114,
         "counted_stations": 287,
+        "total_stations": 303,
         "percent_count": 94.72,
         "top_candidate": {
           "id": "NMA_10_2",
@@ -7336,6 +7463,7 @@
         "invalid_votes": 3689,
         "blank_votes": 3929,
         "counted_stations": 258,
+        "total_stations": 272,
         "percent_count": 94.85,
         "top_candidate": {
           "id": "NMA_11_3",
@@ -7391,6 +7519,7 @@
         "invalid_votes": 4225,
         "blank_votes": 3686,
         "counted_stations": 310,
+        "total_stations": 327,
         "percent_count": 94.8,
         "top_candidate": {
           "id": "NMA_12_3",
@@ -7446,6 +7575,7 @@
         "invalid_votes": 6106,
         "blank_votes": 4789,
         "counted_stations": 270,
+        "total_stations": 285,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "NMA_13_5",
@@ -7501,6 +7631,7 @@
         "invalid_votes": 4731,
         "blank_votes": 5557,
         "counted_stations": 228,
+        "total_stations": 240,
         "percent_count": 95,
         "top_candidate": {
           "id": "NMA_14_1",
@@ -7556,6 +7687,7 @@
         "invalid_votes": 2489,
         "blank_votes": 1509,
         "counted_stations": 313,
+        "total_stations": 330,
         "percent_count": 94.85,
         "top_candidate": {
           "id": "NMA_15_5",
@@ -7611,6 +7743,7 @@
         "invalid_votes": 2785,
         "blank_votes": 2218,
         "counted_stations": 323,
+        "total_stations": 340,
         "percent_count": 95,
         "top_candidate": {
           "id": "NMA_16_3",
@@ -7666,6 +7799,7 @@
         "invalid_votes": 2897,
         "blank_votes": 4789,
         "counted_stations": 211,
+        "total_stations": 223,
         "percent_count": 94.62,
         "top_candidate": {
           "id": "NST_1_2",
@@ -7721,6 +7855,7 @@
         "invalid_votes": 2663,
         "blank_votes": 5093,
         "counted_stations": 249,
+        "total_stations": 263,
         "percent_count": 94.68,
         "top_candidate": {
           "id": "NST_2_1",
@@ -7776,6 +7911,7 @@
         "invalid_votes": 2548,
         "blank_votes": 2365,
         "counted_stations": 306,
+        "total_stations": 323,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "NST_3_1",
@@ -7831,6 +7967,7 @@
         "invalid_votes": 2248,
         "blank_votes": 3568,
         "counted_stations": 220,
+        "total_stations": 232,
         "percent_count": 94.83,
         "top_candidate": {
           "id": "NST_4_5",
@@ -7886,6 +8023,7 @@
         "invalid_votes": 1882,
         "blank_votes": 3455,
         "counted_stations": 225,
+        "total_stations": 237,
         "percent_count": 94.94,
         "top_candidate": {
           "id": "NST_5_5",
@@ -7941,6 +8079,7 @@
         "invalid_votes": 1908,
         "blank_votes": 2806,
         "counted_stations": 237,
+        "total_stations": 250,
         "percent_count": 94.8,
         "top_candidate": {
           "id": "NST_6_3",
@@ -7996,6 +8135,7 @@
         "invalid_votes": 4910,
         "blank_votes": 10807,
         "counted_stations": 248,
+        "total_stations": 262,
         "percent_count": 94.66,
         "top_candidate": {
           "id": "NST_7_7",
@@ -8051,6 +8191,7 @@
         "invalid_votes": 2458,
         "blank_votes": 4191,
         "counted_stations": 218,
+        "total_stations": 230,
         "percent_count": 94.78,
         "top_candidate": {
           "id": "NST_8_1",
@@ -8106,6 +8247,7 @@
         "invalid_votes": 2107,
         "blank_votes": 2709,
         "counted_stations": 248,
+        "total_stations": 262,
         "percent_count": 94.66,
         "top_candidate": {
           "id": "NST_9_7",
@@ -8161,6 +8303,7 @@
         "invalid_votes": 3084,
         "blank_votes": 4502,
         "counted_stations": 221,
+        "total_stations": 233,
         "percent_count": 94.85,
         "top_candidate": {
           "id": "NSN_1_3",
@@ -8216,6 +8359,7 @@
         "invalid_votes": 3671,
         "blank_votes": 3058,
         "counted_stations": 260,
+        "total_stations": 274,
         "percent_count": 94.89,
         "top_candidate": {
           "id": "NSN_2_3",
@@ -8271,6 +8415,7 @@
         "invalid_votes": 4481,
         "blank_votes": 3518,
         "counted_stations": 294,
+        "total_stations": 310,
         "percent_count": 94.84,
         "top_candidate": {
           "id": "NSN_3_5",
@@ -8326,6 +8471,7 @@
         "invalid_votes": 4857,
         "blank_votes": 2689,
         "counted_stations": 269,
+        "total_stations": 284,
         "percent_count": 94.72,
         "top_candidate": {
           "id": "NSN_4_2",
@@ -8381,6 +8527,7 @@
         "invalid_votes": 3790,
         "blank_votes": 2603,
         "counted_stations": 277,
+        "total_stations": 292,
         "percent_count": 94.86,
         "top_candidate": {
           "id": "NSN_5_4",
@@ -8436,6 +8583,7 @@
         "invalid_votes": 3107,
         "blank_votes": 1152,
         "counted_stations": 248,
+        "total_stations": 262,
         "percent_count": 94.66,
         "top_candidate": {
           "id": "NSN_6_2",
@@ -8491,6 +8639,7 @@
         "invalid_votes": 1616,
         "blank_votes": 5219,
         "counted_stations": 167,
+        "total_stations": 176,
         "percent_count": 94.89,
         "top_candidate": {
           "id": "NBI_1_8",
@@ -8546,6 +8695,7 @@
         "invalid_votes": 1692,
         "blank_votes": 5311,
         "counted_stations": 166,
+        "total_stations": 175,
         "percent_count": 94.86,
         "top_candidate": {
           "id": "NBI_2_7",
@@ -8601,6 +8751,7 @@
         "invalid_votes": 1896,
         "blank_votes": 5956,
         "counted_stations": 158,
+        "total_stations": 205,
         "percent_count": 77.07,
         "top_candidate": {
           "id": "NBI_3_7",
@@ -8656,6 +8807,7 @@
         "invalid_votes": 1765,
         "blank_votes": 4365,
         "counted_stations": 168,
+        "total_stations": 177,
         "percent_count": 94.92,
         "top_candidate": {
           "id": "NBI_4_2",
@@ -8711,6 +8863,7 @@
         "invalid_votes": 2083,
         "blank_votes": 5924,
         "counted_stations": 188,
+        "total_stations": 198,
         "percent_count": 94.95,
         "top_candidate": {
           "id": "NBI_5_8",
@@ -8766,6 +8919,7 @@
         "invalid_votes": 3445,
         "blank_votes": 7023,
         "counted_stations": 202,
+        "total_stations": 213,
         "percent_count": 94.84,
         "top_candidate": {
           "id": "NBI_6_4",
@@ -8821,6 +8975,7 @@
         "invalid_votes": 2480,
         "blank_votes": 5962,
         "counted_stations": 199,
+        "total_stations": 210,
         "percent_count": 94.76,
         "top_candidate": {
           "id": "NBI_7_1",
@@ -8876,6 +9031,7 @@
         "invalid_votes": 2125,
         "blank_votes": 5696,
         "counted_stations": 194,
+        "total_stations": 205,
         "percent_count": 94.63,
         "top_candidate": {
           "id": "NBI_8_3",
@@ -8931,6 +9087,7 @@
         "invalid_votes": 2606,
         "blank_votes": 2723,
         "counted_stations": 216,
+        "total_stations": 228,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "NWT_1_4",
@@ -8986,6 +9143,7 @@
         "invalid_votes": 3258,
         "blank_votes": 3733,
         "counted_stations": 190,
+        "total_stations": 201,
         "percent_count": 94.53,
         "top_candidate": {
           "id": "NWT_2_2",
@@ -9041,6 +9199,7 @@
         "invalid_votes": 2392,
         "blank_votes": 1193,
         "counted_stations": 196,
+        "total_stations": 207,
         "percent_count": 94.69,
         "top_candidate": {
           "id": "NWT_3_2",
@@ -9096,6 +9255,7 @@
         "invalid_votes": 2228,
         "blank_votes": 1016,
         "counted_stations": 206,
+        "total_stations": 217,
         "percent_count": 94.93,
         "top_candidate": {
           "id": "NWT_4_5",
@@ -9151,6 +9311,7 @@
         "invalid_votes": 2854,
         "blank_votes": 1397,
         "counted_stations": 221,
+        "total_stations": 233,
         "percent_count": 94.85,
         "top_candidate": {
           "id": "NWT_5_1",
@@ -9206,6 +9367,7 @@
         "invalid_votes": 4053,
         "blank_votes": 5809,
         "counted_stations": 285,
+        "total_stations": 300,
         "percent_count": 95,
         "top_candidate": {
           "id": "NAN_1_3",
@@ -9241,6 +9403,7 @@
         "invalid_votes": 3300,
         "blank_votes": 4341,
         "counted_stations": 334,
+        "total_stations": 352,
         "percent_count": 94.89,
         "top_candidate": {
           "id": "NAN_2_3",
@@ -9296,6 +9459,7 @@
         "invalid_votes": 4982,
         "blank_votes": 3974,
         "counted_stations": 286,
+        "total_stations": 302,
         "percent_count": 94.7,
         "top_candidate": {
           "id": "NAN_3_2",
@@ -9351,6 +9515,7 @@
         "invalid_votes": 2694,
         "blank_votes": 1404,
         "counted_stations": 207,
+        "total_stations": 218,
         "percent_count": 94.95,
         "top_candidate": {
           "id": "BKN_1_6",
@@ -9406,6 +9571,7 @@
         "invalid_votes": 1819,
         "blank_votes": 1049,
         "counted_stations": 244,
+        "total_stations": 267,
         "percent_count": 91.39,
         "top_candidate": {
           "id": "BKN_2_3",
@@ -9461,6 +9627,7 @@
         "invalid_votes": 3457,
         "blank_votes": 2084,
         "counted_stations": 246,
+        "total_stations": 259,
         "percent_count": 94.98,
         "top_candidate": {
           "id": "BKN_3_1",
@@ -9516,6 +9683,7 @@
         "invalid_votes": 3400,
         "blank_votes": 2915,
         "counted_stations": 261,
+        "total_stations": 275,
         "percent_count": 94.91,
         "top_candidate": {
           "id": "BRM_1_5",
@@ -9571,6 +9739,7 @@
         "invalid_votes": 3510,
         "blank_votes": 3391,
         "counted_stations": 263,
+        "total_stations": 277,
         "percent_count": 94.95,
         "top_candidate": {
           "id": "BRM_2_5",
@@ -9626,6 +9795,7 @@
         "invalid_votes": 3142,
         "blank_votes": 1340,
         "counted_stations": 266,
+        "total_stations": 281,
         "percent_count": 94.66,
         "top_candidate": {
           "id": "BRM_3_1",
@@ -9681,6 +9851,7 @@
         "invalid_votes": 3058,
         "blank_votes": 1800,
         "counted_stations": 257,
+        "total_stations": 271,
         "percent_count": 94.83,
         "top_candidate": {
           "id": "BRM_4_3",
@@ -9736,6 +9907,7 @@
         "invalid_votes": 2920,
         "blank_votes": 2477,
         "counted_stations": 302,
+        "total_stations": 318,
         "percent_count": 94.97,
         "top_candidate": {
           "id": "BRM_5_6",
@@ -9791,6 +9963,7 @@
         "invalid_votes": 2667,
         "blank_votes": 2534,
         "counted_stations": 294,
+        "total_stations": 310,
         "percent_count": 94.84,
         "top_candidate": {
           "id": "BRM_6_4",
@@ -9846,6 +10019,7 @@
         "invalid_votes": 2802,
         "blank_votes": 2023,
         "counted_stations": 257,
+        "total_stations": 271,
         "percent_count": 94.83,
         "top_candidate": {
           "id": "BRM_7_5",
@@ -9901,6 +10075,7 @@
         "invalid_votes": 3042,
         "blank_votes": 3305,
         "counted_stations": 266,
+        "total_stations": 280,
         "percent_count": 95,
         "top_candidate": {
           "id": "BRM_8_5",
@@ -9956,6 +10131,7 @@
         "invalid_votes": 3038,
         "blank_votes": 1975,
         "counted_stations": 239,
+        "total_stations": 252,
         "percent_count": 94.84,
         "top_candidate": {
           "id": "BRM_9_5",
@@ -10011,6 +10187,7 @@
         "invalid_votes": 2705,
         "blank_votes": 1927,
         "counted_stations": 211,
+        "total_stations": 223,
         "percent_count": 94.62,
         "top_candidate": {
           "id": "BRM_10_2",
@@ -10066,6 +10243,7 @@
         "invalid_votes": 2728,
         "blank_votes": 4277,
         "counted_stations": 191,
+        "total_stations": 202,
         "percent_count": 94.55,
         "top_candidate": {
           "id": "PTE_1_4",
@@ -10121,6 +10299,7 @@
         "invalid_votes": 1936,
         "blank_votes": 3616,
         "counted_stations": 185,
+        "total_stations": 195,
         "percent_count": 94.87,
         "top_candidate": {
           "id": "PTE_2_1",
@@ -10176,6 +10355,7 @@
         "invalid_votes": 2794,
         "blank_votes": 6353,
         "counted_stations": 171,
+        "total_stations": 180,
         "percent_count": 95,
         "top_candidate": {
           "id": "PTE_3_7",
@@ -10231,6 +10411,7 @@
         "invalid_votes": 2367,
         "blank_votes": 4908,
         "counted_stations": 169,
+        "total_stations": 178,
         "percent_count": 94.94,
         "top_candidate": {
           "id": "PTE_4_1",
@@ -10286,6 +10467,7 @@
         "invalid_votes": 1572,
         "blank_votes": 4711,
         "counted_stations": 201,
+        "total_stations": 212,
         "percent_count": 94.81,
         "top_candidate": {
           "id": "PTE_5_3",
@@ -10341,6 +10523,7 @@
         "invalid_votes": 1644,
         "blank_votes": 4659,
         "counted_stations": 145,
+        "total_stations": 153,
         "percent_count": 94.77,
         "top_candidate": {
           "id": "PTE_6_8",
@@ -10396,6 +10579,7 @@
         "invalid_votes": 2068,
         "blank_votes": 3578,
         "counted_stations": 176,
+        "total_stations": 186,
         "percent_count": 94.62,
         "top_candidate": {
           "id": "PTE_7_4",
@@ -10451,6 +10635,7 @@
         "invalid_votes": 3095,
         "blank_votes": 3412,
         "counted_stations": 177,
+        "total_stations": 187,
         "percent_count": 94.65,
         "top_candidate": {
           "id": "PTE_8_3",
@@ -10506,6 +10691,7 @@
         "invalid_votes": 3127,
         "blank_votes": 2148,
         "counted_stations": 244,
+        "total_stations": 257,
         "percent_count": 94.94,
         "top_candidate": {
           "id": "PKN_1_3",
@@ -10561,6 +10747,7 @@
         "invalid_votes": 2591,
         "blank_votes": 4182,
         "counted_stations": 215,
+        "total_stations": 227,
         "percent_count": 94.71,
         "top_candidate": {
           "id": "PKN_2_1",
@@ -10616,6 +10803,7 @@
         "invalid_votes": 2411,
         "blank_votes": 1968,
         "counted_stations": 244,
+        "total_stations": 257,
         "percent_count": 94.94,
         "top_candidate": {
           "id": "PKN_3_7",
@@ -10671,6 +10859,7 @@
         "invalid_votes": 3509,
         "blank_votes": 7790,
         "counted_stations": 228,
+        "total_stations": 241,
         "percent_count": 94.61,
         "top_candidate": {
           "id": "PRI_1_1",
@@ -10726,6 +10915,7 @@
         "invalid_votes": 3353,
         "blank_votes": 3970,
         "counted_stations": 281,
+        "total_stations": 296,
         "percent_count": 94.93,
         "top_candidate": {
           "id": "PRI_2_3",
@@ -10761,6 +10951,7 @@
         "invalid_votes": 4326,
         "blank_votes": 4256,
         "counted_stations": 248,
+        "total_stations": 262,
         "percent_count": 94.66,
         "top_candidate": {
           "id": "PRI_3_2",
@@ -10816,6 +11007,7 @@
         "invalid_votes": 1946,
         "blank_votes": 2285,
         "counted_stations": 151,
+        "total_stations": 159,
         "percent_count": 94.97,
         "top_candidate": {
           "id": "PTN_1_5",
@@ -10871,6 +11063,7 @@
         "invalid_votes": 2713,
         "blank_votes": 2613,
         "counted_stations": 204,
+        "total_stations": 215,
         "percent_count": 94.88,
         "top_candidate": {
           "id": "PTN_2_2",
@@ -10926,6 +11119,7 @@
         "invalid_votes": 2490,
         "blank_votes": 1483,
         "counted_stations": 164,
+        "total_stations": 173,
         "percent_count": 94.8,
         "top_candidate": {
           "id": "PTN_3_4",
@@ -10981,6 +11175,7 @@
         "invalid_votes": 2003,
         "blank_votes": 921,
         "counted_stations": 212,
+        "total_stations": 224,
         "percent_count": 94.64,
         "top_candidate": {
           "id": "PTN_4_5",
@@ -11036,6 +11231,7 @@
         "invalid_votes": 2953,
         "blank_votes": 1571,
         "counted_stations": 200,
+        "total_stations": 211,
         "percent_count": 94.79,
         "top_candidate": {
           "id": "PTN_5_4",
@@ -11091,6 +11287,7 @@
         "invalid_votes": 3338,
         "blank_votes": 4841,
         "counted_stations": 227,
+        "total_stations": 239,
         "percent_count": 94.98,
         "top_candidate": {
           "id": "AYA_1_6",
@@ -11146,6 +11343,7 @@
         "invalid_votes": 3371,
         "blank_votes": 4455,
         "counted_stations": 222,
+        "total_stations": 234,
         "percent_count": 94.87,
         "top_candidate": {
           "id": "AYA_2_7",
@@ -11201,6 +11399,7 @@
         "invalid_votes": 3436,
         "blank_votes": 3466,
         "counted_stations": 206,
+        "total_stations": 217,
         "percent_count": 94.93,
         "top_candidate": {
           "id": "AYA_3_5",
@@ -11256,6 +11455,7 @@
         "invalid_votes": 2797,
         "blank_votes": 3749,
         "counted_stations": 219,
+        "total_stations": 231,
         "percent_count": 94.81,
         "top_candidate": {
           "id": "AYA_4_4",
@@ -11311,6 +11511,7 @@
         "invalid_votes": 4153,
         "blank_votes": 2667,
         "counted_stations": 227,
+        "total_stations": 239,
         "percent_count": 94.98,
         "top_candidate": {
           "id": "AYA_5_7",
@@ -11366,6 +11567,7 @@
         "invalid_votes": 2652,
         "blank_votes": 3079,
         "counted_stations": 266,
+        "total_stations": 281,
         "percent_count": 94.66,
         "top_candidate": {
           "id": "PYO_1_3",
@@ -11421,6 +11623,7 @@
         "invalid_votes": 3837,
         "blank_votes": 3280,
         "counted_stations": 279,
+        "total_stations": 294,
         "percent_count": 94.9,
         "top_candidate": {
           "id": "PYO_2_1",
@@ -11476,6 +11679,7 @@
         "invalid_votes": 4223,
         "blank_votes": 2581,
         "counted_stations": 286,
+        "total_stations": 302,
         "percent_count": 94.7,
         "top_candidate": {
           "id": "PYO_3_1",
@@ -11531,6 +11735,7 @@
         "invalid_votes": 2801,
         "blank_votes": 4823,
         "counted_stations": 194,
+        "total_stations": 205,
         "percent_count": 94.63,
         "top_candidate": {
           "id": "PNA_1_5",
@@ -11586,6 +11791,7 @@
         "invalid_votes": 2717,
         "blank_votes": 4555,
         "counted_stations": 181,
+        "total_stations": 191,
         "percent_count": 94.76,
         "top_candidate": {
           "id": "PNA_2_3",
@@ -11641,6 +11847,7 @@
         "invalid_votes": 1918,
         "blank_votes": 2953,
         "counted_stations": 248,
+        "total_stations": 262,
         "percent_count": 94.66,
         "top_candidate": {
           "id": "PLG_1_4",
@@ -11696,6 +11903,7 @@
         "invalid_votes": 2277,
         "blank_votes": 2718,
         "counted_stations": 266,
+        "total_stations": 281,
         "percent_count": 94.66,
         "top_candidate": {
           "id": "PLG_2_1",
@@ -11751,6 +11959,7 @@
         "invalid_votes": 2990,
         "blank_votes": 3599,
         "counted_stations": 249,
+        "total_stations": 263,
         "percent_count": 94.68,
         "top_candidate": {
           "id": "PLG_3_6",
@@ -11806,6 +12015,7 @@
         "invalid_votes": 4786,
         "blank_votes": 4274,
         "counted_stations": 292,
+        "total_stations": 308,
         "percent_count": 94.81,
         "top_candidate": {
           "id": "PCT_1_6",
@@ -11861,6 +12071,7 @@
         "invalid_votes": 4109,
         "blank_votes": 3369,
         "counted_stations": 338,
+        "total_stations": 356,
         "percent_count": 94.94,
         "top_candidate": {
           "id": "PCT_2_2",
@@ -11916,6 +12127,7 @@
         "invalid_votes": 3378,
         "blank_votes": 1708,
         "counted_stations": 340,
+        "total_stations": 358,
         "percent_count": 94.97,
         "top_candidate": {
           "id": "PCT_3_2",
@@ -11971,6 +12183,7 @@
         "invalid_votes": 2929,
         "blank_votes": 6141,
         "counted_stations": 209,
+        "total_stations": 221,
         "percent_count": 94.57,
         "top_candidate": {
           "id": "PLK_1_5",
@@ -12026,6 +12239,7 @@
         "invalid_votes": 4544,
         "blank_votes": 6808,
         "counted_stations": 270,
+        "total_stations": 285,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "PLK_2_1",
@@ -12081,6 +12295,7 @@
         "invalid_votes": 4011,
         "blank_votes": 2804,
         "counted_stations": 263,
+        "total_stations": 277,
         "percent_count": 94.95,
         "top_candidate": {
           "id": "PLK_3_6",
@@ -12136,6 +12351,7 @@
         "invalid_votes": 3141,
         "blank_votes": 2242,
         "counted_stations": 269,
+        "total_stations": 284,
         "percent_count": 94.72,
         "top_candidate": {
           "id": "PLK_4_3",
@@ -12191,6 +12407,7 @@
         "invalid_votes": 3963,
         "blank_votes": 2489,
         "counted_stations": 280,
+        "total_stations": 295,
         "percent_count": 94.92,
         "top_candidate": {
           "id": "PLK_5_5",
@@ -12246,6 +12463,7 @@
         "invalid_votes": 1873,
         "blank_votes": 4302,
         "counted_stations": 139,
+        "total_stations": 147,
         "percent_count": 94.56,
         "top_candidate": {
           "id": "PKT_1_3",
@@ -12301,6 +12519,7 @@
         "invalid_votes": 2751,
         "blank_votes": 4834,
         "counted_stations": 142,
+        "total_stations": 150,
         "percent_count": 94.67,
         "top_candidate": {
           "id": "PKT_2_6",
@@ -12356,6 +12575,7 @@
         "invalid_votes": 2035,
         "blank_votes": 4667,
         "counted_stations": 164,
+        "total_stations": 173,
         "percent_count": 94.8,
         "top_candidate": {
           "id": "PKT_3_3",
@@ -12411,6 +12631,7 @@
         "invalid_votes": 1957,
         "blank_votes": 3287,
         "counted_stations": 225,
+        "total_stations": 237,
         "percent_count": 94.94,
         "top_candidate": {
           "id": "MKM_1_6",
@@ -12466,6 +12687,7 @@
         "invalid_votes": 1940,
         "blank_votes": 1415,
         "counted_stations": 317,
+        "total_stations": 334,
         "percent_count": 94.91,
         "top_candidate": {
           "id": "MKM_2_5",
@@ -12521,6 +12743,7 @@
         "invalid_votes": 1858,
         "blank_votes": 613,
         "counted_stations": 271,
+        "total_stations": 286,
         "percent_count": 94.76,
         "top_candidate": {
           "id": "MKM_3_6",
@@ -12576,6 +12799,7 @@
         "invalid_votes": 2797,
         "blank_votes": 1267,
         "counted_stations": 277,
+        "total_stations": 292,
         "percent_count": 94.86,
         "top_candidate": {
           "id": "MKM_4_3",
@@ -12631,6 +12855,7 @@
         "invalid_votes": 2769,
         "blank_votes": 3430,
         "counted_stations": 325,
+        "total_stations": 343,
         "percent_count": 94.75,
         "top_candidate": {
           "id": "MKM_5_1",
@@ -12686,6 +12911,7 @@
         "invalid_votes": 2325,
         "blank_votes": 2003,
         "counted_stations": 289,
+        "total_stations": 305,
         "percent_count": 94.75,
         "top_candidate": {
           "id": "MKM_6_1",
@@ -12741,6 +12967,7 @@
         "invalid_votes": 2917,
         "blank_votes": 2266,
         "counted_stations": 272,
+        "total_stations": 287,
         "percent_count": 94.77,
         "top_candidate": {
           "id": "MDH_1_4",
@@ -12796,6 +13023,7 @@
         "invalid_votes": 3594,
         "blank_votes": 2205,
         "counted_stations": 315,
+        "total_stations": 332,
         "percent_count": 94.88,
         "top_candidate": {
           "id": "MDH_2_1",
@@ -12851,6 +13079,7 @@
         "invalid_votes": 2802,
         "blank_votes": 4474,
         "counted_stations": 209,
+        "total_stations": 221,
         "percent_count": 94.57,
         "top_candidate": {
           "id": "YLA_1_3",
@@ -12906,6 +13135,7 @@
         "invalid_votes": 4990,
         "blank_votes": 3597,
         "counted_stations": 228,
+        "total_stations": 240,
         "percent_count": 95,
         "top_candidate": {
           "id": "YLA_2_7",
@@ -12961,6 +13191,7 @@
         "invalid_votes": 3987,
         "blank_votes": 4319,
         "counted_stations": 234,
+        "total_stations": 247,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "YLA_3_3",
@@ -13016,6 +13247,7 @@
         "invalid_votes": 2747,
         "blank_votes": 2016,
         "counted_stations": 291,
+        "total_stations": 307,
         "percent_count": 94.79,
         "top_candidate": {
           "id": "YST_1_2",
@@ -13071,6 +13303,7 @@
         "invalid_votes": 1694,
         "blank_votes": 788,
         "counted_stations": 291,
+        "total_stations": 307,
         "percent_count": 94.79,
         "top_candidate": {
           "id": "YST_2_3",
@@ -13126,6 +13359,7 @@
         "invalid_votes": 3394,
         "blank_votes": 1898,
         "counted_stations": 296,
+        "total_stations": 312,
         "percent_count": 94.87,
         "top_candidate": {
           "id": "YST_3_2",
@@ -13181,6 +13415,7 @@
         "invalid_votes": 4533,
         "blank_votes": 7386,
         "counted_stations": 233,
+        "total_stations": 246,
         "percent_count": 94.72,
         "top_candidate": {
           "id": "RNG_1_4",
@@ -13236,6 +13471,7 @@
         "invalid_votes": 2232,
         "blank_votes": 3609,
         "counted_stations": 170,
+        "total_stations": 179,
         "percent_count": 94.97,
         "top_candidate": {
           "id": "RYG_1_1",
@@ -13291,6 +13527,7 @@
         "invalid_votes": 3408,
         "blank_votes": 5067,
         "counted_stations": 190,
+        "total_stations": 201,
         "percent_count": 94.53,
         "top_candidate": {
           "id": "RYG_2_1",
@@ -13346,6 +13583,7 @@
         "invalid_votes": 3348,
         "blank_votes": 4955,
         "counted_stations": 232,
+        "total_stations": 245,
         "percent_count": 94.69,
         "top_candidate": {
           "id": "RYG_3_5",
@@ -13401,6 +13639,7 @@
         "invalid_votes": 1994,
         "blank_votes": 2344,
         "counted_stations": 115,
+        "total_stations": 196,
         "percent_count": 58.67,
         "top_candidate": {
           "id": "RYG_4_2",
@@ -13456,6 +13695,7 @@
         "invalid_votes": 3288,
         "blank_votes": 4575,
         "counted_stations": 169,
+        "total_stations": 178,
         "percent_count": 94.94,
         "top_candidate": {
           "id": "RYG_5_2",
@@ -13511,6 +13751,7 @@
         "invalid_votes": 3249,
         "blank_votes": 5066,
         "counted_stations": 230,
+        "total_stations": 243,
         "percent_count": 94.65,
         "top_candidate": {
           "id": "RBR_1_4",
@@ -13566,6 +13807,7 @@
         "invalid_votes": 4636,
         "blank_votes": 5979,
         "counted_stations": 228,
+        "total_stations": 240,
         "percent_count": 95,
         "top_candidate": {
           "id": "RBR_2_4",
@@ -13621,6 +13863,7 @@
         "invalid_votes": 5586,
         "blank_votes": 7545,
         "counted_stations": 234,
+        "total_stations": 247,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "RBR_3_2",
@@ -13676,6 +13919,7 @@
         "invalid_votes": 2688,
         "blank_votes": 2458,
         "counted_stations": 199,
+        "total_stations": 210,
         "percent_count": 94.76,
         "top_candidate": {
           "id": "RBR_4_3",
@@ -13731,6 +13975,7 @@
         "invalid_votes": 2915,
         "blank_votes": 2627,
         "counted_stations": 225,
+        "total_stations": 237,
         "percent_count": 94.94,
         "top_candidate": {
           "id": "RBR_5_4",
@@ -13786,6 +14031,7 @@
         "invalid_votes": 2317,
         "blank_votes": 1938,
         "counted_stations": 249,
+        "total_stations": 263,
         "percent_count": 94.68,
         "top_candidate": {
           "id": "RET_1_5",
@@ -13841,6 +14087,7 @@
         "invalid_votes": 2860,
         "blank_votes": 1709,
         "counted_stations": 347,
+        "total_stations": 366,
         "percent_count": 94.81,
         "top_candidate": {
           "id": "RET_2_2",
@@ -13896,6 +14143,7 @@
         "invalid_votes": 1975,
         "blank_votes": 1324,
         "counted_stations": 286,
+        "total_stations": 302,
         "percent_count": 94.7,
         "top_candidate": {
           "id": "RET_3_3",
@@ -13951,6 +14199,7 @@
         "invalid_votes": 1898,
         "blank_votes": 1546,
         "counted_stations": 316,
+        "total_stations": 333,
         "percent_count": 94.89,
         "top_candidate": {
           "id": "RET_4_4",
@@ -14006,6 +14255,7 @@
         "invalid_votes": 4171,
         "blank_votes": 2649,
         "counted_stations": 328,
+        "total_stations": 346,
         "percent_count": 94.8,
         "top_candidate": {
           "id": "RET_5_6",
@@ -14061,6 +14311,7 @@
         "invalid_votes": 2696,
         "blank_votes": 1082,
         "counted_stations": 285,
+        "total_stations": 300,
         "percent_count": 95,
         "top_candidate": {
           "id": "RET_6_4",
@@ -14116,6 +14367,7 @@
         "invalid_votes": 2289,
         "blank_votes": 522,
         "counted_stations": 304,
+        "total_stations": 320,
         "percent_count": 95,
         "top_candidate": {
           "id": "RET_7_4",
@@ -14171,6 +14423,7 @@
         "invalid_votes": 1986,
         "blank_votes": 1528,
         "counted_stations": 323,
+        "total_stations": 341,
         "percent_count": 94.72,
         "top_candidate": {
           "id": "RET_8_6",
@@ -14226,6 +14479,7 @@
         "invalid_votes": 3424,
         "blank_votes": 5073,
         "counted_stations": 246,
+        "total_stations": 259,
         "percent_count": 94.98,
         "top_candidate": {
           "id": "LRI_1_8",
@@ -14281,6 +14535,7 @@
         "invalid_votes": 3842,
         "blank_votes": 4296,
         "counted_stations": 254,
+        "total_stations": 268,
         "percent_count": 94.78,
         "top_candidate": {
           "id": "LRI_2_3",
@@ -14336,6 +14591,7 @@
         "invalid_votes": 3661,
         "blank_votes": 2636,
         "counted_stations": 272,
+        "total_stations": 287,
         "percent_count": 94.77,
         "top_candidate": {
           "id": "LRI_3_6",
@@ -14391,6 +14647,7 @@
         "invalid_votes": 4531,
         "blank_votes": 2981,
         "counted_stations": 266,
+        "total_stations": 281,
         "percent_count": 94.66,
         "top_candidate": {
           "id": "LRI_4_5",
@@ -14446,6 +14703,7 @@
         "invalid_votes": 4381,
         "blank_votes": 8368,
         "counted_stations": 278,
+        "total_stations": 293,
         "percent_count": 94.88,
         "top_candidate": {
           "id": "LPG_1_8",
@@ -14501,6 +14759,7 @@
         "invalid_votes": 7364,
         "blank_votes": 5150,
         "counted_stations": 328,
+        "total_stations": 346,
         "percent_count": 94.8,
         "top_candidate": {
           "id": "LPG_2_5",
@@ -14556,6 +14815,7 @@
         "invalid_votes": 4161,
         "blank_votes": 6599,
         "counted_stations": 264,
+        "total_stations": 278,
         "percent_count": 94.96,
         "top_candidate": {
           "id": "LPG_3_4",
@@ -14611,6 +14871,7 @@
         "invalid_votes": 6329,
         "blank_votes": 4468,
         "counted_stations": 320,
+        "total_stations": 337,
         "percent_count": 94.96,
         "top_candidate": {
           "id": "LPG_4_3",
@@ -14666,6 +14927,7 @@
         "invalid_votes": 4760,
         "blank_votes": 7852,
         "counted_stations": 318,
+        "total_stations": 335,
         "percent_count": 94.93,
         "top_candidate": {
           "id": "LPN_1_1",
@@ -14721,6 +14983,7 @@
         "invalid_votes": 7266,
         "blank_votes": 6880,
         "counted_stations": 354,
+        "total_stations": 373,
         "percent_count": 94.91,
         "top_candidate": {
           "id": "LPN_2_3",
@@ -14776,6 +15039,7 @@
         "invalid_votes": 1964,
         "blank_votes": 1434,
         "counted_stations": 274,
+        "total_stations": 289,
         "percent_count": 94.81,
         "top_candidate": {
           "id": "SSK_1_5",
@@ -14831,6 +15095,7 @@
         "invalid_votes": 2191,
         "blank_votes": 1351,
         "counted_stations": 273,
+        "total_stations": 288,
         "percent_count": 94.79,
         "top_candidate": {
           "id": "SSK_2_4",
@@ -14886,6 +15151,7 @@
         "invalid_votes": 3067,
         "blank_votes": 2228,
         "counted_stations": 277,
+        "total_stations": 292,
         "percent_count": 94.86,
         "top_candidate": {
           "id": "SSK_3_4",
@@ -14941,6 +15207,7 @@
         "invalid_votes": 2520,
         "blank_votes": 1692,
         "counted_stations": 230,
+        "total_stations": 243,
         "percent_count": 94.65,
         "top_candidate": {
           "id": "SSK_4_4",
@@ -14996,6 +15263,7 @@
         "invalid_votes": 3280,
         "blank_votes": 1848,
         "counted_stations": 232,
+        "total_stations": 245,
         "percent_count": 94.69,
         "top_candidate": {
           "id": "SSK_5_4",
@@ -15051,6 +15319,7 @@
         "invalid_votes": 2850,
         "blank_votes": 1245,
         "counted_stations": 298,
+        "total_stations": 314,
         "percent_count": 94.9,
         "top_candidate": {
           "id": "SSK_6_2",
@@ -15106,6 +15375,7 @@
         "invalid_votes": 3877,
         "blank_votes": 760,
         "counted_stations": 324,
+        "total_stations": 342,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "SSK_7_6",
@@ -15161,6 +15431,7 @@
         "invalid_votes": 2679,
         "blank_votes": 1530,
         "counted_stations": 361,
+        "total_stations": 380,
         "percent_count": 95,
         "top_candidate": {
           "id": "SSK_8_2",
@@ -15216,6 +15487,7 @@
         "invalid_votes": 2521,
         "blank_votes": 1568,
         "counted_stations": 402,
+        "total_stations": 424,
         "percent_count": 94.81,
         "top_candidate": {
           "id": "SSK_9_2",
@@ -15271,6 +15543,7 @@
         "invalid_votes": 2142,
         "blank_votes": 3517,
         "counted_stations": 222,
+        "total_stations": 234,
         "percent_count": 94.87,
         "top_candidate": {
           "id": "SNK_1_6",
@@ -15326,6 +15599,7 @@
         "invalid_votes": 3076,
         "blank_votes": 1682,
         "counted_stations": 246,
+        "total_stations": 259,
         "percent_count": 94.98,
         "top_candidate": {
           "id": "SNK_2_4",
@@ -15361,6 +15635,7 @@
         "invalid_votes": 3743,
         "blank_votes": 3113,
         "counted_stations": 247,
+        "total_stations": 260,
         "percent_count": 95,
         "top_candidate": {
           "id": "SNK_3_4",
@@ -15416,6 +15691,7 @@
         "invalid_votes": 3172,
         "blank_votes": 3406,
         "counted_stations": 242,
+        "total_stations": 255,
         "percent_count": 94.9,
         "top_candidate": {
           "id": "SNK_4_6",
@@ -15471,6 +15747,7 @@
         "invalid_votes": 2018,
         "blank_votes": 1297,
         "counted_stations": 215,
+        "total_stations": 227,
         "percent_count": 94.71,
         "top_candidate": {
           "id": "SNK_5_2",
@@ -15526,6 +15803,7 @@
         "invalid_votes": 2918,
         "blank_votes": 1904,
         "counted_stations": 225,
+        "total_stations": 237,
         "percent_count": 94.94,
         "top_candidate": {
           "id": "SNK_6_5",
@@ -15581,6 +15859,7 @@
         "invalid_votes": 2735,
         "blank_votes": 2796,
         "counted_stations": 239,
+        "total_stations": 252,
         "percent_count": 94.84,
         "top_candidate": {
           "id": "SNK_7_3",
@@ -15636,6 +15915,7 @@
         "invalid_votes": 2732,
         "blank_votes": 7065,
         "counted_stations": 190,
+        "total_stations": 201,
         "percent_count": 94.53,
         "top_candidate": {
           "id": "SKA_1_2",
@@ -15691,6 +15971,7 @@
         "invalid_votes": 1341,
         "blank_votes": 2544,
         "counted_stations": 170,
+        "total_stations": 179,
         "percent_count": 94.97,
         "top_candidate": {
           "id": "SKA_2_1",
@@ -15746,6 +16027,7 @@
         "invalid_votes": 3169,
         "blank_votes": 8852,
         "counted_stations": 202,
+        "total_stations": 213,
         "percent_count": 94.84,
         "top_candidate": {
           "id": "SKA_3_5",
@@ -15801,6 +16083,7 @@
         "invalid_votes": 2541,
         "blank_votes": 2879,
         "counted_stations": 236,
+        "total_stations": 249,
         "percent_count": 94.78,
         "top_candidate": {
           "id": "SKA_4_2",
@@ -15856,6 +16139,7 @@
         "invalid_votes": 3632,
         "blank_votes": 5986,
         "counted_stations": 222,
+        "total_stations": 234,
         "percent_count": 94.87,
         "top_candidate": {
           "id": "SKA_5_3",
@@ -15911,6 +16195,7 @@
         "invalid_votes": 2151,
         "blank_votes": 2137,
         "counted_stations": 181,
+        "total_stations": 191,
         "percent_count": 94.76,
         "top_candidate": {
           "id": "SKA_6_3",
@@ -15966,6 +16251,7 @@
         "invalid_votes": 2638,
         "blank_votes": 2786,
         "counted_stations": 222,
+        "total_stations": 234,
         "percent_count": 94.87,
         "top_candidate": {
           "id": "SKA_7_2",
@@ -16021,6 +16307,7 @@
         "invalid_votes": 2252,
         "blank_votes": 2537,
         "counted_stations": 224,
+        "total_stations": 236,
         "percent_count": 94.92,
         "top_candidate": {
           "id": "SKA_8_3",
@@ -16076,6 +16363,7 @@
         "invalid_votes": 2983,
         "blank_votes": 6306,
         "counted_stations": 195,
+        "total_stations": 206,
         "percent_count": 94.66,
         "top_candidate": {
           "id": "SKA_9_2",
@@ -16131,6 +16419,7 @@
         "invalid_votes": 2382,
         "blank_votes": 4355,
         "counted_stations": 191,
+        "total_stations": 202,
         "percent_count": 94.55,
         "top_candidate": {
           "id": "STN_1_3",
@@ -16186,6 +16475,7 @@
         "invalid_votes": 2930,
         "blank_votes": 4989,
         "counted_stations": 222,
+        "total_stations": 234,
         "percent_count": 94.87,
         "top_candidate": {
           "id": "STN_2_4",
@@ -16241,6 +16531,7 @@
         "invalid_votes": 3986,
         "blank_votes": 4666,
         "counted_stations": 197,
+        "total_stations": 208,
         "percent_count": 94.71,
         "top_candidate": {
           "id": "SPK_1_7",
@@ -16296,6 +16587,7 @@
         "invalid_votes": 2357,
         "blank_votes": 4199,
         "counted_stations": 190,
+        "total_stations": 201,
         "percent_count": 94.53,
         "top_candidate": {
           "id": "SPK_2_7",
@@ -16351,6 +16643,7 @@
         "invalid_votes": 2232,
         "blank_votes": 4999,
         "counted_stations": 200,
+        "total_stations": 211,
         "percent_count": 94.79,
         "top_candidate": {
           "id": "SPK_3_4",
@@ -16406,6 +16699,7 @@
         "invalid_votes": 1513,
         "blank_votes": 5521,
         "counted_stations": 170,
+        "total_stations": 179,
         "percent_count": 94.97,
         "top_candidate": {
           "id": "SPK_4_2",
@@ -16461,6 +16755,7 @@
         "invalid_votes": 2530,
         "blank_votes": 7169,
         "counted_stations": 218,
+        "total_stations": 230,
         "percent_count": 94.78,
         "top_candidate": {
           "id": "SPK_5_11",
@@ -16516,6 +16811,7 @@
         "invalid_votes": 2553,
         "blank_votes": 4208,
         "counted_stations": 247,
+        "total_stations": 261,
         "percent_count": 94.64,
         "top_candidate": {
           "id": "SPK_6_4",
@@ -16571,6 +16867,7 @@
         "invalid_votes": 2612,
         "blank_votes": 4860,
         "counted_stations": 217,
+        "total_stations": 229,
         "percent_count": 94.76,
         "top_candidate": {
           "id": "SPK_7_8",
@@ -16626,6 +16923,7 @@
         "invalid_votes": 3255,
         "blank_votes": 5009,
         "counted_stations": 239,
+        "total_stations": 252,
         "percent_count": 94.84,
         "top_candidate": {
           "id": "SPK_8_9",
@@ -16681,6 +16979,7 @@
         "invalid_votes": 4271,
         "blank_votes": 6509,
         "counted_stations": 254,
+        "total_stations": 268,
         "percent_count": 94.78,
         "top_candidate": {
           "id": "SKM_1_5",
@@ -16736,6 +17035,7 @@
         "invalid_votes": 2245,
         "blank_votes": 4366,
         "counted_stations": 162,
+        "total_stations": 171,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "SKN_1_5",
@@ -16791,6 +17091,7 @@
         "invalid_votes": 2950,
         "blank_votes": 3939,
         "counted_stations": 154,
+        "total_stations": 163,
         "percent_count": 94.48,
         "top_candidate": {
           "id": "SKN_2_1",
@@ -16846,6 +17147,7 @@
         "invalid_votes": 2905,
         "blank_votes": 3474,
         "counted_stations": 130,
+        "total_stations": 137,
         "percent_count": 94.89,
         "top_candidate": {
           "id": "SKN_3_3",
@@ -16901,6 +17203,7 @@
         "invalid_votes": 2462,
         "blank_votes": 3496,
         "counted_stations": 192,
+        "total_stations": 203,
         "percent_count": 94.58,
         "top_candidate": {
           "id": "SKN_4_1",
@@ -16956,6 +17259,7 @@
         "invalid_votes": 3459,
         "blank_votes": 6271,
         "counted_stations": 207,
+        "total_stations": 218,
         "percent_count": 94.95,
         "top_candidate": {
           "id": "SRI_1_5",
@@ -17011,6 +17315,7 @@
         "invalid_votes": 4256,
         "blank_votes": 3493,
         "counted_stations": 231,
+        "total_stations": 244,
         "percent_count": 94.67,
         "top_candidate": {
           "id": "SRI_2_5",
@@ -17066,6 +17371,7 @@
         "invalid_votes": 2411,
         "blank_votes": 2768,
         "counted_stations": 197,
+        "total_stations": 208,
         "percent_count": 94.71,
         "top_candidate": {
           "id": "SRI_3_5",
@@ -17121,6 +17427,7 @@
         "invalid_votes": 4089,
         "blank_votes": 5556,
         "counted_stations": 222,
+        "total_stations": 234,
         "percent_count": 94.87,
         "top_candidate": {
           "id": "SRI_4_5",
@@ -17176,6 +17483,7 @@
         "invalid_votes": 3596,
         "blank_votes": 3995,
         "counted_stations": 276,
+        "total_stations": 291,
         "percent_count": 94.85,
         "top_candidate": {
           "id": "SKW_1_5",
@@ -17231,6 +17539,7 @@
         "invalid_votes": 3520,
         "blank_votes": 3514,
         "counted_stations": 290,
+        "total_stations": 306,
         "percent_count": 94.77,
         "top_candidate": {
           "id": "SKW_2_6",
@@ -17286,6 +17595,7 @@
         "invalid_votes": 4905,
         "blank_votes": 3554,
         "counted_stations": 288,
+        "total_stations": 304,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "SKW_3_3",
@@ -17341,6 +17651,7 @@
         "invalid_votes": 5170,
         "blank_votes": 6807,
         "counted_stations": 316,
+        "total_stations": 333,
         "percent_count": 94.89,
         "top_candidate": {
           "id": "SBR_1_5",
@@ -17396,6 +17707,7 @@
         "invalid_votes": 2835,
         "blank_votes": 4194,
         "counted_stations": 221,
+        "total_stations": 233,
         "percent_count": 94.85,
         "top_candidate": {
           "id": "SPB_1_1",
@@ -17451,6 +17763,7 @@
         "invalid_votes": 3138,
         "blank_votes": 2980,
         "counted_stations": 236,
+        "total_stations": 249,
         "percent_count": 94.78,
         "top_candidate": {
           "id": "SPB_2_5",
@@ -17506,6 +17819,7 @@
         "invalid_votes": 3251,
         "blank_votes": 1854,
         "counted_stations": 248,
+        "total_stations": 262,
         "percent_count": 94.66,
         "top_candidate": {
           "id": "SPB_3_6",
@@ -17561,6 +17875,7 @@
         "invalid_votes": 4344,
         "blank_votes": 3571,
         "counted_stations": 269,
+        "total_stations": 284,
         "percent_count": 94.72,
         "top_candidate": {
           "id": "SPB_4_5",
@@ -17616,6 +17931,7 @@
         "invalid_votes": 4373,
         "blank_votes": 5233,
         "counted_stations": 246,
+        "total_stations": 259,
         "percent_count": 94.98,
         "top_candidate": {
           "id": "SPB_5_5",
@@ -17671,6 +17987,7 @@
         "invalid_votes": 1540,
         "blank_votes": 4916,
         "counted_stations": 160,
+        "total_stations": 169,
         "percent_count": 94.67,
         "top_candidate": {
           "id": "SNI_1_3",
@@ -17726,6 +18043,7 @@
         "invalid_votes": 1997,
         "blank_votes": 2567,
         "counted_stations": 203,
+        "total_stations": 214,
         "percent_count": 94.86,
         "top_candidate": {
           "id": "SNI_2_5",
@@ -17781,6 +18099,7 @@
         "invalid_votes": 2117,
         "blank_votes": 3182,
         "counted_stations": 216,
+        "total_stations": 228,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "SNI_3_5",
@@ -17836,6 +18155,7 @@
         "invalid_votes": 1747,
         "blank_votes": 2098,
         "counted_stations": 224,
+        "total_stations": 236,
         "percent_count": 94.92,
         "top_candidate": {
           "id": "SNI_4_5",
@@ -17891,6 +18211,7 @@
         "invalid_votes": 1968,
         "blank_votes": 2575,
         "counted_stations": 213,
+        "total_stations": 225,
         "percent_count": 94.67,
         "top_candidate": {
           "id": "SNI_5_5",
@@ -17946,6 +18267,7 @@
         "invalid_votes": 2114,
         "blank_votes": 1708,
         "counted_stations": 234,
+        "total_stations": 247,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "SNI_6_6",
@@ -18001,6 +18323,7 @@
         "invalid_votes": 1872,
         "blank_votes": 2532,
         "counted_stations": 191,
+        "total_stations": 202,
         "percent_count": 94.55,
         "top_candidate": {
           "id": "SNI_7_6",
@@ -18056,6 +18379,7 @@
         "invalid_votes": 3303,
         "blank_votes": 4230,
         "counted_stations": 235,
+        "total_stations": 248,
         "percent_count": 94.76,
         "top_candidate": {
           "id": "SRN_1_5",
@@ -18111,6 +18435,7 @@
         "invalid_votes": 2850,
         "blank_votes": 2311,
         "counted_stations": 251,
+        "total_stations": 265,
         "percent_count": 94.72,
         "top_candidate": {
           "id": "SRN_2_7",
@@ -18166,6 +18491,7 @@
         "invalid_votes": 2455,
         "blank_votes": 2012,
         "counted_stations": 301,
+        "total_stations": 317,
         "percent_count": 94.95,
         "top_candidate": {
           "id": "SRN_3_4",
@@ -18221,6 +18547,7 @@
         "invalid_votes": 2121,
         "blank_votes": 1631,
         "counted_stations": 293,
+        "total_stations": 309,
         "percent_count": 94.82,
         "top_candidate": {
           "id": "SRN_4_7",
@@ -18276,6 +18603,7 @@
         "invalid_votes": 1949,
         "blank_votes": 808,
         "counted_stations": 301,
+        "total_stations": 317,
         "percent_count": 94.95,
         "top_candidate": {
           "id": "SRN_5_4",
@@ -18331,6 +18659,7 @@
         "invalid_votes": 3007,
         "blank_votes": 1714,
         "counted_stations": 259,
+        "total_stations": 273,
         "percent_count": 94.87,
         "top_candidate": {
           "id": "SRN_6_4",
@@ -18386,6 +18715,7 @@
         "invalid_votes": 4081,
         "blank_votes": 2209,
         "counted_stations": 278,
+        "total_stations": 293,
         "percent_count": 94.88,
         "top_candidate": {
           "id": "SRN_7_4",
@@ -18441,6 +18771,7 @@
         "invalid_votes": 3934,
         "blank_votes": 1571,
         "counted_stations": 247,
+        "total_stations": 261,
         "percent_count": 94.64,
         "top_candidate": {
           "id": "SRN_8_2",
@@ -18496,6 +18827,7 @@
         "invalid_votes": 3765,
         "blank_votes": 4969,
         "counted_stations": 235,
+        "total_stations": 248,
         "percent_count": 94.76,
         "top_candidate": {
           "id": "STI_1_5",
@@ -18551,6 +18883,7 @@
         "invalid_votes": 3470,
         "blank_votes": 3234,
         "counted_stations": 244,
+        "total_stations": 257,
         "percent_count": 94.94,
         "top_candidate": {
           "id": "STI_2_2",
@@ -18606,6 +18939,7 @@
         "invalid_votes": 4178,
         "blank_votes": 4896,
         "counted_stations": 229,
+        "total_stations": 242,
         "percent_count": 94.63,
         "top_candidate": {
           "id": "STI_3_1",
@@ -18661,6 +18995,7 @@
         "invalid_votes": 2678,
         "blank_votes": 1484,
         "counted_stations": 242,
+        "total_stations": 255,
         "percent_count": 94.9,
         "top_candidate": {
           "id": "STI_4_5",
@@ -18716,6 +19051,7 @@
         "invalid_votes": 3520,
         "blank_votes": 2197,
         "counted_stations": 282,
+        "total_stations": 297,
         "percent_count": 94.95,
         "top_candidate": {
           "id": "NKI_1_4",
@@ -18771,6 +19107,7 @@
         "invalid_votes": 3169,
         "blank_votes": 1148,
         "counted_stations": 267,
+        "total_stations": 282,
         "percent_count": 94.68,
         "top_candidate": {
           "id": "NKI_2_3",
@@ -18826,6 +19163,7 @@
         "invalid_votes": 5071,
         "blank_votes": 3004,
         "counted_stations": 249,
+        "total_stations": 263,
         "percent_count": 94.68,
         "top_candidate": {
           "id": "NKI_3_2",
@@ -18881,6 +19219,7 @@
         "invalid_votes": 2222,
         "blank_votes": 2276,
         "counted_stations": 257,
+        "total_stations": 271,
         "percent_count": 94.83,
         "top_candidate": {
           "id": "NBP_1_9",
@@ -18936,6 +19275,7 @@
         "invalid_votes": 2329,
         "blank_votes": 1652,
         "counted_stations": 257,
+        "total_stations": 271,
         "percent_count": 94.83,
         "top_candidate": {
           "id": "NBP_2_3",
@@ -18991,6 +19331,7 @@
         "invalid_votes": 2781,
         "blank_votes": 1784,
         "counted_stations": 250,
+        "total_stations": 264,
         "percent_count": 94.7,
         "top_candidate": {
           "id": "NBP_3_2",
@@ -19046,6 +19387,7 @@
         "invalid_votes": 2654,
         "blank_votes": 3086,
         "counted_stations": 306,
+        "total_stations": 323,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "ACR_1_5",
@@ -19101,6 +19443,7 @@
         "invalid_votes": 5450,
         "blank_votes": 3703,
         "counted_stations": 334,
+        "total_stations": 352,
         "percent_count": 94.89,
         "top_candidate": {
           "id": "ACR_2_5",
@@ -19156,6 +19499,7 @@
         "invalid_votes": 2345,
         "blank_votes": 5466,
         "counted_stations": 212,
+        "total_stations": 224,
         "percent_count": 94.64,
         "top_candidate": {
           "id": "UDN_1_5",
@@ -19211,6 +19555,7 @@
         "invalid_votes": 2463,
         "blank_votes": 2990,
         "counted_stations": 194,
+        "total_stations": 205,
         "percent_count": 94.63,
         "top_candidate": {
           "id": "UDN_2_1",
@@ -19266,6 +19611,7 @@
         "invalid_votes": 2315,
         "blank_votes": 1124,
         "counted_stations": 231,
+        "total_stations": 244,
         "percent_count": 94.67,
         "top_candidate": {
           "id": "UDN_3_1",
@@ -19321,6 +19667,7 @@
         "invalid_votes": 2136,
         "blank_votes": 1385,
         "counted_stations": 209,
+        "total_stations": 220,
         "percent_count": 95,
         "top_candidate": {
           "id": "UDN_4_3",
@@ -19376,6 +19723,7 @@
         "invalid_votes": 2143,
         "blank_votes": 1409,
         "counted_stations": 218,
+        "total_stations": 230,
         "percent_count": 94.78,
         "top_candidate": {
           "id": "UDN_5_3",
@@ -19431,6 +19779,7 @@
         "invalid_votes": 2264,
         "blank_votes": 1058,
         "counted_stations": 230,
+        "total_stations": 243,
         "percent_count": 94.65,
         "top_candidate": {
           "id": "UDN_6_5",
@@ -19486,6 +19835,7 @@
         "invalid_votes": 3024,
         "blank_votes": 2453,
         "counted_stations": 229,
+        "total_stations": 242,
         "percent_count": 94.63,
         "top_candidate": {
           "id": "UDN_7_6",
@@ -19541,6 +19891,7 @@
         "invalid_votes": 2746,
         "blank_votes": 2184,
         "counted_stations": 209,
+        "total_stations": 221,
         "percent_count": 94.57,
         "top_candidate": {
           "id": "UDN_8_6",
@@ -19596,6 +19947,7 @@
         "invalid_votes": 4683,
         "blank_votes": 2275,
         "counted_stations": 225,
+        "total_stations": 237,
         "percent_count": 94.94,
         "top_candidate": {
           "id": "UDN_9_6",
@@ -19651,6 +20003,7 @@
         "invalid_votes": 4324,
         "blank_votes": 1766,
         "counted_stations": 231,
+        "total_stations": 244,
         "percent_count": 94.67,
         "top_candidate": {
           "id": "UDN_10_5",
@@ -19706,6 +20059,7 @@
         "invalid_votes": 3137,
         "blank_votes": 2884,
         "counted_stations": 226,
+        "total_stations": 238,
         "percent_count": 94.96,
         "top_candidate": {
           "id": "UTT_1_2",
@@ -19761,6 +20115,7 @@
         "invalid_votes": 3485,
         "blank_votes": 3639,
         "counted_stations": 275,
+        "total_stations": 290,
         "percent_count": 94.83,
         "top_candidate": {
           "id": "UTT_2_4",
@@ -19816,6 +20171,7 @@
         "invalid_votes": 4376,
         "blank_votes": 4185,
         "counted_stations": 236,
+        "total_stations": 249,
         "percent_count": 94.78,
         "top_candidate": {
           "id": "UTT_3_1",
@@ -19871,6 +20227,7 @@
         "invalid_votes": 3026,
         "blank_votes": 4361,
         "counted_stations": 324,
+        "total_stations": 342,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "UTI_1_2",
@@ -19926,6 +20283,7 @@
         "invalid_votes": 3149,
         "blank_votes": 2565,
         "counted_stations": 295,
+        "total_stations": 311,
         "percent_count": 94.86,
         "top_candidate": {
           "id": "UTI_2_2",
@@ -19981,6 +20339,7 @@
         "invalid_votes": 3834,
         "blank_votes": 6153,
         "counted_stations": 235,
+        "total_stations": 248,
         "percent_count": 94.76,
         "top_candidate": {
           "id": "UBN_1_2",
@@ -20036,6 +20395,7 @@
         "invalid_votes": 2147,
         "blank_votes": 2645,
         "counted_stations": 272,
+        "total_stations": 287,
         "percent_count": 94.77,
         "top_candidate": {
           "id": "UBN_2_5",
@@ -20091,6 +20451,7 @@
         "invalid_votes": 3261,
         "blank_votes": 3916,
         "counted_stations": 318,
+        "total_stations": 335,
         "percent_count": 94.93,
         "top_candidate": {
           "id": "UBN_3_1",
@@ -20146,6 +20507,7 @@
         "invalid_votes": 4933,
         "blank_votes": 6381,
         "counted_stations": 291,
+        "total_stations": 307,
         "percent_count": 94.79,
         "top_candidate": {
           "id": "UBN_4_1",
@@ -20201,6 +20563,7 @@
         "invalid_votes": 2665,
         "blank_votes": 1937,
         "counted_stations": 305,
+        "total_stations": 322,
         "percent_count": 94.72,
         "top_candidate": {
           "id": "UBN_5_2",
@@ -20256,6 +20619,7 @@
         "invalid_votes": 3912,
         "blank_votes": 1590,
         "counted_stations": 264,
+        "total_stations": 278,
         "percent_count": 94.96,
         "top_candidate": {
           "id": "UBN_6_3",
@@ -20311,6 +20675,7 @@
         "invalid_votes": 2418,
         "blank_votes": 937,
         "counted_stations": 270,
+        "total_stations": 285,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "UBN_7_1",
@@ -20366,6 +20731,7 @@
         "invalid_votes": 2553,
         "blank_votes": 1643,
         "counted_stations": 280,
+        "total_stations": 295,
         "percent_count": 94.92,
         "top_candidate": {
           "id": "UBN_8_3",
@@ -20421,6 +20787,7 @@
         "invalid_votes": 3354,
         "blank_votes": 1071,
         "counted_stations": 231,
+        "total_stations": 244,
         "percent_count": 94.67,
         "top_candidate": {
           "id": "UBN_9_3",
@@ -20476,6 +20843,7 @@
         "invalid_votes": 4622,
         "blank_votes": 2386,
         "counted_stations": 304,
+        "total_stations": 321,
         "percent_count": 94.7,
         "top_candidate": {
           "id": "UBN_10_2",
@@ -20531,6 +20899,7 @@
         "invalid_votes": 3056,
         "blank_votes": 2523,
         "counted_stations": 234,
+        "total_stations": 247,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "UBN_11_3",
@@ -20586,6 +20955,7 @@
         "invalid_votes": 2578,
         "blank_votes": 2919,
         "counted_stations": 236,
+        "total_stations": 249,
         "percent_count": 94.78,
         "top_candidate": {
           "id": "ATG_1_4",
@@ -20641,6 +21011,7 @@
         "invalid_votes": 3152,
         "blank_votes": 3096,
         "counted_stations": 243,
+        "total_stations": 256,
         "percent_count": 94.92,
         "top_candidate": {
           "id": "ATG_2_2",
@@ -20696,6 +21067,7 @@
         "invalid_votes": 3284,
         "blank_votes": 5885,
         "counted_stations": 230,
+        "total_stations": 243,
         "percent_count": 94.65,
         "top_candidate": {
           "id": "CRI_1_7",
@@ -20751,6 +21123,7 @@
         "invalid_votes": 5991,
         "blank_votes": 5244,
         "counted_stations": 252,
+        "total_stations": 266,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "CRI_2_2",
@@ -20806,6 +21179,7 @@
         "invalid_votes": 7793,
         "blank_votes": 4316,
         "counted_stations": 308,
+        "total_stations": 325,
         "percent_count": 94.77,
         "top_candidate": {
           "id": "CRI_3_3",
@@ -20861,6 +21235,7 @@
         "invalid_votes": 5568,
         "blank_votes": 4820,
         "counted_stations": 350,
+        "total_stations": 369,
         "percent_count": 94.85,
         "top_candidate": {
           "id": "CRI_4_1",
@@ -20916,6 +21291,7 @@
         "invalid_votes": 4253,
         "blank_votes": 2800,
         "counted_stations": 284,
+        "total_stations": 299,
         "percent_count": 94.98,
         "top_candidate": {
           "id": "CRI_5_2",
@@ -20971,6 +21347,7 @@
         "invalid_votes": 4916,
         "blank_votes": 3700,
         "counted_stations": 231,
+        "total_stations": 244,
         "percent_count": 94.67,
         "top_candidate": {
           "id": "CRI_6_7",
@@ -21026,6 +21403,7 @@
         "invalid_votes": 4242,
         "blank_votes": 3989,
         "counted_stations": 283,
+        "total_stations": 298,
         "percent_count": 94.97,
         "top_candidate": {
           "id": "CRI_7_6",
@@ -21081,6 +21459,7 @@
         "invalid_votes": 2306,
         "blank_votes": 5958,
         "counted_stations": 223,
+        "total_stations": 235,
         "percent_count": 94.89,
         "top_candidate": {
           "id": "CMI_1_2",
@@ -21136,6 +21515,7 @@
         "invalid_votes": 3245,
         "blank_votes": 7646,
         "counted_stations": 269,
+        "total_stations": 284,
         "percent_count": 94.72,
         "top_candidate": {
           "id": "CMI_2_8",
@@ -21191,6 +21571,7 @@
         "invalid_votes": 3632,
         "blank_votes": 6847,
         "counted_stations": 277,
+        "total_stations": 292,
         "percent_count": 94.86,
         "top_candidate": {
           "id": "CMI_3_5",
@@ -21246,6 +21627,7 @@
         "invalid_votes": 2563,
         "blank_votes": 5867,
         "counted_stations": 230,
+        "total_stations": 243,
         "percent_count": 94.65,
         "top_candidate": {
           "id": "CMI_4_6",
@@ -21301,6 +21683,7 @@
         "invalid_votes": 4048,
         "blank_votes": 5403,
         "counted_stations": 281,
+        "total_stations": 296,
         "percent_count": 94.93,
         "top_candidate": {
           "id": "CMI_5_9",
@@ -21356,6 +21739,7 @@
         "invalid_votes": 5720,
         "blank_votes": 2860,
         "counted_stations": 275,
+        "total_stations": 290,
         "percent_count": 94.83,
         "top_candidate": {
           "id": "CMI_6_1",
@@ -21411,6 +21795,7 @@
         "invalid_votes": 4249,
         "blank_votes": 3082,
         "counted_stations": 275,
+        "total_stations": 290,
         "percent_count": 94.83,
         "top_candidate": {
           "id": "CMI_7_5",
@@ -21466,6 +21851,7 @@
         "invalid_votes": 3529,
         "blank_votes": 6072,
         "counted_stations": 310,
+        "total_stations": 327,
         "percent_count": 94.8,
         "top_candidate": {
           "id": "CMI_8_4",
@@ -21521,6 +21907,7 @@
         "invalid_votes": 5372,
         "blank_votes": 2995,
         "counted_stations": 279,
+        "total_stations": 294,
         "percent_count": 94.9,
         "top_candidate": {
           "id": "CMI_9_5",
@@ -21576,6 +21963,7 @@
         "invalid_votes": 9247,
         "blank_votes": 1395,
         "counted_stations": 266,
+        "total_stations": 280,
         "percent_count": 95,
         "top_candidate": {
           "id": "CMI_10_4",
@@ -21631,6 +22019,7 @@
         "invalid_votes": 3637,
         "blank_votes": 5194,
         "counted_stations": 228,
+        "total_stations": 240,
         "percent_count": 95,
         "top_candidate": {
           "id": "PBI_1_3",
@@ -21686,6 +22075,7 @@
         "invalid_votes": 4380,
         "blank_votes": 4674,
         "counted_stations": 242,
+        "total_stations": 255,
         "percent_count": 94.9,
         "top_candidate": {
           "id": "PBI_2_5",
@@ -21741,6 +22131,7 @@
         "invalid_votes": 3580,
         "blank_votes": 4093,
         "counted_stations": 266,
+        "total_stations": 281,
         "percent_count": 94.66,
         "top_candidate": {
           "id": "PBI_3_5",
@@ -21796,6 +22187,7 @@
         "invalid_votes": 4370,
         "blank_votes": 3914,
         "counted_stations": 216,
+        "total_stations": 228,
         "percent_count": 94.74,
         "top_candidate": {
           "id": "LEI_1_7",
@@ -21851,6 +22243,7 @@
         "invalid_votes": 5791,
         "blank_votes": 3845,
         "counted_stations": 257,
+        "total_stations": 271,
         "percent_count": 94.83,
         "top_candidate": {
           "id": "LEI_2_2",
@@ -21906,6 +22299,7 @@
         "invalid_votes": 4041,
         "blank_votes": 3722,
         "counted_stations": 278,
+        "total_stations": 293,
         "percent_count": 94.88,
         "top_candidate": {
           "id": "LEI_3_3",
@@ -21961,6 +22355,7 @@
         "invalid_votes": 6039,
         "blank_votes": 3969,
         "counted_stations": 245,
+        "total_stations": 258,
         "percent_count": 94.96,
         "top_candidate": {
           "id": "LEI_4_4",
@@ -22016,6 +22411,7 @@
         "invalid_votes": 2335,
         "blank_votes": 2561,
         "counted_stations": 244,
+        "total_stations": 257,
         "percent_count": 94.94,
         "top_candidate": {
           "id": "PRE_1_1",
@@ -22071,6 +22467,7 @@
         "invalid_votes": 2920,
         "blank_votes": 1714,
         "counted_stations": 265,
+        "total_stations": 279,
         "percent_count": 94.98,
         "top_candidate": {
           "id": "PRE_2_1",
@@ -22126,6 +22523,7 @@
         "invalid_votes": 5976,
         "blank_votes": 4516,
         "counted_stations": 249,
+        "total_stations": 263,
         "percent_count": 94.68,
         "top_candidate": {
           "id": "PRE_3_4",
@@ -22181,6 +22579,7 @@
         "invalid_votes": 3690,
         "blank_votes": 2991,
         "counted_stations": 231,
+        "total_stations": 244,
         "percent_count": 94.67,
         "top_candidate": {
           "id": "MSN_1_2",
@@ -22236,6 +22635,7 @@
         "invalid_votes": 4990,
         "blank_votes": 1695,
         "counted_stations": 218,
+        "total_stations": 230,
         "percent_count": 94.78,
         "top_candidate": {
           "id": "MSN_2_5",
