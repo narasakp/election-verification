@@ -130,7 +130,6 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
 
       // MAX = max(ECT.valid_votes, KN.valid_votes, LN.valid_votes)
       // Diff = |MAX − OCR.turnout| / MAX × 100
-      // Coverage = OCR files / Drive files (province-level from backup_status)
       const refVals = [
         ect?.valid_votes || 0,
         kn?.valid_votes || 0,
@@ -139,9 +138,6 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
       const refMax = Math.max(...refVals)
       const ocrVal = ocr?.turnout || 0
       const maxDiff = (ocr && refMax > 0) ? Math.abs(refMax - ocrVal) / refMax * 100 : 0
-      const provSummary = (crossRefData.province_summary || {})[c.province] || {}
-      const driveFiles = provSummary.drive_files || 0
-      const ocrCoverage = (ocr && driveFiles > 0) ? (ocr.fileCount / driveFiles * 100) : 0
 
       // Severity based on OCR vs reference diff
       let severity = 'ok'
@@ -168,8 +164,6 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
         ocrQuality,
         maxDiff: Math.round(maxDiff * 10) / 10,
         refMax,
-        ocrCoverage: Math.round(ocrCoverage * 10) / 10,
-        driveFilesTotal: driveFiles,
         sourceCount,
         reviewPct: ocr ? (ocr.total > 0 ? ocr.reviewed / ocr.total * 100 : 0) : 0,
         sortPriority: c.sort_priority != null ? c.sort_priority : 1000,
@@ -379,9 +373,9 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                                   {row.ocrQuality === 'warning' && <span className="text-amber-400" title={`OCR: ${row.ocr.warnings} warnings`}>⚠</span>}
                                   <span className="text-indigo-600">{fmtNum(row.ocr.turnout)}</span>
                                   {row.driveFolder ? (
-                                    <a href={row.driveFolder} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-indigo-600 hover:underline" title={`${row.ocr.stationCount} หน่วย / ${row.ocr.fileCount} ไฟล์${row.driveFilesTotal ? ` จาก Drive ${row.driveFilesTotal} ไฟล์ (ทั้งจังหวัด)` : ''} · เปิดใน Drive`} onClick={e => e.stopPropagation()}>({row.ocr.fileCount} ไฟล์{row.ocrCoverage > 0 ? ` · ${row.ocrCoverage}%` : ''})</a>
+                                    <a href={row.driveFolder} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-indigo-600 hover:underline" title={`${row.ocr.stationCount} หน่วย / ${row.ocr.fileCount} ไฟล์ · เปิดใน Drive`} onClick={e => e.stopPropagation()}>({row.ocr.fileCount} ไฟล์)</a>
                                   ) : (
-                                    <span className="text-gray-400" title={`${row.ocr.stationCount} หน่วย / ${row.ocr.fileCount} ไฟล์${row.driveFilesTotal ? ` จาก Drive ${row.driveFilesTotal} ไฟล์ (ทั้งจังหวัด)` : ''}`}>({row.ocr.fileCount} ไฟล์{row.ocrCoverage > 0 ? ` · ${row.ocrCoverage}%` : ''})</span>
+                                    <span className="text-gray-400" title={`${row.ocr.stationCount} หน่วย / ${row.ocr.fileCount} ไฟล์`}>({row.ocr.fileCount} ไฟล์)</span>
                                   )}
                                 </div>
                               ) : <span className="text-gray-300 text-[10px]">—</span>}
@@ -479,7 +473,7 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                         </div>
                         {/* Source legend */}
                         <div className="flex items-center gap-3 text-[9px] text-gray-400 pt-1 border-t border-gray-100">
-                          {row.ocr && <span>🔬 OCR ({row.ocr.stationCount} หน่วย · {row.ocr.fileCount} ไฟล์{row.ocrCoverage > 0 ? ` · ${row.ocrCoverage}%` : ''})</span>}
+                          {row.ocr && <span>🔬 OCR ({row.ocr.stationCount} หน่วย · {row.ocr.fileCount} ไฟล์)</span>}
                           {row.ect && <span>🏛️ กกต. ({row.ect.percent_count}% นับ)</span>}
                           {row.kn && <span>📊 Killernay</span>}
                           {row.ln && <span>📈 Luengnat</span>}
@@ -570,9 +564,6 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                         {(row.ocr.errors > 0 || row.ocr.warnings > 0) && <> · <span className="text-red-500">{row.ocr.errors} errors</span>, <span className="text-amber-500">{row.ocr.warnings} warnings</span></>}
                         {row.refMax > 0 && <>
                           <br />📐 <strong>Diff:</strong> |{row.refMax.toLocaleString()} − {row.ocr.turnout.toLocaleString()}| / {row.refMax.toLocaleString()} = <strong>{row.maxDiff}%</strong>
-                        </>}
-                        {row.driveFilesTotal > 0 && <>
-                          <br />📁 <strong>Coverage:</strong> {row.ocr.fileCount}/{row.driveFilesTotal} ไฟล์ (ทั้งจังหวัด) = <strong>{row.ocrCoverage}%</strong>
                         </>}
                       </div>
                     )}
