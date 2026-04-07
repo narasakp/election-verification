@@ -399,7 +399,6 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                               {row.ln ? (
                                 <div className="text-right font-mono text-[10px]">
                                   <span className="text-purple-600">{fmtNum(row.ln.valid_votes)}</span>
-                                  {row.ln.ocr_exact && <span className="text-emerald-500 ml-0.5" title="OCR exact match">✓</span>}
                                 </div>
                               ) : <span className="text-gray-300 text-[10px]">—</span>}
                             </td>
@@ -411,7 +410,7 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                                     row.maxDiff > 10 ? 'bg-amber-100 text-amber-700' :
                                     row.maxDiff > 3 ? 'bg-orange-100 text-orange-700' : 'text-gray-500'
                                   }`}>{row.maxDiff}%</span>
-                                ) : <span className="text-gray-400 text-[10px]">0%</span>
+                                ) : <span className="text-gray-300 text-[10px]">—</span>
                               ) : <span className="text-gray-300 text-[10px]">—</span>}
                             </td>
                             <td className="px-2 py-2">
