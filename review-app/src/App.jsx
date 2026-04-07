@@ -974,14 +974,9 @@ function App() {
               <button onClick={() => {
                 const subj = encodeURIComponent('คำถาม / ข้อเสนอแนะ – Election Verification')
                 const body = encodeURIComponent(fbMsg || '')
-                const a = document.createElement('a')
-                a.href = `mailto:narasakp@gmail.com?subject=${subj}&body=${body}`
-                a.style.display = 'none'
-                document.body.appendChild(a)
-                a.click()
-                document.body.removeChild(a)
+                window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=narasakp@gmail.com&su=${subj}&body=${body}&tf=cm`, 'feedback_email', 'width=680,height=600,left=200,top=100')
                 setFbOpen(false); setFbMsg('')
-              }} className="px-4 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium">เปิดอีเมล</button>
+              }} className="px-4 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium">ส่งผ่าน Gmail</button>
             </div>
           </div>
         </div>
