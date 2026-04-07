@@ -141,7 +141,7 @@ export default function useThailandMap({ enabled = true, aliasMap } = {}) {
     if (!enabled) return
     if (geoFeatures) return
 
-    fetch('/thailand-provinces.topojson')
+    fetch(`${import.meta.env.BASE_URL}thailand-provinces.topojson`)
       .then(r => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`)
         return r.json()
