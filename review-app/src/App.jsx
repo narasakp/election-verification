@@ -57,6 +57,8 @@ function App() {
   const [priorityQueueEnabled, setPriorityQueueEnabled] = useState(false)
   const [activeDashboard, setActiveDashboard] = useState(null)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
+  const [fbOpen, setFbOpen] = useState(false)
+  const [fbMsg, setFbMsg] = useState('')
   const exportMenuRef = React.useRef(null)
   const mobileMenuRef = React.useRef(null)
 
@@ -942,16 +944,43 @@ function App() {
           />
         </Suspense>
       )}
-      {/* Floating feedback button */}
+      {/* Floating feedback button + popup */}
       <button
         type="button"
-        onClick={() => { window.location.href = 'mailto:narasakp@gmail.com?subject=' + encodeURIComponent('คำถาม / ข้อเสนอแนะ – Election Verification') }}
+        onClick={() => setFbOpen(v => !v)}
         className="fixed bottom-5 left-5 z-50 flex flex-col items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-2xl shadow-lg hover:shadow-xl transition-all cursor-pointer"
-        title="ส่งคำถามหรือข้อเสนอแนะทางอีเมล"
+        title="ส่งคำถามหรือข้อเสนอแนะ"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         <span className="text-[11px] font-medium leading-tight text-center mt-0.5">คำถาม<br/>ข้อเสนอแนะ</span>
       </button>
+      {fbOpen && (
+        <div className="fixed bottom-20 left-5 z-50 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
+          <div className="bg-indigo-600 text-white px-4 py-2.5 flex items-center justify-between">
+            <span className="text-sm font-medium">📩 ส่งคำถาม / ข้อเสนอแนะ</span>
+            <button onClick={() => setFbOpen(false)} className="text-white/70 hover:text-white text-lg leading-none">&times;</button>
+          </div>
+          <div className="p-3 space-y-2">
+            <div className="text-xs text-gray-500">ถึง: narasakp@gmail.com</div>
+            <textarea
+              value={fbMsg}
+              onChange={e => setFbMsg(e.target.value)}
+              placeholder="พิมพ์ข้อความที่นี่..."
+              className="w-full h-24 text-sm border border-gray-200 rounded-lg p-2 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              autoFocus
+            />
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setFbOpen(false)} className="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700">ยกเลิก</button>
+              <button onClick={() => {
+                const subj = encodeURIComponent('คำถาม / ข้อเสนอแนะ – Election Verification')
+                const body = encodeURIComponent(fbMsg || '(ไม่มีข้อความ)')
+                window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=narasakp@gmail.com&su=${subj}&body=${body}`, '_blank')
+                setFbOpen(false); setFbMsg('')
+              }} className="px-4 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium">ส่งผ่าน Gmail</button>
+            </div>
+          </div>
+        </div>
+      )}
       <ToastContainer />
     </div>
   )
