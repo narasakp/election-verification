@@ -973,10 +973,15 @@ function App() {
               <button onClick={() => setFbOpen(false)} className="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700">ยกเลิก</button>
               <button onClick={() => {
                 const subj = encodeURIComponent('คำถาม / ข้อเสนอแนะ – Election Verification')
-                const body = encodeURIComponent(fbMsg || '(ไม่มีข้อความ)')
-                window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=narasakp@gmail.com&su=${subj}&body=${body}`, '_blank')
+                const body = encodeURIComponent(fbMsg || '')
+                const a = document.createElement('a')
+                a.href = `mailto:narasakp@gmail.com?subject=${subj}&body=${body}`
+                a.style.display = 'none'
+                document.body.appendChild(a)
+                a.click()
+                document.body.removeChild(a)
                 setFbOpen(false); setFbMsg('')
-              }} className="px-4 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium">ส่งผ่าน Gmail</button>
+              }} className="px-4 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium">เปิดอีเมล</button>
             </div>
           </div>
         </div>
