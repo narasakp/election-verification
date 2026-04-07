@@ -942,12 +942,24 @@ function App() {
           />
         </Suspense>
       )}
-      {/* Floating feedback button — opens Gmail compose directly */}
+      {/* Floating feedback button — Gmail compose with mailto fallback */}
       <button
         type="button"
         onClick={() => {
           const subj = encodeURIComponent('คำถาม / ข้อเสนอแนะ – Election Verification')
-          window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=narasakp@gmail.com&su=${subj}&tf=cm`, 'feedback_email', 'width=680,height=600,left=200,top=100')
+          const mailto = `mailto:narasakp@gmail.com?subject=${subj}`
+          const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+          if (isMobile) {
+            // Mobile: use mailto which opens default mail app (Gmail app, etc.)
+            window.location.href = mailto
+            return
+          }
+          // Desktop: try Gmail compose popup, fallback to mailto if blocked
+          const w = window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=narasakp@gmail.com&su=${subj}&tf=cm`, 'feedback_email', 'width=680,height=600,left=200,top=100')
+          if (!w || w.closed || typeof w.closed === 'undefined') {
+            // Popup blocked — fallback to mailto
+            window.location.href = mailto
+          }
         }}
         className="fixed bottom-5 left-5 z-50 flex flex-col items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-2xl shadow-lg hover:shadow-xl transition-all cursor-pointer"
         title="ส่งคำถามหรือข้อเสนอแนะ"
