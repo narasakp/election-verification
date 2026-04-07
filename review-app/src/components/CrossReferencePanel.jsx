@@ -364,11 +364,11 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                             onClick={() => setSelectedRow(selectedRow === row.key ? null : row.key)}
                           >
                             <td className="px-2 py-2 text-center"><SeverityBadge severity={row.severity} /></td>
-                            <td className="px-2 py-2 font-medium text-gray-700">{row.province}</td>
+                            <td className="px-2 py-2 text-center font-medium text-gray-700">{row.province}</td>
                             <td className="px-2 py-2 text-center">{row.zone}</td>
-                            <td className="px-2 py-2">
+                            <td className="px-2 py-2 text-center">
                               {row.ocr ? (
-                                <div className="text-right font-mono text-[10px] flex items-center justify-end gap-1">
+                                <div className="font-mono text-[10px] flex items-center justify-center gap-1">
                                   {row.ocrQuality === 'error' && <span className="text-red-400" title={`OCR: ${row.ocr.errors} errors`}>⚠</span>}
                                   {row.ocrQuality === 'warning' && <span className="text-amber-400" title={`OCR: ${row.ocr.warnings} warnings`}>⚠</span>}
                                   <span className="text-indigo-600">{fmtNum(row.ocr.turnout)}</span>
@@ -380,24 +380,24 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                                 </div>
                               ) : <span className="text-gray-300 text-[10px]">—</span>}
                             </td>
-                            <td className="px-2 py-2">
+                            <td className="px-2 py-2 text-center">
                               {row.ect ? (
-                                <div className="text-right font-mono text-[10px]">
+                                <div className="font-mono text-[10px]">
                                   <span className="text-blue-600">{fmtNum(row.ect.turnout)}</span>
                                   <span className="text-gray-400 ml-1">({row.ect.percent_count}%)</span>
                                 </div>
                               ) : <span className="text-gray-300 text-[10px]">—</span>}
                             </td>
-                            <td className="px-2 py-2">
+                            <td className="px-2 py-2 text-center">
                               {row.kn ? (
-                                <div className="text-right font-mono text-[10px]">
+                                <div className="font-mono text-[10px]">
                                   <span className="text-emerald-600">{fmtNum(row.kn.valid_votes)}</span>
                                 </div>
                               ) : <span className="text-gray-300 text-[10px]">—</span>}
                             </td>
                             <td className="px-2 py-2 text-center">
                               {row.ln ? (
-                                <div className="text-right font-mono text-[10px]">
+                                <div className="font-mono text-[10px]">
                                   <span className="text-purple-600">{fmtNum(row.ln.valid_votes)}</span>
                                 </div>
                               ) : <span className="text-gray-300 text-[10px]">—</span>}
@@ -413,8 +413,8 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                                 ) : <span className="text-gray-300 text-[10px]">—</span>
                               ) : <span className="text-gray-300 text-[10px]">—</span>}
                             </td>
-                            <td className="px-2 py-2">
-                              <div className="flex items-center gap-1">
+                            <td className="px-2 py-2 text-center">
+                              <div className="flex items-center justify-center gap-1">
                                 <div className="w-12 bg-gray-100 rounded-full h-1.5 overflow-hidden">
                                   <div className={`h-full rounded-full ${row.reviewPct >= 100 ? 'bg-emerald-500' : row.reviewPct > 50 ? 'bg-indigo-400' : 'bg-amber-400'}`}
                                     style={{ width: `${row.reviewPct}%` }} />
