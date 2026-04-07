@@ -345,7 +345,7 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                     <thead>
                       <tr className="text-[10px] text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
                         <SortTh col="severity" align="center">สถานะ</SortTh>
-                        <SortTh col="province">จังหวัด</SortTh>
+                        <SortTh col="province" align="center">จังหวัด</SortTh>
                         <SortTh col="zone" align="center">เขต</SortTh>
                         <th className="px-2 py-1.5 text-center">🔬 OCR</th>
                         <th className="px-2 py-1.5 text-center"><a href={crossRefData?.sources?.ect?.url} target="_blank" rel="noopener noreferrer" className="hover:underline">🏛️ กกต.</a></th>
