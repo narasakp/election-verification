@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-06T21:55:43.310360",
+  "generated": "2026-04-06T22:36:50.351419",
   "ocr_provinces": [
     "ชัยภูมิ",
     "ตาก",
@@ -33,311 +33,388 @@
   "province_summary": {
     "กรุงเทพมหานคร": {
       "registered": 4502458,
-      "stations": 6728
+      "stations": 6728,
+      "drive_files": 6254
     },
     "สมุทรปราการ": {
       "registered": 1126420,
-      "stations": 1771
+      "stations": 1771,
+      "drive_files": 3500
     },
     "นนทบุรี": {
       "registered": 1094383,
-      "stations": 1559
+      "stations": 1559,
+      "drive_files": 2090
     },
     "ปทุมธานี": {
       "registered": 1012760,
-      "stations": 1493
+      "stations": 1493,
+      "drive_files": 1563
     },
     "พระนครศรีอยุธยา": {
       "registered": 677848,
-      "stations": 1162
+      "stations": 1162,
+      "drive_files": 1545
     },
     "อ่างทอง": {
       "registered": 224089,
-      "stations": 505
+      "stations": 505,
+      "drive_files": 999
     },
     "ลพบุรี": {
       "registered": 596426,
-      "stations": 1095
+      "stations": 1095,
+      "drive_files": 2170
     },
     "สิงห์บุรี": {
       "registered": 167173,
-      "stations": 365
+      "stations": 365,
+      "drive_files": 658
     },
     "ชัยนาท": {
       "registered": 261579,
-      "stations": 516
+      "stations": 516,
+      "drive_files": 749
     },
     "สระบุรี": {
       "registered": 518984,
-      "stations": 904
+      "stations": 904,
+      "drive_files": 1823
     },
     "ชลบุรี": {
       "registered": 1294267,
-      "stations": 1747
+      "stations": 1747,
+      "drive_files": 1596
     },
     "ระยอง": {
       "registered": 621808,
-      "stations": 999
+      "stations": 999,
+      "drive_files": 2001
     },
     "จันทบุรี": {
       "registered": 432792,
-      "stations": 879
+      "stations": 879,
+      "drive_files": 1767
     },
     "ตราด": {
       "registered": 176920,
-      "stations": 347
+      "stations": 347,
+      "drive_files": 467
     },
     "ฉะเชิงเทรา": {
       "registered": 591982,
-      "stations": 1051
+      "stations": 1051,
+      "drive_files": 330
     },
     "ปราจีนบุรี": {
       "registered": 403530,
-      "stations": 799
+      "stations": 799,
+      "drive_files": 349
     },
     "นครนายก": {
       "registered": 212999,
-      "stations": 465
+      "stations": 465,
+      "drive_files": 88
     },
     "สระแก้ว": {
       "registered": 443695,
-      "stations": 903
+      "stations": 903,
+      "drive_files": 1783
     },
     "นครราชสีมา": {
       "registered": 2145255,
-      "stations": 4620
+      "stations": 4620,
+      "drive_files": 7741
     },
     "บุรีรัมย์": {
       "registered": 1261622,
-      "stations": 2770
+      "stations": 2770,
+      "drive_files": 4648
     },
     "สุรินทร์": {
       "registered": 1096279,
-      "stations": 2303
+      "stations": 2303,
+      "drive_files": 4684
     },
     "ศรีสะเกษ": {
       "registered": 1168696,
-      "stations": 2825
+      "stations": 2825,
+      "drive_files": 3479
     },
     "อุบลราชธานี": {
       "registered": 1497799,
-      "stations": 3179
+      "stations": 3179,
+      "drive_files": 5315
     },
     "ยโสธร": {
       "registered": 432508,
-      "stations": 948
+      "stations": 948,
+      "drive_files": 1215
     },
     "ชัยภูมิ": {
       "registered": 904844,
-      "stations": 1975
+      "stations": 1975,
+      "drive_files": 273
     },
     "อำนาจเจริญ": {
       "registered": 302708,
-      "stations": 697
+      "stations": 697,
+      "drive_files": 1424
     },
     "บึงกาฬ": {
       "registered": 332602,
-      "stations": 744
+      "stations": 744,
+      "drive_files": 157
     },
     "หนองบัวลำภู": {
       "registered": 408642,
-      "stations": 806
+      "stations": 806,
+      "drive_files": 988
     },
     "ขอนแก่น": {
       "registered": 1458371,
-      "stations": 2798
+      "stations": 2798,
+      "drive_files": 2429
     },
     "อุดรธานี": {
       "registered": 1258728,
-      "stations": 2320
+      "stations": 2320,
+      "drive_files": 5159
     },
     "เลย": {
       "registered": 508131,
-      "stations": 1053
+      "stations": 1053,
+      "drive_files": 2366
     },
     "หนองคาย": {
       "registered": 413467,
-      "stations": 866
+      "stations": 866,
+      "drive_files": 785
     },
     "มหาสารคาม": {
       "registered": 769508,
-      "stations": 1797
+      "stations": 1797,
+      "drive_files": 3631
     },
     "ร้อยเอ็ด": {
       "registered": 1054374,
-      "stations": 2571
+      "stations": 2571,
+      "drive_files": 3677
     },
     "กาฬสินธุ์": {
       "registered": 791204,
-      "stations": 1712
+      "stations": 1712,
+      "drive_files": 1714
     },
     "สกลนคร": {
       "registered": 919997,
-      "stations": 1748
+      "stations": 1748,
+      "drive_files": 3608
     },
     "นครพนม": {
       "registered": 573695,
-      "stations": 1195
+      "stations": 1195,
+      "drive_files": 1174
     },
     "มุกดาหาร": {
       "registered": 280339,
-      "stations": 619
+      "stations": 619,
+      "drive_files": 1261
     },
     "เชียงใหม่": {
       "registered": 1348261,
-      "stations": 2831
+      "stations": 2831,
+      "drive_files": 4305
     },
     "ลำพูน": {
       "registered": 333891,
-      "stations": 711
+      "stations": 711,
+      "drive_files": 1513
     },
     "ลำปาง": {
       "registered": 602277,
-      "stations": 1258
+      "stations": 1258,
+      "drive_files": 848
     },
     "อุตรดิตถ์": {
       "registered": 366697,
-      "stations": 777
+      "stations": 777,
+      "drive_files": 1564
     },
     "แพร่": {
       "registered": 360150,
-      "stations": 829
+      "stations": 829,
+      "drive_files": 1602
     },
     "น่าน": {
       "registered": 389276,
-      "stations": 974
+      "stations": 974,
+      "drive_files": 157
     },
     "พะเยา": {
       "registered": 383153,
-      "stations": 892
+      "stations": 892,
+      "drive_files": 1674
     },
     "เชียงราย": {
       "registered": 948989,
-      "stations": 2057
+      "stations": 2057,
+      "drive_files": 315
     },
     "แม่ฮ่องสอน": {
       "registered": 185172,
-      "stations": 475
+      "stations": 475,
+      "drive_files": 299
     },
     "นครสวรรค์": {
       "registered": 838251,
-      "stations": 1655
+      "stations": 1655,
+      "drive_files": 3275
     },
     "อุทัยธานี": {
       "registered": 261841,
-      "stations": 653
+      "stations": 653,
+      "drive_files": 1851
     },
     "กำแพงเพชร": {
       "registered": 569706,
-      "stations": 1188
+      "stations": 1188,
+      "drive_files": 1559
     },
     "ตาก": {
       "registered": 415314,
-      "stations": 735
+      "stations": 735,
+      "drive_files": 1084
     },
     "สุโขทัย": {
       "registered": 477497,
-      "stations": 1004
+      "stations": 1004,
+      "drive_files": 1978
     },
     "พิษณุโลก": {
       "registered": 690652,
-      "stations": 1374
+      "stations": 1374,
+      "drive_files": 2775
     },
     "พิจิตร": {
       "registered": 427543,
-      "stations": 1023
+      "stations": 1023,
+      "drive_files": 1691
     },
     "เพชรบูรณ์": {
       "registered": 783341,
-      "stations": 1731
+      "stations": 1731,
+      "drive_files": 1106
     },
     "ราชบุรี": {
       "registered": 691526,
-      "stations": 1177
+      "stations": 1177,
+      "drive_files": 1614
     },
     "กาญจนบุรี": {
       "registered": 657286,
-      "stations": 1098
+      "stations": 1098,
+      "drive_files": 2186
     },
     "สุพรรณบุรี": {
       "registered": 677735,
-      "stations": 1287
+      "stations": 1287,
+      "drive_files": 133
     },
     "นครปฐม": {
       "registered": 756871,
-      "stations": 1299
+      "stations": 1299,
+      "drive_files": 1417
     },
     "สมุทรสาคร": {
       "registered": 462724,
-      "stations": 674
+      "stations": 674,
+      "drive_files": 1320
     },
     "สมุทรสงคราม": {
       "registered": 156265,
-      "stations": 268
+      "stations": 268,
+      "drive_files": 528
     },
     "เพชรบุรี": {
       "registered": 396388,
-      "stations": 777
+      "stations": 777,
+      "drive_files": 7615
     },
     "ประจวบคีรีขันธ์": {
       "registered": 438184,
-      "stations": 741
+      "stations": 741,
+      "drive_files": 1506
     },
     "นครศรีธรรมราช": {
       "registered": 1231806,
-      "stations": 2282
+      "stations": 2282,
+      "drive_files": 1610
     },
     "กระบี่": {
       "registered": 370578,
-      "stations": 656
+      "stations": 656,
+      "drive_files": 90
     },
     "พังงา": {
       "registered": 211116,
-      "stations": 396
+      "stations": 396,
+      "drive_files": 752
     },
     "ภูเก็ต": {
       "registered": 330148,
-      "stations": 470
+      "stations": 470,
+      "drive_files": 1861
     },
     "สุราษฎร์ธานี": {
       "registered": 847406,
-      "stations": 1521
+      "stations": 1521,
+      "drive_files": 2916
     },
     "ระนอง": {
       "registered": 143314,
-      "stations": 246
+      "stations": 246,
+      "drive_files": 504
     },
     "ชุมพร": {
       "registered": 409631,
-      "stations": 823
+      "stations": 823,
+      "drive_files": 1670
     },
     "สงขลา": {
       "registered": 1122947,
-      "stations": 1943
+      "stations": 1943,
+      "drive_files": 3466
     },
     "สตูล": {
       "registered": 246426,
-      "stations": 436
+      "stations": 436,
+      "drive_files": 865
     },
     "ตรัง": {
       "registered": 510403,
-      "stations": 943
+      "stations": 943,
+      "drive_files": 738
     },
     "พัทลุง": {
       "registered": 422693,
-      "stations": 806
+      "stations": 806,
+      "drive_files": 82
     },
     "ปัตตานี": {
       "registered": 525674,
-      "stations": 982
+      "stations": 982,
+      "drive_files": 2629
     },
     "ยะลา": {
       "registered": 395865,
-      "stations": 708
+      "stations": 708,
+      "drive_files": 1437
     },
     "นราธิวาส": {
       "registered": 597044,
-      "stations": 1086
+      "stations": 1086,
+      "drive_files": 1941
     }
   },
   "constituencies": [

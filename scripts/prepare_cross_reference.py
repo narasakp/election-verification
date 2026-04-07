@@ -43,6 +43,21 @@ def load_ect_provinces():
     return mapping
 
 
+def load_backup_status():
+    """Load backup_status.json → {province_name: actual_drive_files}"""
+    path = Path(__file__).resolve().parent.parent / "review-app" / "public" / "data" / "backup_status.json"
+    if not path.exists():
+        print(f"\u26a0\ufe0f  {path.name} not found")
+        return {}
+    raw = json.loads(path.read_text("utf-8"))
+    result = {}
+    for p in raw.get("provinces", []):
+        name = p.get("name", "")
+        if name:
+            result[name] = p.get("actual", 0)
+    return result
+
+
 def load_ect_constituencies(prov_map):
     """Load ECT constituency reference → {province_zone: total_vote_stations}"""
     path = DATA / "ect_constituencies.json"
@@ -242,6 +257,9 @@ def main():
     drive_map = load_drive_mapping()
     print(f"   Drive folder mappings: {len(drive_map)}")
 
+    backup_files = load_backup_status()
+    print(f"   Backup Drive file counts: {len(backup_files)} provinces")
+
     # Build sort priority: OCR provinces first, then Thai alphabetical
     ocr_prio = {p: i for i, p in enumerate(OCR_PROVINCES)}  # 0,1,2
 
@@ -349,12 +367,14 @@ def main():
 
         records.append(rec)
 
-    # Province summary for ECT
+    # Province summary for ECT + backup Drive file counts
     prov_summary = {}
     for pid, pinfo in prov_map.items():
-        prov_summary[pinfo["province"]] = {
+        pname = pinfo["province"]
+        prov_summary[pname] = {
             "registered": pinfo["registered"],
             "stations": pinfo["stations"],
+            "drive_files": backup_files.get(pname, 0),
         }
 
     output = {
