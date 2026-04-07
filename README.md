@@ -386,7 +386,7 @@ If you use this dataset or code, please credit:
 
 **Narasak Phuphayang** — or link back to this repository: [election-verification](https://github.com/narasakp/election-verification)
 
-หากนำข้อมูลหรือโค้ดไปใช้ กรุณาให้เครดิต **นายนรศักดิ์ ภูผายาง** หรืออ้างอิงกลับมาที่ repository นี้
+หากนำข้อมูลหรือโค้ดไปใช้ กรุณาให้เครดิต **นายนราศักดิ์  ภูผายาง** หรืออ้างอิงกลับมาที่ repository นี้
 
 ---
 
