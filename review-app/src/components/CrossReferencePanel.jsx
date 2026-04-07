@@ -6,7 +6,7 @@ import { validateItem } from '../utils/validation'
 const CROSS_REF_URL = './data/cross_reference_sources.json'
 
 const SOURCE_COLORS = {
-  ocr: { bg: 'bg-indigo-50', text: 'text-indigo-700', bar: 'bg-indigo-500', border: 'border-indigo-200', label: 'ระบบ OCR ของเรา', icon: '🔬' },
+  ocr: { bg: 'bg-indigo-50', text: 'text-indigo-700', bar: 'bg-indigo-500', border: 'border-indigo-200', label: 'ระบบ OCR ของเรา', icon: '🔬', url: 'https://github.com/narasakp/election-verification' },
   ect: { bg: 'bg-blue-50', text: 'text-blue-700', bar: 'bg-blue-500', border: 'border-blue-200', label: 'กกต. (ECT)', icon: '🏛️' },
   killernay: { bg: 'bg-emerald-50', text: 'text-emerald-700', bar: 'bg-emerald-500', border: 'border-emerald-200', label: 'Killernay', icon: '📊' },
   luengnat: { bg: 'bg-purple-50', text: 'text-purple-700', bar: 'bg-purple-500', border: 'border-purple-200', label: 'Luengnat', icon: '📈' },
@@ -277,9 +277,13 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                   const src = sources[key] || {}
                   const count = key === 'ocr' ? Object.keys(ocrByConst).length : (src.records || 0)
                   return (
-                    <div key={key} className={`rounded-lg border ${sc.border} ${sc.bg} p-3`}>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium">{sc.icon} {sc.label}</span>
+                    <div key={key} className={`rounded-lg border ${sc.border} ${sc.bg} p-3 text-center`}>
+                      <div className="flex items-center justify-center gap-1 mb-1">
+                        {(() => {
+                          const linkUrl = sc.url || (key !== 'ocr' && crossRefData?.sources?.[key]?.url)
+                          const content = <span className="text-sm font-medium">{sc.icon} {sc.label}</span>
+                          return linkUrl ? <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">{content}</a> : content
+                        })()}
                         <SourceStatusBadge status={key === 'ocr' ? 'live' : (src.status || 'pending')} />
                       </div>
                       <div className={`text-lg font-bold ${sc.text}`}>{count.toLocaleString()}</div>
@@ -347,7 +351,7 @@ function CrossReferencePanelInner({ allItems, review, anomalyFlags, anomalyMeta 
                         <SortTh col="severity" align="center">สถานะ</SortTh>
                         <SortTh col="province" align="center">จังหวัด</SortTh>
                         <SortTh col="zone" align="center">เขต</SortTh>
-                        <th className="px-2 py-1.5 text-center">🔬 OCR</th>
+                        <th className="px-2 py-1.5 text-center"><a href="https://github.com/narasakp/election-verification" target="_blank" rel="noopener noreferrer" className="hover:underline">🔬 OCR</a></th>
                         <th className="px-2 py-1.5 text-center"><a href={crossRefData?.sources?.ect?.url} target="_blank" rel="noopener noreferrer" className="hover:underline">🏛️ กกต.</a></th>
                         <th className="px-2 py-1.5 text-center"><a href={crossRefData?.sources?.killernay?.url} target="_blank" rel="noopener noreferrer" className="hover:underline">📊 KILLERNAY</a></th>
                         <th className="px-2 py-1.5 text-center"><a href={crossRefData?.sources?.luengnat?.url} target="_blank" rel="noopener noreferrer" className="hover:underline">📈 LUENGNAT</a></th>
