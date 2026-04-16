@@ -721,8 +721,8 @@ function App() {
           { key: 'backup',      label: '💾 Backup' },
           { key: 'analytics',   label: '📈 Analytics' },
           { key: 'heatmap',     label: '🗺️ แผนที่' },
-          { key: 'leaderboard', label: '🏆 ผู้ตรวจ' },
           { key: 'crossref',    label: '🔗 Cross-Ref' },
+          { key: 'leaderboard', label: '🏆 ผู้ตรวจ' },
           { key: 'monitor',     label: '📋 ติดตาม' },
         ]
         return (

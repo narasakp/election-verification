@@ -139,6 +139,63 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
             </button>
           ))}
         </div>
+        {/* Per-constituency summary */}
+        {(() => {
+          const conMap = {}
+          detailItems.forEach(item => {
+            const key = `${item.province} เขต ${item.constituency}`
+            if (!conMap[key]) conMap[key] = { province: item.province, constituency: item.constituency, total: 0, reviewed: 0 }
+            conMap[key].total++
+            if (item._st !== 'pending') conMap[key].reviewed++
+          })
+          // Also add total items per constituency from allItems for full context
+          const fullConMap = {}
+          allItems.forEach(item => {
+            const key = `${item.province} เขต ${item.constituency}`
+            if (!fullConMap[key]) fullConMap[key] = { total: 0, reviewed: 0 }
+            fullConMap[key].total++
+            if (itemStatusMap[item.id] !== 'pending') fullConMap[key].reviewed++
+          })
+          const entries = Object.entries(conMap).sort((a, b) => a[0].localeCompare(b[0], 'th'))
+          if (entries.length === 0) return null
+          return (
+            <div className="mb-4 rounded-lg border overflow-hidden">
+              <table className="w-full text-xs">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="text-left px-3 py-2">เขต</th>
+                    <th className="text-center px-2 py-2">ทั้งหมด (เขต)</th>
+                    <th className="text-center px-2 py-2">ตรวจแล้ว</th>
+                    <th className="text-center px-2 py-2">เหลือ</th>
+                    <th className="text-center px-2 py-2">ความคืบหน้า</th>
+                    <th className="text-center px-2 py-2">%</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {entries.map(([key, d]) => {
+                    const full = fullConMap[key] || { total: d.total, reviewed: d.reviewed }
+                    const pct = full.total > 0 ? (full.reviewed / full.total * 100) : 0
+                    return (
+                      <tr key={key} className="border-t hover:bg-gray-50">
+                        <td className="px-3 py-1.5 font-medium">{key}</td>
+                        <td className="px-2 py-1.5 text-center font-mono">{full.total}</td>
+                        <td className="px-2 py-1.5 text-center font-mono text-emerald-700">{full.reviewed}</td>
+                        <td className="px-2 py-1.5 text-center font-mono text-amber-600">{full.total - full.reviewed}</td>
+                        <td className="px-2 py-1.5 text-center">
+                          <div className="w-20 h-1.5 bg-gray-200 rounded-full overflow-hidden mx-auto">
+                            <div className={`h-full rounded-full ${pct >= 50 ? 'bg-blue-500' : 'bg-amber-500'}`} style={{ width: `${Math.min(100, pct)}%` }} />
+                          </div>
+                        </td>
+                        <td className="px-2 py-1.5 text-center font-mono text-gray-600">{pct.toFixed(1)}%</td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )
+        })()}
+
         <div className="text-xs text-gray-500 mb-2">แสดง {detailItems.length} หน้า</div>
         <div className="max-h-[50vh] overflow-y-auto rounded-lg border">
           <table className="w-full text-xs">
@@ -229,6 +286,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
                   <th className="px-2 py-2 text-center">✏️ แก้ไข</th>
                   <th className="px-2 py-2 text-center">รวม</th>
                   <th className="px-2 py-2 text-center">% ความคืบหน้า</th>
+                  <th className="px-2 py-2 text-center">⏳ รอตรวจ</th>
                   <th className="px-2 py-2 text-center">⏱ เฉลี่ย</th>
                   <th className="px-2 py-2 text-right">เวลาทำงาน</th>
                 </tr>
@@ -267,6 +325,9 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
                         </div>
                         <span className="text-[10px] font-mono text-gray-500">{pct.toFixed(1)}%</span>
                       </div>
+                    </td>
+                    <td className="px-2 py-2 text-center">
+                      <span className="bg-gray-50 text-gray-500 px-1.5 py-0.5 rounded font-mono">{(allItems.length - r.uniqueItems).toLocaleString()}</span>
                     </td>
                     <td className="px-2 py-2 text-center">
                       {r.avgSpeed ? (
