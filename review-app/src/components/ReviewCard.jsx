@@ -46,14 +46,14 @@ function confidenceBadge(level) {
 }
 
 function voteTypeBadge(voteType) {
-  const labels = {
-    'แบ่งเขต': '🗳️ แบ่งเขต (สส.5/16)',
-    'บัญชีรายชื่อ': '📝 บัญชีรายชื่อ (สส.5/16 บช)',
-    'ประชามติ': '🗳️ ประชามติ',
-    'นอกเขต': '📮 นอกเขต',
+  const config = {
+    'แบ่งเขต': { label: '🗳️ แบ่งเขต (สส.)', cls: 'bg-blue-600 text-white border-blue-700' },
+    'บัญชีรายชื่อ': { label: '📝 บัญชีรายชื่อ (บช.)', cls: 'bg-purple-100 text-purple-700 border-purple-300' },
+    'ประชามติ': { label: '🗳️ ประชามติ (อ.ส.)', cls: 'bg-teal-100 text-teal-700 border-teal-300' },
+    'นอกเขต': { label: '📮 นอกเขต', cls: 'bg-gray-100 text-gray-600 border-gray-300' },
   }
-  const label = labels[voteType] || (voteType || 'ไม่ระบุ')
-  return <span className="px-2 py-0.5 rounded-full text-xs font-semibold border bg-indigo-100 text-indigo-700 border-indigo-200">{label}</span>
+  const c = config[voteType] || { label: voteType || 'ไม่ระบุ', cls: 'bg-gray-100 text-gray-500 border-gray-300' }
+  return <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${c.cls}`}>{c.label}</span>
 }
 
 function EditInput({ field, value, isText, intOnly, edits, onEdit, shared, sharedEdits, onSharedEdit, isFirstPage }) {
@@ -178,8 +178,9 @@ function ReviewCardInner({ item, review, reviewSummary, isFirstPage, sharedEdits
     <div className={`bg-white rounded-lg shadow-md overflow-hidden border-l-4 ${borderColor}`}>
       {/* Card Header */}
       <div className="px-4 py-3 border-b bg-gray-50 flex items-center flex-wrap gap-2">
-        <h3 className="text-sm font-semibold text-gray-800 lg:w-[45%] flex-shrink-0">
-          📄 {item.file} — หน้า {item.page}/{item.total_pages || '?'}
+        <h3 className="text-sm font-semibold text-gray-800 lg:w-[45%] flex-shrink-0 flex items-center gap-2 flex-wrap">
+          {voteTypeBadge(item.vote_type)}
+          <span>📄 {item.file} — หน้า {item.page}/{item.total_pages || '?'}</span>
         </h3>
         <div className="flex-1 flex items-center justify-center">
           <div className={`px-3 py-1 rounded border text-sm ${

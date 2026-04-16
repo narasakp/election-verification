@@ -20,11 +20,11 @@ const STATUS_FILTERS = [
 ]
 
 const VOTE_TYPE_TABS = [
-  { key: 'แบ่งเขต', label: 'แบ่งเขต', icon: '🗳️', desc: 'สส.' },
-  { key: 'บัญชีรายชื่อ', label: 'บัญชีรายชื่อ', icon: '📝', desc: 'บช.' },
-  { key: 'ประชามติ', label: 'ประชามติ', icon: '🗳️', desc: 'อ.ส.' },
-  { key: 'นอกเขต', label: 'นอกเขต', icon: '📮', desc: null },
-  { key: 'all', label: 'ทั้งหมด', icon: '📋', desc: null },
+  { key: 'แบ่งเขต', label: 'แบ่งเขต', icon: '🗳️', desc: 'สส.', activeColor: 'bg-blue-600 text-white shadow-md ring-2 ring-blue-300', inactiveColor: 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200' },
+  { key: 'บัญชีรายชื่อ', label: 'บัญชีรายชื่อ', icon: '📝', desc: 'บช.', activeColor: 'bg-purple-600 text-white shadow-md ring-2 ring-purple-300', inactiveColor: 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200' },
+  { key: 'ประชามติ', label: 'ประชามติ', icon: '🗳️', desc: 'อ.ส.', activeColor: 'bg-teal-600 text-white shadow-md ring-2 ring-teal-300', inactiveColor: 'bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200' },
+  { key: 'นอกเขต', label: 'นอกเขต', icon: '📮', desc: null, activeColor: 'bg-gray-600 text-white shadow-md ring-2 ring-gray-300', inactiveColor: 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200' },
+  { key: 'all', label: 'ทั้งหมด', icon: '📋', desc: null, activeColor: 'bg-indigo-700 text-white shadow-md ring-2 ring-indigo-300', inactiveColor: 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200' },
 ]
 
 export default React.memo(function FilterBar({
@@ -57,9 +57,7 @@ export default React.memo(function FilterBar({
                 aria-pressed={isActive}
                 aria-label={`${tab.label} (${count.toLocaleString()} รายการ)`}
                 className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
-                  isActive
-                    ? 'bg-indigo-700 text-white shadow-md ring-2 ring-indigo-300'
-                    : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200'
+                  isActive ? tab.activeColor : tab.inactiveColor
                 }`}
               >
                 <span className="text-sm">{tab.icon}</span>
