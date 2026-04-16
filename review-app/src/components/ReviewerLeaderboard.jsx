@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react'
-import { Users, ChevronDown, ChevronRight, Trophy, Clock, AlertTriangle, CheckCircle2, Zap, ArrowLeft } from 'lucide-react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
+import { Users, ChevronDown, ChevronRight, Trophy, Clock, AlertTriangle, CheckCircle2, Zap, ArrowLeft, RefreshCw, Cloud, CloudOff, Wifi } from 'lucide-react'
 import ErrorBoundary from './ErrorBoundary'
+import { fetchRemoteReviews, mergeLocalAndRemote } from '../utils/fetchRemoteReviews'
 
 function Medal({ rank }) {
   if (rank === 1) return <span className="text-amber-400">🥇</span>
@@ -14,6 +15,41 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
   const [sortBy, setSortBy] = useState('reviews')
   const [selectedReviewer, setSelectedReviewer] = useState(null) // { email, filterStatus }
 
+  // Remote sync state
+  const [remoteEntries, setRemoteEntries] = useState([])
+  const [syncStatus, setSyncStatus] = useState('idle') // idle | loading | success | error
+  const [syncError, setSyncError] = useState(null)
+  const [syncInfo, setSyncInfo] = useState(null) // { fetchedAt, fromCache, addedCount }
+
+  const doSync = useCallback(async (force = false) => {
+    setSyncStatus('loading')
+    setSyncError(null)
+    try {
+      const result = await fetchRemoteReviews(force)
+      if (result.error) {
+        setSyncStatus('error')
+        setSyncError(result.error)
+        return
+      }
+      setRemoteEntries(result.entries)
+      setSyncStatus('success')
+      setSyncInfo({ fetchedAt: result.fetchedAt, fromCache: result.fromCache, count: result.entries.length })
+    } catch (err) {
+      setSyncStatus('error')
+      setSyncError(err.message)
+    }
+  }, [])
+
+  // Auto-fetch on mount
+  useEffect(() => { doSync(false) }, [doSync])
+
+  // Combine local + remote logs for display
+  const combinedLog = useMemo(() => {
+    if (remoteEntries.length === 0) return reviewLog || []
+    const { merged } = mergeLocalAndRemote(reviewLog || [], remoteEntries)
+    return merged
+  }, [reviewLog, remoteEntries])
+
   const itemMap = useMemo(() => {
     const m = {}; allItems.forEach(item => { m[item.id] = item }); return m
   }, [allItems])
@@ -23,9 +59,9 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
   }, [allItems, review])
 
   const reviewers = useMemo(() => {
-    if (!reviewLog || reviewLog.length === 0) return []
+    if (!combinedLog || combinedLog.length === 0) return []
     const map = {}
-    reviewLog.forEach(entry => {
+    combinedLog.forEach(entry => {
       const email = entry.email || 'anonymous'
       const name = entry.name || email.split('@')[0]
       if (!map[email]) {
@@ -61,7 +97,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
       if (r.firstReview && r.lastReview) r.sessionMinutes = Math.round((new Date(r.lastReview) - new Date(r.firstReview)) / 60000)
       return r
     })
-  }, [reviewLog])
+  }, [combinedLog])
 
   // Sort
   const sorted = useMemo(() => {
@@ -86,11 +122,15 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
     return [...ids].map(id => itemMap[id]).filter(Boolean).map(item => ({ ...item, _st: itemStatusMap[item.id] }))
   }, [selectedReviewer, reviewers, itemMap, itemStatusMap])
 
-  if (!reviewLog || reviewLog.length === 0) return (
+  if ((!combinedLog || combinedLog.length === 0) && syncStatus !== 'loading') return (
     <div className="p-8 text-center text-gray-400 text-sm">
       <Trophy size={32} className="mx-auto mb-2 text-gray-200" />
       <div>ยังไม่มีข้อมูล Review Log</div>
       <div className="text-xs mt-1">เริ่มตรวจสอบ OCR เพื่อดูสถิติผู้ตรวจที่นี่</div>
+      <button onClick={() => doSync(true)} className="mt-3 px-3 py-1.5 text-xs bg-indigo-100 text-indigo-700 rounded-full hover:bg-indigo-200 transition inline-flex items-center gap-1">
+        <RefreshCw size={11} /> ดึงข้อมูลจาก Google Sheet
+      </button>
+      {syncError && <div className="text-xs text-red-500 mt-2">{syncError}</div>}
     </div>
   )
 
@@ -247,10 +287,45 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
         <span className="text-xs font-normal text-gray-400">
           {totalUniqueReviewers} คน · {totalActiveReviews} reviews
         </span>
+        {remoteEntries.length > 0 && (
+          <span className="text-[10px] font-normal text-emerald-500 flex items-center gap-0.5" title="เชื่อมต่อ Google Sheet แล้ว">
+            <Cloud size={10} /> Cloud
+          </span>
+        )}
       </button>
 
       {expanded && (
         <div className="p-5">
+          {/* Cloud sync bar */}
+          <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-lg bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-100">
+            <div className="flex items-center gap-1.5 flex-1 min-w-0">
+              {syncStatus === 'success' ? (
+                <Cloud size={13} className="text-emerald-500 flex-shrink-0" />
+              ) : syncStatus === 'error' ? (
+                <CloudOff size={13} className="text-red-400 flex-shrink-0" />
+              ) : syncStatus === 'loading' ? (
+                <RefreshCw size={13} className="text-indigo-400 animate-spin flex-shrink-0" />
+              ) : (
+                <Wifi size={13} className="text-gray-300 flex-shrink-0" />
+              )}
+              <span className="text-[10px] text-gray-500 truncate">
+                {syncStatus === 'loading' ? 'กำลังดึงข้อมูลจาก Google Sheet...' :
+                 syncStatus === 'success' ? `Google Sheet: ${syncInfo?.count || 0} reviews${syncInfo?.fromCache ? ' (cached)' : ''} · อัปเดต ${syncInfo?.fetchedAt ? new Date(syncInfo.fetchedAt).toLocaleTimeString('th-TH') : ''}` :
+                 syncStatus === 'error' ? `ไม่สามารถเชื่อมต่อ: ${syncError}` :
+                 'ยังไม่ได้เชื่อมต่อ Google Sheet'}
+              </span>
+            </div>
+            <button
+              onClick={() => doSync(true)}
+              disabled={syncStatus === 'loading'}
+              className="flex-shrink-0 flex items-center gap-1 px-2.5 py-1 text-[10px] font-medium rounded-full bg-white border border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition disabled:opacity-50"
+              title="ดึงข้อมูลใหม่จาก Google Sheet"
+            >
+              <RefreshCw size={10} className={syncStatus === 'loading' ? 'animate-spin' : ''} />
+              Sync
+            </button>
+          </div>
+
           {/* Sort buttons */}
           <div className="flex items-center gap-2 mb-4">
             <span className="text-xs text-gray-500">เรียงตาม:</span>
@@ -354,7 +429,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
 
           {/* Summary */}
           <div className="mt-4 flex items-center gap-4 text-[10px] text-gray-400 flex-wrap">
-            <span>📊 คำนวณจาก {reviewLog.length} entries ใน review log</span>
+            <span>📊 Local: {(reviewLog || []).length} entries · Cloud: {remoteEntries.length} entries · รวม: {combinedLog.length} entries</span>
             <span>📋 รวม {allItems.length.toLocaleString()} หน้า · เหลือ {remainingCount.toLocaleString()} หน้า</span>
             {sorted.length > 0 && sorted[0].avgSpeed && (
               <span>⚡ เร็วที่สุด: {sorted.reduce((best, r) => r.avgSpeed && (!best || r.avgSpeed < best) ? r.avgSpeed : best, null)}s / หน้า</span>
