@@ -99,12 +99,22 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
     })
   }, [combinedLog])
 
-  // Sort
+  // Sort — all columns sortable
   const sorted = useMemo(() => {
     const arr = [...reviewers]
-    if (sortBy === 'reviews') arr.sort((a, b) => b.activeReviews - a.activeReviews)
-    else if (sortBy === 'speed') arr.sort((a, b) => (a.avgSpeed || 9999) - (b.avgSpeed || 9999))
-    else if (sortBy === 'edits') arr.sort((a, b) => b.edits - a.edits)
+    const sorters = {
+      confirmed: (a, b) => b.idsByStatus.confirmed.size - a.idsByStatus.confirmed.size,
+      flagged: (a, b) => b.idsByStatus.flagged.size - a.idsByStatus.flagged.size,
+      rejected: (a, b) => b.idsByStatus.rejected.size - a.idsByStatus.rejected.size,
+      edits: (a, b) => b.edits - a.edits,
+      reviews: (a, b) => b.uniqueItems - a.uniqueItems,
+      pct: (a, b) => b.uniqueItems - a.uniqueItems,
+      remaining: (a, b) => a.uniqueItems - b.uniqueItems,
+      speed: (a, b) => (a.avgSpeed || 9999) - (b.avgSpeed || 9999),
+      session: (a, b) => (b.sessionMinutes || 0) - (a.sessionMinutes || 0),
+    }
+    const fn = sorters[sortBy] || sorters.reviews
+    arr.sort(fn)
     return arr
   }, [reviewers, sortBy])
 
@@ -326,27 +336,6 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
             </button>
           </div>
 
-          {/* Sort buttons */}
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-xs text-gray-500">เรียงตาม:</span>
-            {[
-              { key: 'reviews', label: 'จำนวน', icon: CheckCircle2 },
-              { key: 'speed', label: 'ความเร็ว', icon: Zap },
-              { key: 'edits', label: 'แก้ไข', icon: AlertTriangle },
-            ].map(s => (
-              <button
-                key={s.key}
-                onClick={() => setSortBy(s.key)}
-                className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition ${
-                  sortBy === s.key
-                    ? 'bg-indigo-100 text-indigo-700 font-semibold'
-                    : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
-                }`}
-              >
-                <s.icon size={11} /> {s.label}
-              </button>
-            ))}
-          </div>
 
           {/* Table */}
           <div className="overflow-x-auto">
@@ -355,15 +344,24 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
                 <tr className="text-[10px] text-gray-500 uppercase border-b border-gray-200">
                   <th className="px-2 py-2 text-left w-8">#</th>
                   <th className="px-2 py-2 text-left">ผู้ตรวจ</th>
-                  <th className="px-2 py-2 text-center">✅ ยืนยัน</th>
-                  <th className="px-2 py-2 text-center">🔄 ตรวจซ้ำ</th>
-                  <th className="px-2 py-2 text-center">🚫 ใช้ไม่ได้</th>
-                  <th className="px-2 py-2 text-center">✏️ แก้ไข</th>
-                  <th className="px-2 py-2 text-center">รวม</th>
-                  <th className="px-2 py-2 text-center">% ความคืบหน้า</th>
-                  <th className="px-2 py-2 text-center">⏳ รอตรวจ</th>
-                  <th className="px-2 py-2 text-center">⏱ เฉลี่ย</th>
-                  <th className="px-2 py-2 text-right">เวลาทำงาน</th>
+                  {[
+                    { key: 'confirmed', label: '✅ ยืนยัน' },
+                    { key: 'flagged', label: '🔄 ตรวจซ้ำ' },
+                    { key: 'rejected', label: '🚫 ใช้ไม่ได้' },
+                    { key: 'edits', label: '✏️ แก้ไข' },
+                    { key: 'reviews', label: '📄 หน้า (unique)' },
+                    { key: 'pct', label: '% ความคืบหน้า' },
+                    { key: 'remaining', label: '⏳ รอตรวจ' },
+                    { key: 'speed', label: '⏱ เฉลี่ย' },
+                    { key: 'session', label: 'เวลาทำงาน' },
+                  ].map(col => (
+                    <th key={col.key}
+                      onClick={() => setSortBy(col.key)}
+                      className={`px-2 py-2 ${col.key === 'session' ? 'text-right' : 'text-center'} cursor-pointer hover:bg-indigo-50 transition select-none ${sortBy === col.key ? 'text-indigo-700 bg-indigo-50/50' : ''}`}
+                    >
+                      {col.label}{sortBy === col.key ? ' ▼' : ''}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
@@ -379,19 +377,19 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
                       </button>
                     </td>
                     <td className="px-2 py-2 text-center">
-                      <button onClick={() => setSelectedReviewer({ email: r.email, filterStatus: 'confirmed' })} className="bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-mono hover:bg-emerald-100 hover:ring-2 hover:ring-emerald-300 transition cursor-pointer">{r.confirmed}</button>
+                      <button onClick={() => setSelectedReviewer({ email: r.email, filterStatus: 'confirmed' })} className="bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-mono hover:bg-emerald-100 hover:ring-2 hover:ring-emerald-300 transition cursor-pointer" title={`${r.confirmed} actions / ${r.idsByStatus.confirmed.size} unique pages`}>{r.idsByStatus.confirmed.size}</button>
                     </td>
                     <td className="px-2 py-2 text-center">
-                      <button onClick={() => setSelectedReviewer({ email: r.email, filterStatus: 'flagged' })} className="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded font-mono hover:bg-amber-100 hover:ring-2 hover:ring-amber-300 transition cursor-pointer">{r.flagged}</button>
+                      <button onClick={() => setSelectedReviewer({ email: r.email, filterStatus: 'flagged' })} className="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded font-mono hover:bg-amber-100 hover:ring-2 hover:ring-amber-300 transition cursor-pointer" title={`${r.flagged} actions / ${r.idsByStatus.flagged.size} unique pages`}>{r.idsByStatus.flagged.size}</button>
                     </td>
                     <td className="px-2 py-2 text-center">
-                      <button onClick={() => setSelectedReviewer({ email: r.email, filterStatus: 'rejected' })} className="bg-red-50 text-red-700 px-1.5 py-0.5 rounded font-mono hover:bg-red-100 hover:ring-2 hover:ring-red-300 transition cursor-pointer">{r.rejected}</button>
+                      <button onClick={() => setSelectedReviewer({ email: r.email, filterStatus: 'rejected' })} className="bg-red-50 text-red-700 px-1.5 py-0.5 rounded font-mono hover:bg-red-100 hover:ring-2 hover:ring-red-300 transition cursor-pointer" title={`${r.rejected} actions / ${r.idsByStatus.rejected.size} unique pages`}>{r.idsByStatus.rejected.size}</button>
                     </td>
                     <td className="px-2 py-2 text-center">
                       <span className="bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded font-mono">{r.edits}</span>
                     </td>
                     <td className="px-2 py-2 text-center">
-                      <button onClick={() => setSelectedReviewer({ email: r.email, filterStatus: null })} className="font-semibold text-gray-700 hover:text-indigo-600 cursor-pointer">{r.activeReviews}</button>
+                      <button onClick={() => setSelectedReviewer({ email: r.email, filterStatus: null })} className="font-semibold text-gray-700 hover:text-indigo-600 cursor-pointer" title={`${r.activeReviews} total actions / ${r.uniqueItems} unique pages`}>{r.uniqueItems}</button>
                     </td>
                     <td className="px-2 py-2 text-center">
                       <div className="flex items-center gap-1">
