@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { BarChart3, ChevronDown, ChevronRight, User, FileText, CheckCircle2, Clock, AlertCircle, Search, Download } from 'lucide-react'
+import { BarChart3, ChevronDown, ChevronRight, User, FileText, CheckCircle2, Clock, AlertCircle, Search, Download, Filter } from 'lucide-react'
 import ErrorBoundary from './ErrorBoundary'
 
 /**
@@ -53,17 +53,44 @@ function StatusBreakdownBar({ statusCounts, total }) {
   )
 }
 
+const VOTE_TYPE_OPTIONS = [
+  { key: 'แบ่งเขต', label: '🗳️ แบ่งเขต', cls: 'bg-blue-600 text-white', inactiveCls: 'bg-blue-50 text-blue-700 border-blue-200' },
+  { key: 'บัญชีรายชื่อ', label: '📝 บัญชีรายชื่อ', cls: 'bg-purple-600 text-white', inactiveCls: 'bg-purple-50 text-purple-700 border-purple-200' },
+  { key: 'ประชามติ', label: '🗳️ ประชามติ', cls: 'bg-teal-600 text-white', inactiveCls: 'bg-teal-50 text-teal-700 border-teal-200' },
+  { key: 'all', label: '📋 ทั้งหมด', cls: 'bg-gray-700 text-white', inactiveCls: 'bg-gray-100 text-gray-600 border-gray-300' },
+]
+
 function ReviewProgressMonitorInner({ allItems, review, reviewLog }) {
   const [viewMode, setViewMode] = useState('overview') // overview | reviewer | remaining
   const [expandedGroups, setExpandedGroups] = useState({})
   const [searchText, setSearchText] = useState('')
   const [selectedReviewer, setSelectedReviewer] = useState(null)
+  const [monitorVoteType, setMonitorVoteType] = useState('แบ่งเขต')
 
   const toggleGroup = (key) => setExpandedGroups(prev => ({ ...prev, [key]: !prev[key] }))
 
+  // ── Vote type counts (from all items, unfiltered) ──
+  const voteTypeCounts = useMemo(() => {
+    const counts = {}
+    allItems.forEach(item => {
+      const vt = item.vote_type || 'ไม่ระบุ'
+      counts[vt] = (counts[vt] || 0) + 1
+    })
+    return counts
+  }, [allItems])
+
+  // ── Filter items by vote type ──
+  const monitorItems = useMemo(() => {
+    if (monitorVoteType === 'all') return allItems
+    return allItems.filter(item => (item.vote_type || 'ไม่ระบุ') === monitorVoteType)
+  }, [allItems, monitorVoteType])
+
+  // ── Set of filtered item IDs for reviewer filtering ──
+  const monitorItemIds = useMemo(() => new Set(monitorItems.map(i => i.id)), [monitorItems])
+
   // ── Core computed data ──
 
-  // Per-item status map
+  // Per-item status map (all items, for lookups)
   const itemStatusMap = useMemo(() => {
     const map = {}
     allItems.forEach(item => {
@@ -73,11 +100,11 @@ function ReviewProgressMonitorInner({ allItems, review, reviewLog }) {
     return map
   }, [allItems, review])
 
-  // Overall stats
+  // Overall stats (filtered by vote type)
   const overallStats = useMemo(() => {
-    const total = allItems.length
+    const total = monitorItems.length
     let confirmed = 0, flagged = 0, rejected = 0, pending = 0
-    allItems.forEach(item => {
+    monitorItems.forEach(item => {
       const st = itemStatusMap[item.id]
       if (st === 'confirmed') confirmed++
       else if (st === 'flagged') flagged++
@@ -86,12 +113,12 @@ function ReviewProgressMonitorInner({ allItems, review, reviewLog }) {
     })
     const reviewed = confirmed + flagged + rejected
     return { total, reviewed, confirmed, flagged, rejected, pending }
-  }, [allItems, itemStatusMap])
+  }, [monitorItems, itemStatusMap])
 
-  // Per-province → per-constituency breakdown
+  // Per-province → per-constituency breakdown (filtered by vote type)
   const provinceBreakdown = useMemo(() => {
     const map = {} // province → { total, reviewed, constituencies: { con → { total, reviewed, statusCounts, items } } }
-    allItems.forEach(item => {
+    monitorItems.forEach(item => {
       const prov = item.province || 'ไม่ระบุ'
       const con = item.constituency || '?'
       const vt = item.vote_type || 'ไม่ระบุ'
@@ -115,14 +142,15 @@ function ReviewProgressMonitorInner({ allItems, review, reviewLog }) {
       if (isReviewed) map[prov].constituencies[con].voteTypes[vt].reviewed++
     })
     return Object.entries(map).sort((a, b) => a[0].localeCompare(b[0], 'th'))
-  }, [allItems, itemStatusMap])
+  }, [monitorItems, itemStatusMap])
 
-  // Per-reviewer: which items each reviewer has reviewed
+  // Per-reviewer: which items each reviewer has reviewed (filtered by vote type)
   const reviewerBreakdown = useMemo(() => {
     if (!reviewLog || reviewLog.length === 0) return []
     const map = {} // email → { name, items: Set<itemId>, statusCounts, timestamps }
     reviewLog.forEach(entry => {
       if (entry.status === 'pending') return // skip resets
+      if (!monitorItemIds.has(entry.itemId)) return // skip items not in current vote type
       const email = entry.email || 'anonymous'
       if (!map[email]) map[email] = { email, name: entry.name || email.split('@')[0], items: new Set(), statusCounts: {}, first: null, last: null }
       const r = map[email]
@@ -133,35 +161,37 @@ function ReviewProgressMonitorInner({ allItems, review, reviewLog }) {
     })
     return Object.values(map)
       .map(r => ({ ...r, itemCount: r.items.size, itemIds: [...r.items] }))
+      .filter(r => r.itemCount > 0)
       .sort((a, b) => b.itemCount - a.itemCount)
-  }, [reviewLog])
+  }, [reviewLog, monitorItemIds])
 
-  // Remaining (unreviewed) items
+  // Remaining (unreviewed) items (filtered by vote type)
   const remainingItems = useMemo(() => {
-    return allItems
+    return monitorItems
       .filter(item => itemStatusMap[item.id] === 'pending')
       .filter(item => {
         if (!searchText) return true
         const hay = `${item.file || ''} ${item.province || ''} ${item.district || ''} ${item.sub_district || ''}`.toLowerCase()
         return hay.includes(searchText.toLowerCase())
       })
-  }, [allItems, itemStatusMap, searchText])
+  }, [monitorItems, itemStatusMap, searchText])
 
   // Items reviewed by selected reviewer
   const selectedReviewerItems = useMemo(() => {
     if (!selectedReviewer) return []
     const r = reviewerBreakdown.find(r => r.email === selectedReviewer)
     if (!r) return []
-    return allItems.filter(item => r.itemIds.includes(item.id)).map(item => ({
+    return monitorItems.filter(item => r.itemIds.includes(item.id)).map(item => ({
       ...item,
       reviewStatus: itemStatusMap[item.id]
     }))
-  }, [selectedReviewer, reviewerBreakdown, allItems, itemStatusMap])
+  }, [selectedReviewer, reviewerBreakdown, monitorItems, itemStatusMap])
 
   // Export progress report
   const exportReport = () => {
     const report = {
       generated_at: new Date().toISOString(),
+      vote_type_filter: monitorVoteType,
       overall: overallStats,
       by_province: provinceBreakdown.map(([prov, data]) => ({
         province: prov,
@@ -217,6 +247,33 @@ function ReviewProgressMonitorInner({ allItems, review, reviewLog }) {
         >
           <Download size={13} /> Export รายงาน
         </button>
+      </div>
+
+      {/* ── Vote Type Filter ── */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <Filter size={14} className="text-gray-400" />
+        <span className="text-xs text-gray-500 font-semibold">ประเภท:</span>
+        {VOTE_TYPE_OPTIONS.map(opt => {
+          const count = opt.key === 'all'
+            ? allItems.length
+            : (voteTypeCounts[opt.key] || 0)
+          if (opt.key !== 'all' && count === 0) return null
+          const isActive = monitorVoteType === opt.key
+          return (
+            <button
+              key={opt.key}
+              onClick={() => setMonitorVoteType(opt.key)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${
+                isActive ? opt.cls : opt.inactiveCls
+              }`}
+            >
+              {opt.label}
+              <span className={`px-1.5 py-0 rounded text-[10px] font-bold ${isActive ? 'bg-white/25' : 'bg-black/8'}`}>
+                {count.toLocaleString()}
+              </span>
+            </button>
+          )
+        })}
       </div>
 
       {/* ── Overall Progress ── */}
