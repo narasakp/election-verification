@@ -3,9 +3,16 @@
  * This allows the admin/employer to see ALL reviewers' progress,
  * not just the local browser's localStorage.
  *
- * The Google Sheet must be:
- * 1. Shared as "Anyone with the link can view"
- * 2. Published to web (File → Share → Publish to web → CSV)
+ * The Google Sheet must be shared as "Anyone with the link can view/edit".
+ *
+ * Google Form field order (known, hardcoded):
+ *   Col 0 = Timestamp (auto by Google)
+ *   Col 1 = 1. รหัสรายการ  (item_id)
+ *   Col 2 = 2. ชื่อไฟล์    (file)
+ *   Col 3 = 3. สถานที่      (station/location)
+ *   Col 4 = 4. สถานะ       (status: confirmed/flagged/rejected/pending/login/logout)
+ *   Col 5 = 5. หมายเหตุ    (comment/note)
+ *   Col 6 = 6. อีเมลผู้ตรวจ (email)
  */
 
 const SHEET_ID = '1mBkP2kS4TWB-PqijYQoJ7C2fZEi-cicZqN7jM47sGow'
@@ -18,11 +25,17 @@ const SHEET_URLS = [
   `https://docs.google.com/spreadsheets/d/${SHEET_ID}/pub?gid=${GID}&single=true&output=csv`,
 ]
 
+// Hardcoded column positions matching Google Form field order
+const COL = { timestamp: 0, itemId: 1, file: 2, station: 3, status: 4, note: 5, email: 6 }
+
+const VALID_STATUSES = new Set(['confirmed', 'flagged', 'rejected', 'pending'])
+const SKIP_ITEM_IDS = new Set(['LOGIN', 'LOGOUT', 'login', 'logout', ''])
+
 const CACHE_KEY = 'ocr_remote_reviews'
 const CACHE_TTL_MS = 2 * 60 * 1000 // 2 minutes cache
 
 /**
- * Parse a CSV line handling quoted fields with commas.
+ * Parse a CSV line handling quoted fields with commas and newlines.
  */
 function parseCSVLine(line) {
   const result = []
@@ -33,7 +46,7 @@ function parseCSVLine(line) {
     if (inQuotes) {
       if (ch === '"' && line[i + 1] === '"') {
         current += '"'
-        i++ // skip escaped quote
+        i++
       } else if (ch === '"') {
         inQuotes = false
       } else {
@@ -55,92 +68,119 @@ function parseCSVLine(line) {
 }
 
 /**
+ * Parse a gviz Date() value like "Date(2026,3,8,9,13,48)" → ISO string.
+ * gviz months are 0-indexed.
+ */
+function parseGvizDate(str) {
+  const m = str.match(/Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+),(\d+))?\)/)
+  if (!m) return null
+  const d = new Date(+m[1], +m[2], +m[3], +(m[4] || 0), +(m[5] || 0), +(m[6] || 0))
+  return isNaN(d.getTime()) ? null : d.toISOString()
+}
+
+/**
+ * Parse any timestamp format → ISO string.
+ */
+function parseTimestamp(raw) {
+  if (!raw) return ''
+  // gviz Date() format
+  if (raw.startsWith('Date(')) {
+    return parseGvizDate(raw) || raw
+  }
+  // Standard date string
+  try {
+    const d = new Date(raw)
+    if (!isNaN(d.getTime())) return d.toISOString()
+  } catch {}
+  return raw
+}
+
+/**
  * Parse Google Sheet CSV into review log entries.
- *
- * Expected Google Form columns (order may vary):
- * Timestamp | item_id | file | station/location | status | comment | email
- *
- * We detect columns by header name matching.
+ * Uses hardcoded column positions (we know the exact Google Form field order).
  */
 function parseSheetCSV(csvText) {
-  const lines = csvText.split('\n').filter(l => l.trim())
-  if (lines.length < 2) return []
+  // Strip BOM and normalize line endings
+  let text = csvText.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n')
 
-  const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase().trim())
-
-  // Auto-detect column indices by matching known patterns
-  const colMap = {}
-  headers.forEach((h, i) => {
-    if (/timestamp|เวลา/.test(h)) colMap.timestamp = i
-    else if (/item.?id|รหัส/.test(h)) colMap.itemId = i
-    else if (/status|สถานะ/.test(h)) colMap.status = i
-    else if (/email|อีเมล/.test(h)) colMap.email = i
-    else if (/comment|หมายเหตุ|note/.test(h)) colMap.note = i
-    else if (/file|ไฟล์/.test(h)) colMap.file = i
-    else if (/station|สถานที่|location/.test(h)) colMap.station = i
-  })
-
-  // Fallback: if auto-detect fails, assume standard Google Form order
-  // Column 0 = Timestamp (auto), then form fields in order they appear in form
-  if (colMap.timestamp == null && headers.length >= 7) {
-    colMap.timestamp = 0
-    colMap.itemId = 1
-    colMap.file = 2
-    colMap.station = 3
-    colMap.status = 4
-    colMap.note = 5
-    colMap.email = 6
-  }
-
-  if (colMap.itemId == null || colMap.status == null || colMap.email == null) {
-    console.warn('[fetchRemoteReviews] Could not detect columns. Headers:', headers)
+  const lines = text.split('\n').filter(l => l.trim())
+  if (lines.length < 2) {
+    console.warn('[fetchRemoteReviews] CSV has < 2 lines. Length:', csvText.length)
     return []
   }
 
+  const headers = parseCSVLine(lines[0])
+  console.log('[fetchRemoteReviews] Headers:', headers)
+  console.log('[fetchRemoteReviews] Total rows (incl header):', lines.length)
+
+  // Try auto-detect columns, but always fall back to hardcoded positions
+  const colMap = { ...COL }
+  const headersLower = headers.map(h => h.toLowerCase().trim())
+  headersLower.forEach((h, i) => {
+    if (/timestamp|เวลา/.test(h)) colMap.timestamp = i
+    else if (/รหัส|item.?id/.test(h)) colMap.itemId = i
+    else if (/สถานะ|status/.test(h)) colMap.status = i
+    else if (/อีเมล|email/.test(h)) colMap.email = i
+    else if (/หมายเหตุ|comment|note/.test(h)) colMap.note = i
+    else if (/ไฟล์|file/.test(h)) colMap.file = i
+    else if (/สถานที่|station|location/.test(h)) colMap.station = i
+  })
+
+  console.log('[fetchRemoteReviews] Column map:', colMap)
+
   const entries = []
+  let skippedLogin = 0, skippedStatus = 0, skippedEmpty = 0
   for (let i = 1; i < lines.length; i++) {
     const cols = parseCSVLine(lines[i])
-    if (cols.length < 3) continue
+    if (cols.length < 5) { skippedEmpty++; continue }
 
-    const itemId = cols[colMap.itemId] || ''
-    const status = (cols[colMap.status] || '').toLowerCase().trim()
-    const email = cols[colMap.email] || ''
-    const timestamp = cols[colMap.timestamp] || ''
-    const note = cols[colMap.note] || ''
+    const rawItemId = (cols[colMap.itemId] || '').trim()
+    const rawStatus = (cols[colMap.status] || '').trim()
+    const rawEmail = (cols[colMap.email] || '').trim()
+    const rawTimestamp = (cols[colMap.timestamp] || '').trim()
+    const rawNote = (cols[colMap.note] || '').trim()
 
-    // Skip non-review entries (login/logout events)
-    if (!itemId || itemId === 'LOGIN' || itemId === 'LOGOUT') continue
+    // Normalize status: lowercase, strip whitespace
+    const status = rawStatus.toLowerCase().replace(/\s+/g, '')
+
+    // Skip login/logout events and empty rows
+    if (SKIP_ITEM_IDS.has(rawItemId) || SKIP_ITEM_IDS.has(rawItemId.toUpperCase())) {
+      skippedLogin++
+      continue
+    }
     // Skip invalid statuses
-    if (!['confirmed', 'flagged', 'rejected', 'pending'].includes(status)) continue
-    if (!email) continue
-
-    // Parse Google timestamp format: "4/16/2025 13:45:00" → ISO
-    let isoTimestamp = timestamp
-    try {
-      const d = new Date(timestamp)
-      if (!isNaN(d.getTime())) {
-        isoTimestamp = d.toISOString()
+    if (!VALID_STATUSES.has(status)) {
+      skippedStatus++
+      // Log first few skipped for debugging
+      if (skippedStatus <= 3) {
+        console.log(`[fetchRemoteReviews] Skipped row ${i}: status="${rawStatus}" (normalized="${status}"), itemId="${rawItemId.substring(0, 30)}"`)
       }
-    } catch {}
+      continue
+    }
+    if (!rawEmail) { skippedEmpty++; continue }
+
+    const isoTimestamp = parseTimestamp(rawTimestamp)
 
     // Parse edits from comment field (format: "note text | edits: field1=val1, field2=val2")
     let edits = {}
-    let cleanNote = note
-    const editsMatch = note.match(/\|\s*edits:\s*(.+)$/)
+    let cleanNote = rawNote
+    const editsMatch = rawNote.match(/\|\s*edits:\s*(.+)$/)
     if (editsMatch) {
-      cleanNote = note.replace(editsMatch[0], '').trim()
+      cleanNote = rawNote.replace(editsMatch[0], '').trim()
       editsMatch[1].split(',').forEach(pair => {
-        const [k, v] = pair.split('=').map(s => s.trim())
-        if (k && v !== undefined) {
-          edits[k] = isNaN(Number(v)) ? v : Number(v)
+        const eqIdx = pair.indexOf('=')
+        if (eqIdx > 0) {
+          const k = pair.substring(0, eqIdx).trim()
+          const v = pair.substring(eqIdx + 1).trim()
+          if (k) edits[k] = isNaN(Number(v)) ? v : Number(v)
         }
       })
     }
 
     entries.push({
-      itemId,
-      email,
-      name: email.split('@')[0],
+      itemId: rawItemId,
+      email: rawEmail,
+      name: rawEmail.split('@')[0],
       status,
       note: cleanNote,
       edits,
@@ -148,6 +188,8 @@ function parseSheetCSV(csvText) {
       _remote: true,
     })
   }
+
+  console.log(`[fetchRemoteReviews] Parsed: ${entries.length} valid, skipped: ${skippedLogin} login/logout, ${skippedStatus} invalid status, ${skippedEmpty} empty/short`)
 
   return entries
 }
@@ -172,16 +214,27 @@ export async function fetchRemoteReviews(forceRefresh = false) {
   let lastError = null
   for (const url of SHEET_URLS) {
     try {
+      console.log(`[fetchRemoteReviews] Trying: ${url.substring(0, 80)}...`)
       const response = await fetch(url, { cache: 'no-cache' })
       if (!response.ok) {
         lastError = `HTTP ${response.status}: ${response.statusText}`
+        console.warn(`[fetchRemoteReviews] ${lastError}`)
         continue
       }
       const csvText = await response.text()
-      if (!csvText || csvText.length < 10 || csvText.includes('<!DOCTYPE html>')) {
-        lastError = 'ได้รับ HTML แทน CSV — Sheet อาจยังไม่ได้ publish หรือ share'
+
+      // Check for HTML error pages
+      if (!csvText || csvText.length < 10) {
+        lastError = `Response too short (${csvText?.length || 0} chars)`
         continue
       }
+      if (csvText.includes('<!DOCTYPE html>') || csvText.includes('<html')) {
+        lastError = 'ได้รับ HTML แทน CSV — Sheet อาจยังไม่ได้ publish หรือ share'
+        console.warn('[fetchRemoteReviews] Got HTML instead of CSV. First 200 chars:', csvText.substring(0, 200))
+        continue
+      }
+
+      console.log(`[fetchRemoteReviews] Got CSV: ${csvText.length} chars, first 300:`, csvText.substring(0, 300))
 
       const entries = parseSheetCSV(csvText)
       const fetchedAt = new Date().toISOString()
@@ -195,10 +248,11 @@ export async function fetchRemoteReviews(forceRefresh = false) {
         }))
       } catch {}
 
-      console.log(`[fetchRemoteReviews] Fetched ${entries.length} review entries from Google Sheet`)
+      console.log(`[fetchRemoteReviews] SUCCESS: ${entries.length} review entries from ${url.includes('gviz') ? 'gviz' : url.includes('export') ? 'export' : 'pub'}`)
       return { entries, error: null, fromCache: false, fetchedAt }
     } catch (err) {
       lastError = err.message
+      console.warn(`[fetchRemoteReviews] Fetch error:`, err.message)
     }
   }
 
