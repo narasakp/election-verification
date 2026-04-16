@@ -150,6 +150,7 @@ function ReviewCardInner({ item, review, reviewSummary, isFirstPage, sharedEdits
   }[status] || ''
 
   const statusBadge = {
+    pending: <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-500 border border-dashed border-gray-300">📋 รอคุณตรวจ</span>,
     confirmed: <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">✅ ยืนยันแล้ว</span>,
     flagged: <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">🔄 ตรวจอีกรอบ</span>,
     rejected: <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700">🚫 ใช้ไม่ได้</span>,
