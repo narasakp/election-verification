@@ -21,6 +21,7 @@ import useDarkMode from './hooks/useDarkMode'
 import useExport from './hooks/useExport'
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts'
 import { submitToGoogleForm, submitLoginEvent, submitLogoutEvent } from './utils/submitReview'
+import { fetchRemoteReviews, mergeLocalAndRemote } from './utils/fetchRemoteReviews'
 import { getReviewLog, appendReviewLog, getAllSummaries, getUserReviewKey, checkRateLimit, recordReviewTiming, validateEditValue, getAllAnomalyScores, mergeReviewLogs, verifyLogIntegrity } from './utils/reviewLog'
 import { validateItem, getWorstSeverity, isLowRiskItem } from './utils/validation'
 import { computeItemAnomalyScore } from './utils/anomalyScore'
@@ -38,6 +39,7 @@ function App() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [review, setReview] = useState({}) // keyed by item.id → { status, note, edits }
   const [reviewLog, setReviewLog] = useState([])
+  const [remoteReviewEntries, setRemoteReviewEntries] = useState([])
   const [sharedEdits, setSharedEdits] = useState({}) // keyed by "province__constituency" → { field: value }
   const [filterStatus, setFilterStatus] = useState('all')
   const [filterProvince, setFilterProvince] = useState('ชัยภูมิ')
@@ -58,6 +60,23 @@ function App() {
   const [priorityQueueEnabled, setPriorityQueueEnabled] = useState(false)
   const [activeDashboard, setActiveDashboard] = useState(null)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
+
+  // Fetch remote reviews from Google Sheet on mount
+  useEffect(() => {
+    fetchRemoteReviews(false).then(result => {
+      if (!result.error && result.entries.length > 0) {
+        setRemoteReviewEntries(result.entries)
+        console.log(`[App] Remote reviews loaded: ${result.entries.length} entries${result.fromCache ? ' (cached)' : ''}`)
+      }
+    }).catch(() => {})
+  }, [])
+
+  // Combined local + remote log for consensus
+  const combinedReviewLog = useMemo(() => {
+    if (remoteReviewEntries.length === 0) return reviewLog
+    const { merged } = mergeLocalAndRemote(reviewLog, remoteReviewEntries)
+    return merged
+  }, [reviewLog, remoteReviewEntries])
   const exportMenuRef = React.useRef(null)
   const mobileMenuRef = React.useRef(null)
 
@@ -454,8 +473,8 @@ function App() {
     return s
   }, [allItems, review])
 
-  // Review summaries from log (multi-reviewer aggregation)
-  const reviewSummaries = useMemo(() => getAllSummaries(reviewLog), [reviewLog])
+  // Review summaries from combined log (local + cloud, multi-reviewer aggregation)
+  const reviewSummaries = useMemo(() => getAllSummaries(combinedReviewLog), [combinedReviewLog])
 
   // Vote type counts (for FilterBar tabs) — pages + unique stations
   const { voteTypeCounts, voteTypeStations } = useMemo(() => {
@@ -765,7 +784,7 @@ function App() {
                   {activeDashboard === 'backup'      && <BackupDashboard />}
                   {activeDashboard === 'analytics'   && <AnalyticsDashboard allItems={allItems} review={review} reviewLog={reviewLog} anomalyFlags={anomalyFlags} />}
                   {activeDashboard === 'heatmap'     && <ProvinceHeatmap allItems={allItems} review={review} />}
-                  {activeDashboard === 'leaderboard' && <ReviewerLeaderboard reviewLog={reviewLog} allItems={allItems} review={review} />}
+                  {activeDashboard === 'leaderboard' && <ReviewerLeaderboard reviewLog={reviewLog} allItems={allItems} review={review} remoteReviewEntries={remoteReviewEntries} onRemoteSync={setRemoteReviewEntries} />}
                   {activeDashboard === 'crossref'    && <CrossReferencePanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} anomalyMeta={anomalyMeta} />}
                   {activeDashboard === 'monitor'     && <ReviewProgressMonitor allItems={allItems} review={review} reviewLog={reviewLog} />}
                 </div>
@@ -880,7 +899,7 @@ function App() {
       {showAdminPanel && (
         <Suspense fallback={<div className="fixed inset-0 bg-black/40 z-[100] flex items-center justify-center"><div className="bg-white rounded-xl p-8 text-gray-400 animate-pulse">กำลังโหลด Admin Panel…</div></div>}>
           <AdminPanel
-            reviewLog={reviewLog}
+            reviewLog={combinedReviewLog}
             allItems={allItems}
             review={review}
             onClose={() => setShowAdminPanel(false)}

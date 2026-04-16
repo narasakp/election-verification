@@ -10,16 +10,16 @@ function Medal({ rank }) {
   return <span className="text-gray-300 text-xs font-mono w-5 text-center inline-block">{rank}</span>
 }
 
-function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
+function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEntries, onRemoteSync }) {
   const [expanded, setExpanded] = useState(true)
   const [sortBy, setSortBy] = useState('reviews')
   const [selectedReviewer, setSelectedReviewer] = useState(null) // { email, filterStatus }
 
-  // Remote sync state
-  const [remoteEntries, setRemoteEntries] = useState([])
-  const [syncStatus, setSyncStatus] = useState('idle') // idle | loading | success | error
+  // Remote sync state (entries come from App via props, but sync UI is local)
+  const remoteEntries = remoteReviewEntries || []
+  const [syncStatus, setSyncStatus] = useState(remoteEntries.length > 0 ? 'success' : 'idle')
   const [syncError, setSyncError] = useState(null)
-  const [syncInfo, setSyncInfo] = useState(null) // { fetchedAt, fromCache, addedCount }
+  const [syncInfo, setSyncInfo] = useState(remoteEntries.length > 0 ? { fetchedAt: new Date().toISOString(), fromCache: true, count: remoteEntries.length } : null)
 
   const doSync = useCallback(async (force = false) => {
     setSyncStatus('loading')
@@ -31,17 +31,18 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review }) {
         setSyncError(result.error)
         return
       }
-      setRemoteEntries(result.entries)
+      // Update parent state so consensus also updates
+      if (onRemoteSync) onRemoteSync(result.entries)
       setSyncStatus('success')
       setSyncInfo({ fetchedAt: result.fetchedAt, fromCache: result.fromCache, count: result.entries.length })
     } catch (err) {
       setSyncStatus('error')
       setSyncError(err.message)
     }
-  }, [])
+  }, [onRemoteSync])
 
-  // Auto-fetch on mount
-  useEffect(() => { doSync(false) }, [doSync])
+  // Auto-fetch on mount if no entries yet
+  useEffect(() => { if (remoteEntries.length === 0) doSync(false) }, [doSync, remoteEntries.length])
 
   // Combine local + remote logs for display
   const combinedLog = useMemo(() => {
