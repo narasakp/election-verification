@@ -15,6 +15,7 @@ const CrossReferencePanel = lazy(() => import('./components/CrossReferencePanel'
 const UploadPanel = lazy(() => import('./components/UploadPanel'))
 const AdminPanel = lazy(() => import('./components/AdminPanel'))
 const AnomalySummaryPanel = lazy(() => import('./components/AnomalySummaryPanel'))
+const ReviewProgressMonitor = lazy(() => import('./components/ReviewProgressMonitor'))
 import useAuth from './hooks/useAuth'
 import useDarkMode from './hooks/useDarkMode'
 import useExport from './hooks/useExport'
@@ -722,6 +723,7 @@ function App() {
           { key: 'heatmap',     label: '🗺️ แผนที่' },
           { key: 'leaderboard', label: '🏆 ผู้ตรวจ' },
           { key: 'crossref',    label: '🔗 Cross-Ref' },
+          { key: 'monitor',     label: '📋 ติดตาม' },
         ]
         return (
           <div className="max-w-[1440px] mx-auto px-4 py-1.5">
@@ -765,6 +767,7 @@ function App() {
                   {activeDashboard === 'heatmap'     && <ProvinceHeatmap allItems={allItems} review={review} />}
                   {activeDashboard === 'leaderboard' && <ReviewerLeaderboard reviewLog={reviewLog} allItems={allItems} review={review} />}
                   {activeDashboard === 'crossref'    && <CrossReferencePanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} anomalyMeta={anomalyMeta} />}
+                  {activeDashboard === 'monitor'     && <ReviewProgressMonitor allItems={allItems} review={review} reviewLog={reviewLog} />}
                 </div>
               </Suspense>
             )}
