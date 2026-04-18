@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { BarChart3, ChevronDown, ChevronRight, User, FileText, CheckCircle2, Clock, AlertCircle, Search, Download, Filter } from 'lucide-react'
 import ErrorBoundary from './ErrorBoundary'
+import { mergeLocalAndRemote } from '../utils/fetchRemoteReviews'
 
 /**
  * Review Progress Monitor — Admin tool to track hired reviewer progress.
@@ -60,7 +61,7 @@ const VOTE_TYPE_OPTIONS = [
   { key: 'all', label: '📋 ทั้งหมด', cls: 'bg-gray-700 text-white', inactiveCls: 'bg-gray-100 text-gray-600 border-gray-300' },
 ]
 
-function ReviewProgressMonitorInner({ allItems, review, reviewLog }) {
+function ReviewProgressMonitorInner({ allItems, review, reviewLog, remoteReviewEntries }) {
   const [viewMode, setViewMode] = useState('overview') // overview | reviewer | remaining
   const [expandedGroups, setExpandedGroups] = useState({})
   const [searchText, setSearchText] = useState('')
@@ -68,6 +69,30 @@ function ReviewProgressMonitorInner({ allItems, review, reviewLog }) {
   const [monitorVoteType, setMonitorVoteType] = useState('แบ่งเขต')
 
   const toggleGroup = (key) => setExpandedGroups(prev => ({ ...prev, [key]: !prev[key] }))
+
+  // ── Merge local + remote review logs ──
+  const combinedLog = useMemo(() => {
+    const remote = remoteReviewEntries || []
+    if (remote.length === 0) return reviewLog || []
+    const { merged } = mergeLocalAndRemote(reviewLog || [], remote)
+    return merged
+  }, [reviewLog, remoteReviewEntries])
+
+  // ── Build combined item status map (last status wins) ──
+  const itemStatusMap = useMemo(() => {
+    const map = {}
+    allItems.forEach(item => { map[item.id] = 'pending' })
+    // Apply local review state first
+    allItems.forEach(item => {
+      const rev = review[item.id] || {}
+      if (rev.status && rev.status !== 'pending') map[item.id] = rev.status
+    })
+    // Overlay from combined log (cloud + local) — last entry wins
+    combinedLog.forEach(entry => {
+      if (entry.itemId && entry.status) map[entry.itemId] = entry.status
+    })
+    return map
+  }, [allItems, review, combinedLog])
 
   // ── Vote type counts (from all items, unfiltered) ──
   const voteTypeCounts = useMemo(() => {
@@ -89,16 +114,6 @@ function ReviewProgressMonitorInner({ allItems, review, reviewLog }) {
   const monitorItemIds = useMemo(() => new Set(monitorItems.map(i => i.id)), [monitorItems])
 
   // ── Core computed data ──
-
-  // Per-item status map (all items, for lookups)
-  const itemStatusMap = useMemo(() => {
-    const map = {}
-    allItems.forEach(item => {
-      const rev = review[item.id] || {}
-      map[item.id] = rev.status || 'pending'
-    })
-    return map
-  }, [allItems, review])
 
   // Overall stats (filtered by vote type)
   const overallStats = useMemo(() => {
@@ -146,9 +161,9 @@ function ReviewProgressMonitorInner({ allItems, review, reviewLog }) {
 
   // Per-reviewer: which items each reviewer has reviewed (filtered by vote type)
   const reviewerBreakdown = useMemo(() => {
-    if (!reviewLog || reviewLog.length === 0) return []
+    if (!combinedLog || combinedLog.length === 0) return []
     const map = {} // email → { name, items: Set<itemId>, statusCounts, timestamps }
-    reviewLog.forEach(entry => {
+    combinedLog.forEach(entry => {
       if (entry.status === 'pending') return // skip resets
       if (!monitorItemIds.has(entry.itemId)) return // skip items not in current vote type
       const email = entry.email || 'anonymous'
@@ -163,7 +178,7 @@ function ReviewProgressMonitorInner({ allItems, review, reviewLog }) {
       .map(r => ({ ...r, itemCount: r.items.size, itemIds: [...r.items] }))
       .filter(r => r.itemCount > 0)
       .sort((a, b) => b.itemCount - a.itemCount)
-  }, [reviewLog, monitorItemIds])
+  }, [combinedLog, monitorItemIds])
 
   // Remaining (unreviewed) items (filtered by vote type)
   const remainingItems = useMemo(() => {

@@ -808,7 +808,7 @@ function App() {
                     setPendingNavTarget(itemId)
                   }} />}
                   {activeDashboard === 'crossref'    && <CrossReferencePanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} anomalyMeta={anomalyMeta} />}
-                  {activeDashboard === 'monitor'     && <ReviewProgressMonitor allItems={allItems} review={review} reviewLog={reviewLog} />}
+                  {activeDashboard === 'monitor'     && <ReviewProgressMonitor allItems={allItems} review={review} reviewLog={reviewLog} remoteReviewEntries={remoteReviewEntries} />}
                 </div>
               </Suspense>
             )}
