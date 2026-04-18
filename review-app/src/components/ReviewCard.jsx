@@ -270,17 +270,24 @@ function ReviewCardInner({ item, review, reviewSummary, isFirstPage, sharedEdits
       )}
 
       {/* Anomaly Score Panel */}
-      {anomalyScore && anomalyScore.score > 0 && (
+      {anomalyScore && anomalyScore.score > 0 && (() => {
+        // ECT constituency-level reason only shown on first page of each constituency
+        const visibleReasons = isFirstPage
+          ? anomalyScore.reasons
+          : anomalyScore.reasons.filter(r => r.label !== 'เทียบคะแนน กกต.')
+        const visibleScore = visibleReasons.reduce((s, r) => s + (r.points || 0), 0)
+        if (visibleReasons.length === 0) return null
+        return (
         <div className="px-4 py-2.5 border-b bg-gradient-to-r from-red-50 to-orange-50 border-red-200">
           <div className="flex items-center gap-2 mb-1.5">
-            <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${getScoreColor(anomalyScore.score)}`}>
-              🚨 {anomalyScore.score} คะแนน
+            <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${getScoreColor(visibleScore)}`}>
+              🚨 {visibleScore} คะแนน
             </span>
             <span className="text-xs font-semibold text-red-800 uppercase tracking-wider">ข้อมูลผิดปกติ</span>
             <span className="text-[10px] text-gray-500">— เรียงจากรุนแรงมากไปน้อย</span>
           </div>
           <div className="space-y-1">
-            {anomalyScore.reasons.map((r, i) => {
+            {visibleReasons.map((r, i) => {
               const color = getSeverityColor(r.severity)
               return (
                 <div key={i} className={`flex items-start gap-2 px-2.5 py-1.5 rounded-lg border ${color.bg} ${color.border}`}>
@@ -296,7 +303,8 @@ function ReviewCardInner({ item, review, reviewSummary, isFirstPage, sharedEdits
             })}
           </div>
         </div>
-      )}
+        )
+      })()}
 
       {/* ECT Anomaly Flags (cross-reference from constituency-level analysis) — first page only */}
       {isFirstPage && anomalyFlags && anomalyFlags.length > 0 && (
