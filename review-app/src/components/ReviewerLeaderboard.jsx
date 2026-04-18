@@ -68,7 +68,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
       if (!map[email]) {
         map[email] = { email, name, reviews: 0, confirmed: 0, flagged: 0, rejected: 0, resets: 0, edits: 0,
           timestamps: [], firstReview: null, lastReview: null, lastReviewedItemId: null, _lastTs: 0,
-          reviewedIds: new Set(), editedIds: new Set(), idsByStatus: { confirmed: new Set(), flagged: new Set(), rejected: new Set() } }
+          reviewedIds: new Set(), editedIds: new Set(), notedIds: new Set(), idsByStatus: { confirmed: new Set(), flagged: new Set(), rejected: new Set() } }
       }
       const r = map[email]
       r.reviews++
@@ -77,6 +77,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
       else if (entry.status === 'rejected') { r.rejected++; r.idsByStatus.rejected.add(entry.itemId) }
       else if (entry.status === 'pending') r.resets++
       if (entry.edits && Object.keys(entry.edits).length > 0) { r.edits++; r.editedIds.add(entry.itemId) }
+      if (entry.note && entry.note.trim()) r.notedIds.add(entry.itemId)
       if (entry.status !== 'pending') {
         r.reviewedIds.add(entry.itemId)
         const entryTs = entry.timestamp ? new Date(entry.timestamp).getTime() : 0
@@ -112,6 +113,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
       flagged: (a, b) => b.idsByStatus.flagged.size - a.idsByStatus.flagged.size,
       rejected: (a, b) => b.idsByStatus.rejected.size - a.idsByStatus.rejected.size,
       edits: (a, b) => b.edits - a.edits,
+      notes: (a, b) => b.notedIds.size - a.notedIds.size,
       reviews: (a, b) => b.uniqueItems - a.uniqueItems,
       pct: (a, b) => b.uniqueItems - a.uniqueItems,
       remaining: (a, b) => a.uniqueItems - b.uniqueItems,
@@ -136,9 +138,12 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
     if (!selectedReviewer) return []
     const r = reviewers.find(rv => rv.email === selectedReviewer.email)
     if (!r) return []
-    const ids = selectedReviewer.filterStatus === 'edits' ? (r.editedIds || new Set()) : selectedReviewer.filterStatus ? (r.idsByStatus[selectedReviewer.filterStatus] || new Set()) : r.reviewedIds
-    return [...ids].map(id => itemMap[id]).filter(Boolean).map(item => ({ ...item, _st: itemStatusMap[item.id] }))
-  }, [selectedReviewer, reviewers, itemMap, itemStatusMap])
+    const ids = selectedReviewer.filterStatus === 'notes' ? (r.notedIds || new Set()) : selectedReviewer.filterStatus === 'edits' ? (r.editedIds || new Set()) : selectedReviewer.filterStatus ? (r.idsByStatus[selectedReviewer.filterStatus] || new Set()) : r.reviewedIds
+    // Build note lookup for this reviewer
+    const noteMap = {}
+    combinedLog.filter(e => e.email === selectedReviewer.email && e.note && e.note.trim()).forEach(e => { noteMap[e.itemId] = e.note.trim() })
+    return [...ids].map(id => itemMap[id]).filter(Boolean).map(item => ({ ...item, _st: itemStatusMap[item.id], _note: noteMap[item.id] || '' }))
+  }, [selectedReviewer, reviewers, itemMap, itemStatusMap, combinedLog])
 
   if ((!combinedLog || combinedLog.length === 0) && syncStatus !== 'loading') return (
     <div className="p-8 text-center text-gray-400 text-sm">
@@ -191,6 +196,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
             { key: 'flagged', label: `🔄 (${r?.idsByStatus.flagged.size || 0})` },
             { key: 'rejected', label: `🚫 (${r?.idsByStatus.rejected.size || 0})` },
             { key: 'edits', label: `✏️ แก้ไข (${r?.editedIds?.size || 0})` },
+            { key: 'notes', label: `💬 หมายเหตุ (${r?.notedIds?.size || 0})` },
           ].map(f => (
             <button key={f.key || 'all'} onClick={() => setSelectedReviewer({ email: selectedReviewer.email, filterStatus: f.key })}
               className={`px-3 py-1 rounded-full text-xs font-medium transition ${selectedReviewer.filterStatus === f.key ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
@@ -267,6 +273,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
                 <th className="text-center px-2 py-2">ประเภท</th>
                 <th className="text-center px-2 py-2">หน่วย</th>
                 <th className="text-center px-2 py-2">สถานะ</th>
+                {selectedReviewer?.filterStatus === 'notes' && <th className="text-left px-2 py-2">หมายเหตุ</th>}
                 <th className="text-center px-2 py-2 w-10"></th>
               </tr>
             </thead>
@@ -283,6 +290,11 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
                     <td className="px-2 py-1.5 text-center"><span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${vtColor}`}>{item.vote_type || '?'}</span></td>
                     <td className="px-2 py-1.5 text-center">{item.station_no || item.ocr_station_no || '?'}</td>
                     <td className="px-2 py-1.5 text-center"><span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${stColor}`}>{item._st}</span></td>
+                    {selectedReviewer?.filterStatus === 'notes' && (
+                      <td className="px-2 py-1.5 text-left max-w-[250px]">
+                        {item._note ? <span className="text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded text-[10px] break-words" title={item._note}>{item._note.length > 60 ? item._note.slice(0, 60) + '…' : item._note}</span> : <span className="text-gray-300">—</span>}
+                      </td>
+                    )}
                     <td className="px-2 py-1.5 text-center">
                       {onNavigateToItem && (
                         <button onClick={() => onNavigateToItem(item.id)} className="text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 rounded p-0.5 transition" title="ไปที่หน้านี้">
@@ -366,6 +378,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
                     { key: 'flagged', label: '🔄 ตรวจซ้ำ' },
                     { key: 'rejected', label: '🚫 ใช้ไม่ได้' },
                     { key: 'edits', label: '✏️ แก้ไข' },
+                    { key: 'notes', label: '💬 หมายเหตุ' },
                     { key: 'reviews', label: '📄 หน้า (unique)' },
                     { key: 'pct', label: '% ความคืบหน้า' },
                     { key: 'remaining', label: '⏳ รอตรวจ' },
@@ -405,6 +418,13 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
                     <td className="px-2 py-2 text-center">
                       {r.edits > 0 ? (
                         <button onClick={() => setSelectedReviewer({ email: r.email, filterStatus: 'edits' })} className="bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded font-mono hover:bg-indigo-100 hover:ring-2 hover:ring-indigo-300 transition cursor-pointer" title={`${r.edits} actions / ${r.editedIds.size} unique pages ที่มีการแก้ไข`}>{r.editedIds.size}</button>
+                      ) : (
+                        <span className="bg-gray-50 text-gray-400 px-1.5 py-0.5 rounded font-mono">0</span>
+                      )}
+                    </td>
+                    <td className="px-2 py-2 text-center">
+                      {r.notedIds.size > 0 ? (
+                        <button onClick={() => setSelectedReviewer({ email: r.email, filterStatus: 'notes' })} className="bg-sky-50 text-sky-700 px-1.5 py-0.5 rounded font-mono hover:bg-sky-100 hover:ring-2 hover:ring-sky-300 transition cursor-pointer" title={`${r.notedIds.size} หน้าที่มีหมายเหตุ`}>{r.notedIds.size}</button>
                       ) : (
                         <span className="bg-gray-50 text-gray-400 px-1.5 py-0.5 rounded font-mono">0</span>
                       )}
