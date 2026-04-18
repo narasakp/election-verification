@@ -111,8 +111,22 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
       r.avgSpeed = diffCount > 0 ? Math.round(totalDiff / diffCount) : null
       r.activeReviews = r.reviews - r.resets
       r.uniqueItems = r.reviewedIds.size
-      // Active session time: sum of gaps ≤10min (excludes idle/tab-left-open periods)
-      r.sessionMinutes = diffCount > 0 ? Math.round(totalDiff / 60) : 0
+      // Session-based working time: group actions into sessions (gap>5min = new session)
+      // Sum intra-session gaps + add avgSpeed per session for first-page time
+      const SESSION_GAP = 300 // 5min threshold
+      let sessionTime = 0, sessions = 0
+      for (let i = 1; i < sorted.length; i++) {
+        const gap = (sorted[i] - sorted[i - 1]) / 1000
+        if (gap > 1 && gap <= SESSION_GAP) {
+          sessionTime += gap
+        } else if (gap > SESSION_GAP) {
+          sessions++ // previous session ended
+        }
+      }
+      if (sorted.length > 0) sessions++ // count last (or only) session
+      const perPage = r.avgSpeed || 60 // fallback 60s if no avg
+      sessionTime += sessions * perPage // add first-page time per session
+      r.sessionMinutes = sessionTime > 0 ? Math.round(sessionTime / 60) : 0
       return r
     })
   }, [combinedLog])
@@ -395,7 +409,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
                     { key: 'pct', label: '% ความคืบหน้า' },
                     { key: 'remaining', label: '⏳ รอตรวจ' },
                     { key: 'speed', label: '⏱ เฉลี่ย' },
-                    { key: 'session', label: '⏰ ใช้งานจริง' },
+                    { key: 'session', label: '⏰ เวลาทำงาน' },
                   ].map(col => (
                     <th key={col.key}
                       onClick={() => setSortBy(col.key)}
