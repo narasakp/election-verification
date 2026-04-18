@@ -95,20 +95,25 @@ export function computeItemAnomalyScore(item, ectFlags = null) {
     })
   }
 
-  // H3: ECT cross-reference anomaly flags
+  // H3: ECT cross-reference anomaly flags (constituency-level)
   if (ectFlags && Array.isArray(ectFlags) && ectFlags.length > 0) {
+    // Build readable detail from each flag's detail field (has actual numbers)
+    const details = ectFlags.map(f => {
+      if (typeof f === 'string') return f
+      // Use detail (has numbers) over flag (short label)
+      return f.detail || f.message || f.flag || JSON.stringify(f)
+    })
     reasons.push({
-      label: 'ECT cross-reference พบความผิดปกติ',
-      detail: ectFlags.map(f => typeof f === 'string' ? f : f.message || f.flag || JSON.stringify(f)).join('; '),
+      label: 'เทียบคะแนน กกต.',
+      detail: details.join('; '),
       severity: 'high',
       points: 15,
     })
   } else if (ectFlags && typeof ectFlags === 'object' && !Array.isArray(ectFlags)) {
-    // ectFlags might be an object with flag keys
     const flagKeys = Object.keys(ectFlags).filter(k => ectFlags[k])
     if (flagKeys.length > 0) {
       reasons.push({
-        label: 'ECT cross-reference พบความผิดปกติ',
+        label: 'เทียบคะแนน กกต.',
         detail: flagKeys.join(', '),
         severity: 'high',
         points: 15,
