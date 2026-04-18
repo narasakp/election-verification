@@ -784,7 +784,10 @@ function App() {
                   {activeDashboard === 'backup'      && <BackupDashboard />}
                   {activeDashboard === 'analytics'   && <AnalyticsDashboard allItems={allItems} review={review} reviewLog={reviewLog} anomalyFlags={anomalyFlags} />}
                   {activeDashboard === 'heatmap'     && <ProvinceHeatmap allItems={allItems} review={review} />}
-                  {activeDashboard === 'leaderboard' && <ReviewerLeaderboard reviewLog={reviewLog} allItems={allItems} review={review} remoteReviewEntries={remoteReviewEntries} onRemoteSync={setRemoteReviewEntries} />}
+                  {activeDashboard === 'leaderboard' && <ReviewerLeaderboard reviewLog={reviewLog} allItems={allItems} review={review} remoteReviewEntries={remoteReviewEntries} onRemoteSync={setRemoteReviewEntries} onNavigateToItem={(itemId) => {
+                    const idx = sortedFilteredItems.findIndex(i => i.id === itemId)
+                    if (idx >= 0) { setCurrentIndex(idx); setActiveDashboard(null) }
+                  }} />}
                   {activeDashboard === 'crossref'    && <CrossReferencePanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} anomalyMeta={anomalyMeta} />}
                   {activeDashboard === 'monitor'     && <ReviewProgressMonitor allItems={allItems} review={review} reviewLog={reviewLog} />}
                 </div>
