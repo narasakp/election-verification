@@ -97,15 +97,30 @@ export function computeItemAnomalyScore(item, ectFlags = null) {
 
   // H3: ECT cross-reference anomaly flags (constituency-level)
   if (ectFlags && Array.isArray(ectFlags) && ectFlags.length > 0) {
-    // Build readable detail from each flag's detail field (has actual numbers)
-    const details = ectFlags.map(f => {
-      if (typeof f === 'string') return f
-      // Use detail (has numbers) over flag (short label)
-      return f.detail || f.message || f.flag || JSON.stringify(f)
-    })
+    // Build readable detail — merge turnout entries to avoid duplication
+    const turnoutFlags = ectFlags.filter(f => f && f.category === 'turnout')
+    const otherFlags = ectFlags.filter(f => !f || f.category !== 'turnout')
+
+    const parts = []
+    // Non-turnout flags: use detail as-is
+    for (const f of otherFlags) {
+      if (typeof f === 'string') { parts.push(f); continue }
+      parts.push(f.detail || f.message || f.flag || JSON.stringify(f))
+    }
+    // Turnout flags: merge entries with same value into one line
+    if (turnoutFlags.length > 0) {
+      // Extract parenthetical parts, e.g. "11/232 หน่วย > 85%"
+      const avg = turnoutFlags[0].value
+      const innerParts = turnoutFlags.map(f => {
+        const m = (f.detail || '').match(/\(([^)]+)\)/)
+        return m ? m[1] : f.detail || f.flag
+      })
+      parts.push(`มาใช้สิทธิ์เฉลี่ย ${avg}% (${innerParts.join(' และ ')})`)
+    }
+
     reasons.push({
       label: 'เทียบคะแนน กกต.',
-      detail: details.join('; '),
+      detail: parts.join('; '),
       severity: 'high',
       points: 15,
     })
