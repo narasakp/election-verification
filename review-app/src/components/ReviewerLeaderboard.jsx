@@ -67,7 +67,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
       const name = entry.name || email.split('@')[0]
       if (!map[email]) {
         map[email] = { email, name, reviews: 0, confirmed: 0, flagged: 0, rejected: 0, resets: 0, edits: 0,
-          timestamps: [], firstReview: null, lastReview: null,
+          timestamps: [], firstReview: null, lastReview: null, lastReviewedItemId: null, _lastTs: 0,
           reviewedIds: new Set(), editedIds: new Set(), idsByStatus: { confirmed: new Set(), flagged: new Set(), rejected: new Set() } }
       }
       const r = map[email]
@@ -77,7 +77,11 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
       else if (entry.status === 'rejected') { r.rejected++; r.idsByStatus.rejected.add(entry.itemId) }
       else if (entry.status === 'pending') r.resets++
       if (entry.edits && Object.keys(entry.edits).length > 0) { r.edits++; r.editedIds.add(entry.itemId) }
-      if (entry.status !== 'pending') r.reviewedIds.add(entry.itemId)
+      if (entry.status !== 'pending') {
+        r.reviewedIds.add(entry.itemId)
+        const entryTs = entry.timestamp ? new Date(entry.timestamp).getTime() : 0
+        if (entryTs >= r._lastTs) { r._lastTs = entryTs; r.lastReviewedItemId = entry.itemId }
+      }
       if (entry.timestamp) {
         const ts = new Date(entry.timestamp).getTime()
         r.timestamps.push(ts)
@@ -420,7 +424,20 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
                       {(() => {
                         const remaining = constTotal - r.uniqueItems
                         if (remaining <= 0 || !onNavigateToNextPending) return <span className="bg-gray-50 text-gray-500 px-1.5 py-0.5 rounded font-mono">{remaining.toLocaleString()}</span>
-                        const nextItem = constItems.find(item => !r.reviewedIds.has(item.id) && itemStatusMap[item.id] === 'pending')
+                        // Find next pending item starting from reviewer's last reviewed position
+                        const lastIdx = r.lastReviewedItemId ? constItems.findIndex(it => it.id === r.lastReviewedItemId) : -1
+                        const startIdx = lastIdx >= 0 ? lastIdx + 1 : 0
+                        // First: search forward from last reviewed position
+                        let nextItem = null
+                        for (let j = startIdx; j < constItems.length; j++) {
+                          if (!r.reviewedIds.has(constItems[j].id)) { nextItem = constItems[j]; break }
+                        }
+                        // Fallback: wrap around from beginning
+                        if (!nextItem) {
+                          for (let j = 0; j < startIdx; j++) {
+                            if (!r.reviewedIds.has(constItems[j].id)) { nextItem = constItems[j]; break }
+                          }
+                        }
                         if (!nextItem) return <span className="bg-gray-50 text-gray-500 px-1.5 py-0.5 rounded font-mono">{remaining.toLocaleString()}</span>
                         return (
                           <button
