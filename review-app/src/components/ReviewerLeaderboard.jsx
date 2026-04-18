@@ -10,7 +10,7 @@ function Medal({ rank }) {
   return <span className="text-gray-300 text-xs font-mono w-5 text-center inline-block">{rank}</span>
 }
 
-function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEntries, onRemoteSync, onNavigateToItem }) {
+function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEntries, onRemoteSync, onNavigateToItem, onNavigateToNextPending }) {
   const [expanded, setExpanded] = useState(true)
   const [sortBy, setSortBy] = useState('reviews')
   const [selectedReviewer, setSelectedReviewer] = useState(null) // { email, filterStatus }
@@ -417,7 +417,21 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
                       </div>
                     </td>
                     <td className="px-2 py-2 text-center">
-                      <span className="bg-gray-50 text-gray-500 px-1.5 py-0.5 rounded font-mono">{(constTotal - r.uniqueItems).toLocaleString()}</span>
+                      {(() => {
+                        const remaining = constTotal - r.uniqueItems
+                        if (remaining <= 0 || !onNavigateToNextPending) return <span className="bg-gray-50 text-gray-500 px-1.5 py-0.5 rounded font-mono">{remaining.toLocaleString()}</span>
+                        const nextItem = constItems.find(item => !r.reviewedIds.has(item.id) && itemStatusMap[item.id] === 'pending')
+                        if (!nextItem) return <span className="bg-gray-50 text-gray-500 px-1.5 py-0.5 rounded font-mono">{remaining.toLocaleString()}</span>
+                        return (
+                          <button
+                            onClick={() => onNavigateToNextPending(nextItem.id)}
+                            className="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded font-mono hover:bg-amber-100 hover:ring-2 hover:ring-amber-300 transition cursor-pointer"
+                            title={`ไปหน้าถัดไป: ${nextItem.file || nextItem.id}`}
+                          >
+                            {remaining.toLocaleString()} ▶
+                          </button>
+                        )
+                      })()}
                     </td>
                     <td className="px-2 py-2 text-center">
                       {r.avgSpeed ? (

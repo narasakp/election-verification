@@ -60,6 +60,7 @@ function App() {
   const [priorityQueueEnabled, setPriorityQueueEnabled] = useState(false)
   const [activeDashboard, setActiveDashboard] = useState(null)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
+  const [pendingNavTarget, setPendingNavTarget] = useState(null)
 
   // Fetch remote reviews from Google Sheet on mount
   useEffect(() => {
@@ -270,8 +271,16 @@ function App() {
     return { sortedFilteredItems: sorted, anomalyScoreMap: scoreMap }
   }, [filteredItems, anomalyFlags, filterStatus, priorityQueueEnabled])
 
-  // Reset index when filter changes
-  useEffect(() => { setCurrentIndex(0) }, [filterStatus, filterProvince, filterConstituency, filterVoteType, searchText])
+  // Reset index when filter changes (unless navigating to a specific target)
+  useEffect(() => { if (!pendingNavTarget) setCurrentIndex(0) }, [filterStatus, filterProvince, filterConstituency, filterVoteType, searchText])
+
+  // Deferred navigation: after filters update, find and navigate to the target item
+  useEffect(() => {
+    if (pendingNavTarget) {
+      const idx = sortedFilteredItems.findIndex(i => i.id === pendingNavTarget)
+      if (idx >= 0) { setCurrentIndex(idx); setPendingNavTarget(null) }
+    }
+  }, [pendingNavTarget, sortedFilteredItems])
 
   const currentItem = sortedFilteredItems[currentIndex] || null
 
@@ -787,6 +796,16 @@ function App() {
                   {activeDashboard === 'leaderboard' && <ReviewerLeaderboard reviewLog={reviewLog} allItems={allItems} review={review} remoteReviewEntries={remoteReviewEntries} onRemoteSync={setRemoteReviewEntries} onNavigateToItem={(itemId) => {
                     const idx = sortedFilteredItems.findIndex(i => i.id === itemId)
                     if (idx >= 0) { setCurrentIndex(idx); setActiveDashboard(null) }
+                  }} onNavigateToNextPending={(itemId) => {
+                    const item = allItems.find(i => i.id === itemId)
+                    if (!item) return
+                    setFilterVoteType(item.vote_type || 'แบ่งเขต')
+                    setFilterStatus('all')
+                    setFilterProvince(item.province)
+                    setFilterConstituency(String(item.constituency))
+                    setSearchText('')
+                    setActiveDashboard(null)
+                    setPendingNavTarget(itemId)
                   }} />}
                   {activeDashboard === 'crossref'    && <CrossReferencePanel allItems={allItems} review={review} anomalyFlags={anomalyFlags} anomalyMeta={anomalyMeta} />}
                   {activeDashboard === 'monitor'     && <ReviewProgressMonitor allItems={allItems} review={review} reviewLog={reviewLog} />}
