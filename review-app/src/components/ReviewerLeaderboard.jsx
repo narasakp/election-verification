@@ -122,7 +122,10 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
   const totalUniqueReviewers = reviewers.length
   const totalActiveReviews = reviewers.reduce((s, r) => s + r.activeReviews, 0)
 
-  const remainingCount = useMemo(() => allItems.filter(i => itemStatusMap[i.id] === 'pending').length, [allItems, itemStatusMap])
+  // Only count แบ่งเขต items for remaining stats
+  const constItems = useMemo(() => allItems.filter(i => i.vote_type === 'แบ่งเขต'), [allItems])
+  const constTotal = constItems.length
+  const remainingCount = useMemo(() => constItems.filter(i => itemStatusMap[i.id] === 'pending').length, [constItems, itemStatusMap])
 
   // Detail items for selected reviewer
   const detailItems = useMemo(() => {
@@ -173,7 +176,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
             <span className="text-emerald-700">✅ {r?.confirmed || 0}</span>
             <span className="text-amber-700">🔄 {r?.flagged || 0}</span>
             <span className="text-red-700">🚫 {r?.rejected || 0}</span>
-            <span className="text-gray-500 ml-auto">เหลือ {remainingCount.toLocaleString()} หน้า ({allItems.length > 0 ? (remainingCount / allItems.length * 100).toFixed(1) : 0}%)</span>
+            <span className="text-gray-500 ml-auto">เหลือ {remainingCount.toLocaleString()} หน้า ({constTotal > 0 ? (remainingCount / constTotal * 100).toFixed(1) : 0}%) <span className="text-[9px] text-gray-400">(แบ่งเขต)</span></span>
           </div>
         </div>
         {/* Filter pills */}
@@ -376,7 +379,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
               </thead>
               <tbody>
                 {sorted.map((r, i) => {
-                  const pct = allItems.length > 0 ? (r.uniqueItems / allItems.length * 100) : 0
+                  const pct = constTotal > 0 ? (r.uniqueItems / constTotal * 100) : 0
                   return (
                   <tr key={r.email} className="border-b border-gray-50 hover:bg-gray-50 transition">
                     <td className="px-2 py-2"><Medal rank={i + 1} /></td>
@@ -414,7 +417,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
                       </div>
                     </td>
                     <td className="px-2 py-2 text-center">
-                      <span className="bg-gray-50 text-gray-500 px-1.5 py-0.5 rounded font-mono">{(allItems.length - r.uniqueItems).toLocaleString()}</span>
+                      <span className="bg-gray-50 text-gray-500 px-1.5 py-0.5 rounded font-mono">{(constTotal - r.uniqueItems).toLocaleString()}</span>
                     </td>
                     <td className="px-2 py-2 text-center">
                       {r.avgSpeed ? (
@@ -442,7 +445,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
           {/* Summary */}
           <div className="mt-4 flex items-center gap-4 text-[10px] text-gray-400 flex-wrap">
             <span>📊 Local: {(reviewLog || []).length} entries · Cloud: {remoteEntries.length} entries · รวม: {combinedLog.length} entries</span>
-            <span>📋 รวม {allItems.length.toLocaleString()} หน้า · เหลือ {remainingCount.toLocaleString()} หน้า</span>
+            <span>📋 แบ่งเขต {constTotal.toLocaleString()} หน้า · เหลือ {remainingCount.toLocaleString()} หน้า</span>
             {sorted.length > 0 && sorted[0].avgSpeed && (
               <span>⚡ เร็วที่สุด: {sorted.reduce((best, r) => r.avgSpeed && (!best || r.avgSpeed < best) ? r.avgSpeed : best, null)}s / หน้า</span>
             )}
