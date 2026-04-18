@@ -111,7 +111,8 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
       r.avgSpeed = diffCount > 0 ? Math.round(totalDiff / diffCount) : null
       r.activeReviews = r.reviews - r.resets
       r.uniqueItems = r.reviewedIds.size
-      if (r.firstReview && r.lastReview) r.sessionMinutes = Math.round((new Date(r.lastReview) - new Date(r.firstReview)) / 60000)
+      // Active session time: sum of gaps ≤10min (excludes idle/tab-left-open periods)
+      r.sessionMinutes = diffCount > 0 ? Math.round(totalDiff / 60) : 0
       return r
     })
   }, [combinedLog])
@@ -394,7 +395,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
                     { key: 'pct', label: '% ความคืบหน้า' },
                     { key: 'remaining', label: '⏳ รอตรวจ' },
                     { key: 'speed', label: '⏱ เฉลี่ย' },
-                    { key: 'session', label: 'เวลาทำงาน' },
+                    { key: 'session', label: '⏰ ใช้งานจริง' },
                   ].map(col => (
                     <th key={col.key}
                       onClick={() => setSortBy(col.key)}
