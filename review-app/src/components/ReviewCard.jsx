@@ -298,8 +298,8 @@ function ReviewCardInner({ item, review, reviewSummary, isFirstPage, sharedEdits
         </div>
       )}
 
-      {/* ECT Anomaly Flags (cross-reference from constituency-level analysis) */}
-      {anomalyFlags && anomalyFlags.length > 0 && (
+      {/* ECT Anomaly Flags (cross-reference from constituency-level analysis) — first page only */}
+      {isFirstPage && anomalyFlags && anomalyFlags.length > 0 && (
         <div className="px-4 py-2 border-b bg-purple-50 border-purple-200">
           <div className="flex items-center gap-1.5 mb-1">
             <span className="text-sm">🔬</span>
