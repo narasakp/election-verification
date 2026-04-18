@@ -3,6 +3,17 @@ import { Users, ChevronDown, ChevronRight, Trophy, Clock, AlertTriangle, CheckCi
 import ErrorBoundary from './ErrorBoundary'
 import { fetchRemoteReviews, mergeLocalAndRemote } from '../utils/fetchRemoteReviews'
 
+// Filter out system-generated notes (edit logs) — only count real human comments
+function isHumanNote(note) {
+  if (!note || !note.trim()) return false
+  const t = note.trim()
+  // System patterns: "edits: field=val, ..." or just field=value pairs
+  if (/^edits:\s/i.test(t)) return false
+  // Pure key=value pairs like "sub_district=xxx, turnout=123"
+  if (/^[\w_]+=.+/.test(t) && !t.includes(' ')) return false
+  return true
+}
+
 function Medal({ rank }) {
   if (rank === 1) return <span className="text-amber-400">🥇</span>
   if (rank === 2) return <span className="text-gray-400">🥈</span>
@@ -77,7 +88,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
       else if (entry.status === 'rejected') { r.rejected++; r.idsByStatus.rejected.add(entry.itemId) }
       else if (entry.status === 'pending') r.resets++
       if (entry.edits && Object.keys(entry.edits).length > 0) { r.edits++; r.editedIds.add(entry.itemId) }
-      if (entry.note && entry.note.trim()) r.notedIds.add(entry.itemId)
+      if (isHumanNote(entry.note)) r.notedIds.add(entry.itemId)
       if (entry.status !== 'pending') {
         r.reviewedIds.add(entry.itemId)
         const entryTs = entry.timestamp ? new Date(entry.timestamp).getTime() : 0
@@ -141,7 +152,7 @@ function ReviewerLeaderboardInner({ reviewLog, allItems, review, remoteReviewEnt
     const ids = selectedReviewer.filterStatus === 'notes' ? (r.notedIds || new Set()) : selectedReviewer.filterStatus === 'edits' ? (r.editedIds || new Set()) : selectedReviewer.filterStatus ? (r.idsByStatus[selectedReviewer.filterStatus] || new Set()) : r.reviewedIds
     // Build note lookup for this reviewer
     const noteMap = {}
-    combinedLog.filter(e => e.email === selectedReviewer.email && e.note && e.note.trim()).forEach(e => { noteMap[e.itemId] = e.note.trim() })
+    combinedLog.filter(e => e.email === selectedReviewer.email && isHumanNote(e.note)).forEach(e => { noteMap[e.itemId] = e.note.trim() })
     return [...ids].map(id => itemMap[id]).filter(Boolean).map(item => ({ ...item, _st: itemStatusMap[item.id], _note: noteMap[item.id] || '' }))
   }, [selectedReviewer, reviewers, itemMap, itemStatusMap, combinedLog])
 
